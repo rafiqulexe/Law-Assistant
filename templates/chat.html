@@ -1,120 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Icons + Styles -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-
-  <title>⚖️ Law Assistant</title>
-
-  <!-- Markdown parser -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bangladesh Law Assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-  <div class="wrapper">
-    <div class="title">⚖️ Law Assistant</div>
-    <div class="box" id="chatBox"></div>
-
-    <div class="typing-area">
-      <div class="input-field">
-        <input id="chatInput" type="text" placeholder="Type your message..." required />
-        <button id="sendBtn" type="button" aria-label="Send">
-          <i class="fa fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
+  <main class="app-shell">
+    <header class="topbar">
+      <div><strong>Law Assistant</strong><small>Bangladesh legal information</small></div>
+      <nav>
+        {% if current_user.is_admin %}<a href="{{ url_for('admin') }}">Admin</a>{% endif %}
+        <span>{{ current_user.username }}</span><a href="{{ url_for('logout') }}">Log out</a>
+      </nav>
+    </header>
+    <section class="workspace">
+      <aside class="history">
+        <h2>Conversations</h2>
+        <div id="conversation-list"></div>
+      </aside>
+      <section class="chat-panel">
+        <div id="chat-box" class="chat-box">
+          <div class="notice">Ask a question about the indexed legal documents. Responses are legal information, not legal advice.</div>
+        </div>
+        <form id="chat-form" class="input-row">
+          <input id="message" autocomplete="off" placeholder="Ask in English or Bangla..." required>
+          <button type="submit">Send</button>
+        </form>
+      </section>
+    </section>
+  </main>
   <script>
-    const chatBox = document.getElementById("chatBox");
-    const input   = document.getElementById("chatInput");
-    const button  = document.getElementById("sendBtn");
+    const chatBox = document.getElementById("chat-box");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("message");
+    let conversationId = null;
 
-    function scrollToBottom() {
+    function addMessage(role, content, citations = []) {
+      const item = document.createElement("article");
+      item.className = `message ${role}`;
+      const text = document.createElement("p");
+      text.textContent = content;
+      item.appendChild(text);
+      if (citations.length) {
+        const source = document.createElement("small");
+        source.textContent = `Sources: ${citations.join(", ")}`;
+        item.appendChild(source);
+      }
+      chatBox.appendChild(item);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function addUserBubble(text) {
-      const el = document.createElement("div");
-      el.className = "item right";
-      el.innerHTML = `<div class="msg"><p>${text}</p></div>`;
-      chatBox.appendChild(el);
-      scrollToBottom();
+    async function loadConversations() {
+      const response = await fetch("/api/conversations");
+      if (!response.ok) return;
+      const list = document.getElementById("conversation-list");
+      (await response.json()).forEach((conversation) => {
+        const button = document.createElement("button");
+        button.textContent = conversation.title;
+        button.onclick = async () => {
+          conversationId = conversation.id;
+          chatBox.replaceChildren();
+          const history = await fetch(`/api/conversations/${conversation.id}`);
+          (await history.json()).forEach((message) =>
+            addMessage(message.role, message.content, message.citations ? message.citations.split("\n") : [])
+          );
+        };
+        list.appendChild(button);
+      });
     }
 
-    function addBotBubble(markdownText) {
-      const el = document.createElement("div");
-      el.className = "item";
-      const html = marked.parse(markdownText || "");
-      el.innerHTML = `
-        <div class="icon"><i class="fa fa-user"></i></div>
-        <div class="msg">${html}</div>`;
-      chatBox.appendChild(el);
-      scrollToBottom();
-    }
-
-    function addTyping() {
-      const el = document.createElement("div");
-      el.className = "item";
-      el.id = "typing";
-      el.innerHTML = `
-        <div class="icon"><i class="fa fa-user"></i></div>
-        <div class="msg"><em>typing…</em></div>`;
-      chatBox.appendChild(el);
-      scrollToBottom();
-    }
-
-    function removeTyping() {
-      const t = document.getElementById("typing");
-      if (t) t.remove();
-    }
-
-    async function send() {
-      const msg = (input.value || "").trim();
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const msg = input.value.trim();
       if (!msg) return;
-
-      // UI: show user message + clear field
-      addUserBubble(msg);
+      addMessage("user", msg);
       input.value = "";
-      input.focus();
-
-      // UI: lock send while awaiting
-      button.disabled = true;
-      addTyping();
-
-      try {
-        // 🔁 Memory-aware route
-        const res = await fetch("/memory-chat", {      
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({ msg })
-        });
-
-        const text = await res.text();
-        removeTyping();
-        addBotBubble(text);
-      } catch (err) {
-        console.error(err);
-        removeTyping();
-        addBotBubble("Sorry—something went wrong. Please try again.");
-      } finally {
-        button.disabled = false;
+      const response = await fetch("/get", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded", "X-CSRFToken": "{{ csrf_token() }}"},
+        body: new URLSearchParams({msg, conversation_id: conversationId || ""})
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        addMessage("assistant", data.error || "The request failed.");
+        return;
       }
-    }
-
-    // Click to send
-    button.addEventListener("click", send);
-
-    // Enter to send
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") send();
+      conversationId = data.conversation_id;
+      addMessage("assistant", data.answer, data.citations);
+      loadConversations();
     });
+
+    loadConversations();
   </script>
 </body>
 </html>
