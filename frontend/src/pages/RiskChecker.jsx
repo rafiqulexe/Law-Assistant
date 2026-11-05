@@ -16,7 +16,8 @@ import {
   Shield,
   FileWarning,
   ListChecks,
-  Lightbulb
+  Lightbulb,
+  BookOpen
 } from 'lucide-react';
 
 export default function RiskChecker() {
@@ -242,6 +243,25 @@ export default function RiskChecker() {
                       </ul>
                     </CardContent>
                   </Card>
+
+                  {/* Sources from the law library */}
+                  {analysis.sources?.length > 0 && (
+                    <Card className="bg-slate-900/80 border-amber-900/30">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-amber-500" />
+                          Sources
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="space-y-1">
+                          {analysis.sources.map((source) => (
+                            <li key={source} className="text-sm text-slate-400">{source}</li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  )}
                 </>
               ) : (
                 <Card className="bg-slate-900/80 border-amber-900/30 h-full flex items-center justify-center min-h-[400px]">

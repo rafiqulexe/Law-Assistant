@@ -36,12 +36,12 @@ Create a `.env` file in the project root (never commit it):
 SECRET_KEY=replace-with-a-long-random-value
 PINECONE_API_KEY=your-pinecone-key
 PINECONE_INDEX_NAME=lawbot
-OLLAMA_MODEL=llama3
+OLLAMA_MODEL=llama3.2
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_TEMPERATURE=0.2
 ```
 
-Optional: `DATA_DIR`, `DATABASE_PATH`, `FRONTEND_DIST`, `RETRIEVAL_K`, `MAX_TEXT_LENGTH`,
+Optional: `DATA_DIR`, `DATABASE_PATH`, `FRONTEND_DIST`, `RETRIEVAL_K`, `MAX_TEXT_LENGTH`, `OLLAMA_MAX_TOKENS`,
 `SESSION_COOKIE_SECURE=1` (when served over HTTPS).
 
 ## Running locally
@@ -56,7 +56,7 @@ Optional: `DATA_DIR`, `DATABASE_PATH`, `FRONTEND_DIST`, `RETRIEVAL_K`, `MAX_TEXT
    python app.py                    # http://localhost:8080
    ```
 
-2. Ollama must be running with the model pulled: `ollama pull llama3`.
+2. Ollama must be running with the model pulled: `ollama pull llama3.2`.
 
 3. Frontend:
 

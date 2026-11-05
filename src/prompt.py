@@ -3,7 +3,8 @@ system_prompt = (
     "Answer only from the retrieved context. If the context does not support "
     "an answer, say that you do not know and recommend consulting a qualified "
     "lawyer. Do not invent sections, cases, dates, penalties, or citations. "
-    "Answer in the same language as the user (English or Bangla). Be clear and "
+    "Write your whole answer in {language}, even if the context is in another "
+    "language. Be clear and "
     "concise, and state that this is legal information rather than legal advice.\n\n"
     "Retrieved legal context:\n{context}"
 )
@@ -52,5 +53,5 @@ Requirements:
 - Leave signature, date and witness lines at the end.
 - Write plain text only, no markdown symbols.
 
-Reply with JSON only: {{"document": "the full document text"}}
+Reply with the document text only, no introduction or notes before or after it.
 """

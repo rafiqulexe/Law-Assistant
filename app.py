@@ -14,6 +14,7 @@ from werkzeug.utils import secure_filename
 
 from src.helper import (
     ask_for_json,
+    ask_for_text,
     build_rag_chain,
     download_hugging_face_embeddings,
     get_retriever,
@@ -34,6 +35,7 @@ FRONTEND_DIST = Path(os.getenv("FRONTEND_DIST", BASE_DIR / "frontend" / "dist"))
 ALLOWED_UPLOAD_EXTENSIONS = {"pdf", "csv"}
 MAX_TEXT_LENGTH = int(os.getenv("MAX_TEXT_LENGTH", "20000"))
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+BANGLA_PATTERN = re.compile(r"[ঀ-৿]")
 
 app = Flask(__name__, static_folder=None)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -207,6 +209,11 @@ def extract_citations(documents):
     return citations
 
 
+def reply_language(text):
+    # Bengali Unicode block is U+0980 to U+09FF.
+    return "Bangla" if BANGLA_PATTERN.search(text) else "English"
+
+
 def risk_level(score, high, medium):
     if score >= high:
         return "high"
@@ -315,13 +322,23 @@ def chat():
         )
 
     try:
-        result = get_rag_chain().invoke({"input": message})
+        result = get_rag_chain().invoke({"input": message, "language": reply_language(message)})
         answer = str(result.get("answer", "")).strip()
         if not answer:
             raise RuntimeError("The retrieval chain returned no answer.")
         citations = extract_citations(result.get("context", []))
     except Exception:
         logger.exception("Chat request failed")
+        with get_db() as connection:
+            if new_conversation:
+                # Don't leave an empty conversation in the history list.
+                connection.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
+                connection.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+            else:
+                connection.execute(
+                    "DELETE FROM messages WHERE id = (SELECT MAX(id) FROM messages WHERE conversation_id = ?)",
+                    (conversation_id,),
+                )
         return jsonify({"error": "The assistant is temporarily unavailable."}), 503
 
     with get_db() as connection:
@@ -437,8 +454,7 @@ def generate_document():
         return jsonify({"error": "Choose a document type and fill in the form."}), 400
     details = "\n".join(f"{str(k)[:60]}: {str(v)[:500]}" for k, v in fields.items())
     try:
-        result = ask_for_json(document_prompt.format(document_type=document_type, fields=details))
-        document = str(result.get("document", "")).strip()
+        document = ask_for_text(document_prompt.format(document_type=document_type, fields=details))
         if not document:
             raise ValueError("Empty document")
     except Exception:

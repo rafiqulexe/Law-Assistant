@@ -57,6 +57,7 @@ def get_llm(json_mode=False):
         model=os.getenv("OLLAMA_MODEL", "llama3"),
         base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0.2")),
+        num_predict=int(os.getenv("OLLAMA_MAX_TOKENS", "2048")),
         format="json" if json_mode else "",
     )
 
@@ -90,3 +91,7 @@ def parse_json_reply(reply):
 
 def ask_for_json(prompt_text):
     return parse_json_reply(get_llm(json_mode=True).invoke(prompt_text))
+
+
+def ask_for_text(prompt_text):
+    return get_llm().invoke(prompt_text).strip()
