@@ -1,23 +1,27 @@
-# store_index.py
+"""Build the Pinecone index from every PDF and CSV in the Data folder.
 
-from dotenv import load_dotenv
+Run once after setting PINECONE_API_KEY (and optionally PINECONE_INDEX_NAME):
+    python store_index.py
+"""
 import os
 
-# Import only what you need to avoid circular issues
-from langchain_pinecone import PineconeVectorStore
-from src.helper import download_hugging_face_embeddings 
+from dotenv import load_dotenv
 
-# Load .env variables
+from src.helper import (
+    download_hugging_face_embeddings,
+    index_documents,
+    index_name,
+    load_all_documents,
+    split_into_chunks,
+)
+
 load_dotenv()
 
-# existing Pinecone index
-index_name = "lawbot"
+data_dir = os.getenv("DATA_DIR", "Data")
 
-# Load embeddings
-embedding_model = download_hugging_face_embeddings()
+documents = load_all_documents(data_dir)
+chunks = split_into_chunks(documents)
+print(f"Loaded {len(documents)} documents, split into {len(chunks)} chunks.")
 
-# Load the existing Pinecone index
-docsearch = PineconeVectorStore.from_existing_index(
-    index_name=index_name,
-    embedding=embedding_model
-)
+index_documents(chunks, download_hugging_face_embeddings())
+print(f"Indexed into Pinecone index '{index_name()}'.")

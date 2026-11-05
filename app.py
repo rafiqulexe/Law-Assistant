@@ -1,31 +1,27 @@
+import io
 import logging
 import os
-import sqlite3
+import re
 import secrets
+import sqlite3
 from functools import wraps
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import (
-    Flask,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    session,
-    url_for,
-)
+from flask import Flask, jsonify, request, send_from_directory, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from src.helper import (
+    ask_for_json,
     build_rag_chain,
     download_hugging_face_embeddings,
+    get_retriever,
     index_documents,
     load_all_documents,
     split_into_chunks,
 )
-from src.prompt import system_prompt
+from src.prompt import contract_prompt, document_prompt, risk_prompt, system_prompt
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -34,9 +30,12 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = Path(os.getenv("DATA_DIR", BASE_DIR / "Data"))
 DATABASE_PATH = Path(os.getenv("DATABASE_PATH", BASE_DIR / "instance" / "law_assistant.db"))
+FRONTEND_DIST = Path(os.getenv("FRONTEND_DIST", BASE_DIR / "frontend" / "dist"))
 ALLOWED_UPLOAD_EXTENSIONS = {"pdf", "csv"}
+MAX_TEXT_LENGTH = int(os.getenv("MAX_TEXT_LENGTH", "20000"))
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 if not app.config["SECRET_KEY"]:
     raise RuntimeError("SECRET_KEY must be configured in the environment.")
@@ -45,8 +44,14 @@ app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "0") == "1"
 
+_embeddings = None
+_retriever = None
 _rag_chain = None
 
+
+# ---------------------------------------------------------------------------
+# Database
+# ---------------------------------------------------------------------------
 
 def get_db():
     DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -80,9 +85,37 @@ def init_db():
                 citations TEXT,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS activity (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                kind TEXT NOT NULL CHECK(kind IN ('chat', 'contract', 'risk', 'document')),
+                title TEXT NOT NULL,
+                risk TEXT,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS contact_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                subject TEXT,
+                message TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
             """
         )
 
+
+def log_activity(kind, title, risk=None):
+    with get_db() as connection:
+        connection.execute(
+            "INSERT INTO activity (user_id, kind, title, risk) VALUES (?, ?, ?, ?)",
+            (session["user_id"], kind, title[:120], risk),
+        )
+
+
+# ---------------------------------------------------------------------------
+# Security helpers
+# ---------------------------------------------------------------------------
 
 def csrf_token():
     token = session.get("_csrf_token")
@@ -95,7 +128,7 @@ def csrf_token():
 @app.before_request
 def protect_state_changing_requests():
     if request.method == "POST":
-        supplied = request.form.get("_csrf_token") or request.headers.get("X-CSRFToken")
+        supplied = request.headers.get("X-CSRFToken") or request.form.get("_csrf_token")
         if not supplied or not secrets.compare_digest(supplied, session.get("_csrf_token", "")):
             return jsonify({"error": "Invalid CSRF token."}), 403
 
@@ -104,7 +137,7 @@ def login_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
         if "user_id" not in session:
-            return redirect(url_for("login", next=request.path))
+            return jsonify({"error": "Please sign in first."}), 401
         return view(*args, **kwargs)
 
     return wrapped
@@ -124,11 +157,39 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_UPLOAD_EXTENSIONS
 
 
+def json_body():
+    return request.get_json(silent=True) or {}
+
+
+def required_text(field):
+    text = str(json_body().get(field, "")).strip()
+    if not text:
+        return None, (jsonify({"error": "Please provide some text first."}), 400)
+    return text[:MAX_TEXT_LENGTH], None
+
+
+# ---------------------------------------------------------------------------
+# AI pipeline
+# ---------------------------------------------------------------------------
+
+def get_embeddings():
+    global _embeddings
+    if _embeddings is None:
+        _embeddings = download_hugging_face_embeddings()
+    return _embeddings
+
+
+def get_shared_retriever():
+    global _retriever
+    if _retriever is None:
+        _retriever = get_retriever(get_embeddings())
+    return _retriever
+
+
 def get_rag_chain():
     global _rag_chain
     if _rag_chain is None:
-        embedding_model = download_hugging_face_embeddings()
-        _rag_chain = build_rag_chain(embedding_model, system_prompt)
+        _rag_chain = build_rag_chain(get_shared_retriever(), system_prompt)
     return _rag_chain
 
 
@@ -146,114 +207,134 @@ def extract_citations(documents):
     return citations
 
 
-def current_user():
+def risk_level(score, high, medium):
+    if score >= high:
+        return "high"
+    if score >= medium:
+        return "medium"
+    return "low"
+
+
+# ---------------------------------------------------------------------------
+# Auth API
+# ---------------------------------------------------------------------------
+
+def user_payload(user):
+    return {"id": user["id"], "username": user["username"], "is_admin": bool(user["is_admin"])}
+
+
+@app.get("/api/csrf")
+def get_csrf():
+    return jsonify({"csrf_token": csrf_token()})
+
+
+@app.get("/api/me")
+def me():
     if "user_id" not in session:
-        return None
+        return jsonify({"user": None}), 401
     with get_db() as connection:
-        return connection.execute(
+        user = connection.execute(
             "SELECT id, username, is_admin FROM users WHERE id = ?", (session["user_id"],)
         ).fetchone()
+    if not user:
+        session.clear()
+        return jsonify({"user": None}), 401
+    return jsonify({"user": user_payload(user)})
 
 
-@app.context_processor
-def inject_user():
-    return {"current_user": current_user(), "csrf_token": csrf_token}
-
-
-@app.route("/")
-@login_required
-def index():
-    return render_template("chat.html")
-
-
-@app.route("/login", methods=["GET", "POST"])
+@app.post("/api/login")
 def login():
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        with get_db() as connection:
-            user = connection.execute(
-                "SELECT * FROM users WHERE username = ?", (username,)
-            ).fetchone()
-        if user and check_password_hash(user["password_hash"], password):
-            session.clear()
-            session.update(user_id=user["id"], username=user["username"], is_admin=bool(user["is_admin"]))
-            return redirect(request.args.get("next") or url_for("index"))
-        return render_template("login.html", error="Invalid username or password.")
-    return render_template("login.html")
+    data = json_body()
+    username = str(data.get("username", "")).strip()
+    password = str(data.get("password", ""))
+    with get_db() as connection:
+        user = connection.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+    if not user or not check_password_hash(user["password_hash"], password):
+        return jsonify({"error": "Invalid username or password."}), 401
+    session.clear()
+    session.update(user_id=user["id"], username=user["username"], is_admin=bool(user["is_admin"]))
+    return jsonify({"user": user_payload(user), "csrf_token": csrf_token()})
 
 
-@app.route("/register", methods=["GET", "POST"])
+@app.post("/api/register")
 def register():
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
-        if len(username) < 3 or len(password) < 8:
-            return render_template("login.html", error="Username must have 3 characters and password 8 characters.")
-        try:
-            with get_db() as connection:
-                connection.execute(
-                    "INSERT INTO users (username, password_hash) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
-                )
-        except sqlite3.IntegrityError:
-            return render_template("login.html", error="That username is already registered.")
-        return redirect(url_for("login"))
-    return render_template("login.html", register=True)
+    data = json_body()
+    username = str(data.get("username", "")).strip()
+    password = str(data.get("password", ""))
+    if len(username) < 3 or len(password) < 8:
+        return jsonify({"error": "Username needs 3 characters and password 8 characters."}), 400
+    try:
+        with get_db() as connection:
+            connection.execute(
+                "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+                (username, generate_password_hash(password)),
+            )
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "That username is already registered."}), 409
+    return jsonify({"message": "Account created."}), 201
 
 
-@app.route("/logout")
+@app.post("/api/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return jsonify({"message": "Signed out.", "csrf_token": csrf_token()})
 
 
-@app.route("/get", methods=["POST"])
+# ---------------------------------------------------------------------------
+# Chat API
+# ---------------------------------------------------------------------------
+
+@app.post("/api/chat")
 @login_required
 def chat():
-    message = request.form.get("msg", "").strip()
-    conversation_id = request.form.get("conversation_id", type=int)
+    data = json_body()
+    message = str(data.get("message", "")).strip()
+    conversation_id = data.get("conversation_id")
     if not message:
         return jsonify({"error": "Message cannot be empty."}), 400
 
-    try:
-        with get_db() as connection:
-            if conversation_id is None:
-                cursor = connection.execute(
-                    "INSERT INTO conversations (user_id, title) VALUES (?, ?)",
-                    (session["user_id"], message[:80]),
-                )
-                conversation_id = cursor.lastrowid
-            else:
-                owned = connection.execute(
-                    "SELECT id FROM conversations WHERE id = ? AND user_id = ?",
-                    (conversation_id, session["user_id"]),
-                ).fetchone()
-                if not owned:
-                    return jsonify({"error": "Conversation not found."}), 404
-            connection.execute(
-                "INSERT INTO messages (conversation_id, role, content) VALUES (?, 'user', ?)",
-                (conversation_id, message),
+    with get_db() as connection:
+        if conversation_id is None:
+            cursor = connection.execute(
+                "INSERT INTO conversations (user_id, title) VALUES (?, ?)",
+                (session["user_id"], message[:80]),
             )
+            conversation_id = cursor.lastrowid
+            new_conversation = True
+        else:
+            owned = connection.execute(
+                "SELECT id FROM conversations WHERE id = ? AND user_id = ?",
+                (conversation_id, session["user_id"]),
+            ).fetchone()
+            if not owned:
+                return jsonify({"error": "Conversation not found."}), 404
+            new_conversation = False
+        connection.execute(
+            "INSERT INTO messages (conversation_id, role, content) VALUES (?, 'user', ?)",
+            (conversation_id, message),
+        )
 
+    try:
         result = get_rag_chain().invoke({"input": message})
         answer = str(result.get("answer", "")).strip()
         if not answer:
             raise RuntimeError("The retrieval chain returned no answer.")
         citations = extract_citations(result.get("context", []))
-
-        with get_db() as connection:
-            connection.execute(
-                "INSERT INTO messages (conversation_id, role, content, citations) VALUES (?, 'assistant', ?, ?)",
-                (conversation_id, answer, "\n".join(citations)),
-            )
-        return jsonify({"answer": answer, "citations": citations, "conversation_id": conversation_id})
     except Exception:
         logger.exception("Chat request failed")
         return jsonify({"error": "The assistant is temporarily unavailable."}), 503
 
+    with get_db() as connection:
+        connection.execute(
+            "INSERT INTO messages (conversation_id, role, content, citations) VALUES (?, 'assistant', ?, ?)",
+            (conversation_id, answer, "\n".join(citations)),
+        )
+    if new_conversation:
+        log_activity("chat", message)
+    return jsonify({"answer": answer, "citations": citations, "conversation_id": conversation_id})
 
-@app.route("/api/conversations")
+
+@app.get("/api/conversations")
 @login_required
 def conversations():
     with get_db() as connection:
@@ -264,7 +345,7 @@ def conversations():
     return jsonify([dict(row) for row in rows])
 
 
-@app.route("/api/conversations/<int:conversation_id>")
+@app.get("/api/conversations/<int:conversation_id>")
 @login_required
 def conversation(conversation_id):
     with get_db() as connection:
@@ -279,21 +360,150 @@ def conversation(conversation_id):
     return jsonify([dict(row) for row in rows])
 
 
-@app.route("/admin")
+# ---------------------------------------------------------------------------
+# Legal tools API
+# ---------------------------------------------------------------------------
+
+@app.post("/api/extract-text")
+@login_required
+def extract_text():
+    upload = request.files.get("file")
+    if not upload or not upload.filename:
+        return jsonify({"error": "Please choose a file."}), 400
+    extension = upload.filename.rsplit(".", 1)[-1].lower()
+    raw = upload.read()
+    try:
+        if extension == "pdf":
+            from pypdf import PdfReader
+
+            reader = PdfReader(io.BytesIO(raw))
+            text = "\n".join(page.extract_text() or "" for page in reader.pages)
+        elif extension == "txt":
+            text = raw.decode("utf-8", errors="ignore")
+        else:
+            return jsonify({"error": "Only PDF and TXT files are supported."}), 400
+    except Exception:
+        logger.exception("Text extraction failed")
+        return jsonify({"error": "Could not read that file."}), 400
+    if not text.strip():
+        return jsonify({"error": "No text found. Scanned PDFs are not supported yet."}), 400
+    return jsonify({"text": text[:MAX_TEXT_LENGTH]})
+
+
+@app.post("/api/contract/analyze")
+@login_required
+def analyze_contract():
+    text, error = required_text("text")
+    if error:
+        return error
+    try:
+        result = ask_for_json(contract_prompt.format(text=text))
+        score = float(result.get("riskScore", 0))
+    except Exception:
+        logger.exception("Contract analysis failed")
+        return jsonify({"error": "The contract could not be analyzed right now."}), 503
+    result["riskScore"] = max(1, min(10, round(score)))
+    log_activity("contract", f"Contract analyzed: {text[:60]}", risk_level(score, 7, 4))
+    return jsonify(result)
+
+
+@app.post("/api/risk/check")
+@login_required
+def check_risk():
+    text, error = required_text("text")
+    if error:
+        return error
+    try:
+        passages = get_shared_retriever().invoke(text[:2000])
+        context = "\n\n".join(doc.page_content for doc in passages)
+        result = ask_for_json(risk_prompt.format(context=context, text=text))
+        score = float(result.get("complianceScore", 0))
+    except Exception:
+        logger.exception("Risk check failed")
+        return jsonify({"error": "The document could not be checked right now."}), 503
+    result["complianceScore"] = max(0, min(100, round(score)))
+    result["sources"] = extract_citations(passages)
+    log_activity("risk", f"Risk check: {text[:60]}", risk_level(100 - score, 60, 30))
+    return jsonify(result)
+
+
+@app.post("/api/documents/generate")
+@login_required
+def generate_document():
+    data = json_body()
+    document_type = str(data.get("document_type", "")).strip()[:100]
+    fields = data.get("fields") or {}
+    if not document_type or not isinstance(fields, dict):
+        return jsonify({"error": "Choose a document type and fill in the form."}), 400
+    details = "\n".join(f"{str(k)[:60]}: {str(v)[:500]}" for k, v in fields.items())
+    try:
+        result = ask_for_json(document_prompt.format(document_type=document_type, fields=details))
+        document = str(result.get("document", "")).strip()
+        if not document:
+            raise ValueError("Empty document")
+    except Exception:
+        logger.exception("Document generation failed")
+        return jsonify({"error": "The document could not be generated right now."}), 503
+    log_activity("document", f"{document_type} created")
+    return jsonify({"document": document})
+
+
+@app.post("/api/contact")
+def contact():
+    data = json_body()
+    name = str(data.get("name", "")).strip()[:120]
+    email = str(data.get("email", "")).strip()[:200]
+    subject = str(data.get("subject", "")).strip()[:200]
+    message = str(data.get("message", "")).strip()[:5000]
+    if not name or not message or not EMAIL_PATTERN.match(email):
+        return jsonify({"error": "Please enter your name, a valid email and a message."}), 400
+    with get_db() as connection:
+        connection.execute(
+            "INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)",
+            (name, email, subject, message),
+        )
+    return jsonify({"message": "Thanks, we will get back to you soon."}), 201
+
+
+@app.get("/api/dashboard")
+@login_required
+def dashboard():
+    with get_db() as connection:
+        counts = {
+            row["kind"]: row["total"]
+            for row in connection.execute(
+                "SELECT kind, COUNT(*) AS total FROM activity WHERE user_id = ? GROUP BY kind",
+                (session["user_id"],),
+            )
+        }
+        recent = connection.execute(
+            "SELECT kind, title, risk, created_at FROM activity WHERE user_id = ? ORDER BY id DESC LIMIT 8",
+            (session["user_id"],),
+        ).fetchall()
+    return jsonify({"counts": counts, "recent": [dict(row) for row in recent]})
+
+
+# ---------------------------------------------------------------------------
+# Admin API
+# ---------------------------------------------------------------------------
+
+@app.get("/api/admin/users")
 @login_required
 @admin_required
-def admin():
+def admin_users():
     with get_db() as connection:
         users = connection.execute(
             "SELECT username, is_admin, created_at FROM users ORDER BY id DESC"
         ).fetchall()
-    return render_template("admin.html", users=users, data_dir=DATA_DIR)
+    data_files = sorted(p.name for p in DATA_DIR.glob("*") if p.suffix.lower() in {".pdf", ".csv"})
+    return jsonify({"users": [dict(row) for row in users], "data_files": data_files})
 
 
-@app.route("/admin/upload", methods=["POST"])
+@app.post("/api/admin/upload")
 @login_required
 @admin_required
 def upload_document():
+    global _retriever, _rag_chain
     upload = request.files.get("document")
     if not upload or not upload.filename or not allowed_file(upload.filename):
         return jsonify({"error": "Only PDF and CSV files are supported."}), 400
@@ -301,15 +511,36 @@ def upload_document():
     destination = DATA_DIR / secure_filename(upload.filename)
     upload.save(destination)
     try:
-        documents = load_all_documents(str(DATA_DIR))
-        chunks = split_into_chunks(documents)
-        embedding_model = download_hugging_face_embeddings()
-        index_documents(chunks, embedding_model)
+        chunks = split_into_chunks(load_all_documents(str(DATA_DIR)))
+        index_documents(chunks, get_embeddings())
     except Exception:
         logger.exception("Document indexing failed for %s", destination)
         destination.unlink(missing_ok=True)
         return jsonify({"error": "The document could not be indexed."}), 503
+    _retriever = None
+    _rag_chain = None
     return jsonify({"message": f"{destination.name} uploaded and indexed."})
+
+
+@app.errorhandler(413)
+def too_large(_error):
+    return jsonify({"error": "File is larger than 16 MB."}), 413
+
+
+# ---------------------------------------------------------------------------
+# React frontend
+# ---------------------------------------------------------------------------
+
+@app.get("/", defaults={"path": ""})
+@app.get("/<path:path>")
+def frontend(path):
+    if path.startswith("api/"):
+        return jsonify({"error": "Not found."}), 404
+    if path and (FRONTEND_DIST / path).is_file():
+        return send_from_directory(FRONTEND_DIST, path)
+    if not (FRONTEND_DIST / "index.html").is_file():
+        return "Frontend is not built. Run `npm run build` inside the frontend folder.", 503
+    return send_from_directory(FRONTEND_DIST, "index.html")
 
 
 with app.app_context():
