@@ -139,6 +139,15 @@ def build_rag_chain(retriever, system_prompt):
     )
 
 
+def translate_to_english(text):
+    """Short English version of a Bangla question, used only to improve search."""
+    prompt = (
+        "Translate this legal question from Bangla to English. "
+        "Reply with the English question only.\n\n" + text
+    )
+    return get_llm().invoke(prompt).strip().splitlines()[0][:300]
+
+
 def parse_json_reply(reply):
     """Models sometimes wrap JSON in prose or code fences, so pull out the object."""
     try:

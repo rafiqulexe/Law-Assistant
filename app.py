@@ -23,6 +23,7 @@ from src.helper import (
     index_documents,
     load_all_documents,
     split_into_chunks,
+    translate_to_english,
 )
 from src.database import get_db, init_db
 from src.prompt import contract_prompt, document_prompt, risk_prompt, system_prompt
@@ -166,6 +167,18 @@ def reply_language(text):
     return "Bangla" if BANGLA_PATTERN.search(text) else "English"
 
 
+def search_query(message, language):
+    # Bangla-only queries match unrelated Bangla text; adding the English
+    # translation lets them find the right sections of the (mostly English) acts.
+    if language != "Bangla":
+        return message
+    try:
+        return f"{message}\n(English: {translate_to_english(message)})"
+    except Exception:
+        logger.exception("Translation failed, searching with the original question")
+        return message
+
+
 def risk_level(score, high, medium):
     if score >= high:
         return "high"
@@ -274,7 +287,8 @@ def chat():
         )
 
     try:
-        result = get_rag_chain().invoke({"input": message, "language": reply_language(message)})
+        language = reply_language(message)
+        result = get_rag_chain().invoke({"input": search_query(message, language), "language": language})
         answer = str(result.get("answer", "")).strip()
         if not answer:
             raise RuntimeError("The retrieval chain returned no answer.")
