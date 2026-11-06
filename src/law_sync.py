@@ -225,6 +225,15 @@ def register_acts(connection, acts, first_run):
 
 def sync(limit=None, progress=print):
     """Run one sync. Returns a summary dict."""
+    report = progress
+
+    def progress(line):
+        # A logging/printing problem must never stop the sync itself.
+        try:
+            report(line)
+        except Exception:
+            pass
+
     with get_db() as connection:
         run_id = connection.execute("INSERT INTO sync_runs DEFAULT VALUES").lastrowid
 

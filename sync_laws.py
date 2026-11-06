@@ -7,6 +7,7 @@ Schedule it monthly (for example a PythonAnywhere scheduled task).
 """
 import argparse
 import logging
+import sys
 
 from dotenv import load_dotenv
 
@@ -16,6 +17,8 @@ from src.database import init_db  # noqa: E402  (needs .env loaded first)
 from src.law_sync import sync  # noqa: E402
 
 if __name__ == "__main__":
+    # Act titles are often Bangla; the Windows console default (cp1252) cannot print them.
+    sys.stdout.reconfigure(encoding="utf-8")
     logging.basicConfig(level=logging.WARNING)
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None)
