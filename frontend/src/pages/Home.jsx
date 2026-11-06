@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import DonationSection from '@/components/DonationSection';
 import { 
   ArrowRight, 
   FileSearch, 
@@ -333,9 +332,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Creator Support & Donation */}
-      <DonationSection />
 
       {/* Stats Section */}
       <section className="py-20 border-y border-amber-900/20 bg-slate-900/30">
