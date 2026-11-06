@@ -1,4 +1,5 @@
 import React from 'react';
+import SupportSection from '@/components/SupportSection';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
@@ -332,6 +333,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Support */}
+      <SupportSection />
 
       {/* Stats Section */}
       <section className="py-20 border-y border-amber-900/20 bg-slate-900/30">
