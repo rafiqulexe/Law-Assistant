@@ -115,7 +115,7 @@ def index_documents(documents, embedding_model, batch_size=500, on_progress=None
 
 def get_llm(json_mode=False):
     return OllamaLLM(
-        model=os.getenv("OLLAMA_MODEL", "llama3"),
+        model=os.getenv("OLLAMA_MODEL", "gemma3:12b"),
         base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0.2")),
         num_predict=int(os.getenv("OLLAMA_MAX_TOKENS", "2048")),
@@ -142,8 +142,9 @@ def build_rag_chain(retriever, system_prompt):
 def translate_to_english(text):
     """Short English version of a Bangla question, used only to improve search."""
     prompt = (
-        "Translate this legal question from Bangla to English. "
-        "Reply with the English question only.\n\n" + text
+        "Translate this legal question from Bangla to English. Use the formal terms "
+        "found in Bangladesh statutes (for example 'cheque is dishonoured', not "
+        "'check bounces'). Reply with the English question only.\n\n" + text
     )
     return get_llm().invoke(prompt).strip().splitlines()[0][:300]
 
