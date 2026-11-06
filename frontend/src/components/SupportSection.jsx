@@ -8,8 +8,8 @@ const MESSAGE_PARAGRAPHS = [
   "Servers, AI models and the time to keep improving it all cost money. If LexAI helped you, any support keeps it free for the next person who needs it.",
 ];
 
-// Set VITE_SUPPORT_URL in frontend/.env to your payment page; without it the button opens Contact.
-const SUPPORT_URL = import.meta.env.VITE_SUPPORT_URL || '/Contact';
+// VITE_SUPPORT_URL in frontend/.env can point the button somewhere else.
+const SUPPORT_URL = import.meta.env.VITE_SUPPORT_URL || 'https://rafiqul-portfolio-bice.vercel.app/';
 const SUPPORT_IS_EXTERNAL = SUPPORT_URL.startsWith('http');
 
 const PARTICLES = [
