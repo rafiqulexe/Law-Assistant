@@ -25,6 +25,7 @@ import {
 const navLinks = [
   { name: 'Home', path: 'Home' },
   { name: 'Features', path: 'Features' },
+  { name: 'Law Updates', path: 'LawUpdates' },
   { name: 'Find a Lawyer', path: 'FindLawyer' },
   { name: 'Pricing', path: 'Pricing' },
   { name: 'Blog', path: 'Blog' },

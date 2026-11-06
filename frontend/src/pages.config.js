@@ -11,6 +11,7 @@ import Blog from './pages/Blog';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import LawUpdates from './pages/LawUpdates';
 
 // Pages anyone can open.
 export const publicPages = {
@@ -21,6 +22,7 @@ export const publicPages = {
   Blog,
   About,
   Contact,
+  LawUpdates,
 };
 
 // Pages that need a signed-in user (the AI tools call the backend).

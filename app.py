@@ -1,9 +1,11 @@
 import io
+import json
 import logging
 import os
 import re
 import secrets
 import sqlite3
+import threading
 from functools import wraps
 from pathlib import Path
 
@@ -22,6 +24,7 @@ from src.helper import (
     load_all_documents,
     split_into_chunks,
 )
+from src.database import get_db, init_db
 from src.prompt import contract_prompt, document_prompt, risk_prompt, system_prompt
 
 load_dotenv()
@@ -30,7 +33,6 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = Path(os.getenv("DATA_DIR", BASE_DIR / "Data"))
-DATABASE_PATH = Path(os.getenv("DATABASE_PATH", BASE_DIR / "instance" / "law_assistant.db"))
 FRONTEND_DIST = Path(os.getenv("FRONTEND_DIST", BASE_DIR / "frontend" / "dist"))
 ALLOWED_UPLOAD_EXTENSIONS = {"pdf", "csv"}
 MAX_TEXT_LENGTH = int(os.getenv("MAX_TEXT_LENGTH", "20000"))
@@ -49,62 +51,6 @@ app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "0") ==
 _embeddings = None
 _retriever = None
 _rag_chain = None
-
-
-# ---------------------------------------------------------------------------
-# Database
-# ---------------------------------------------------------------------------
-
-def get_db():
-    DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(DATABASE_PATH)
-    connection.row_factory = sqlite3.Row
-    return connection
-
-
-def init_db():
-    with get_db() as connection:
-        connection.executescript(
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL UNIQUE,
-                password_hash TEXT NOT NULL,
-                is_admin INTEGER NOT NULL DEFAULT 0,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS conversations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL REFERENCES users(id),
-                title TEXT NOT NULL,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                conversation_id INTEGER NOT NULL REFERENCES conversations(id),
-                role TEXT NOT NULL CHECK(role IN ('user', 'assistant')),
-                content TEXT NOT NULL,
-                citations TEXT,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS activity (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL REFERENCES users(id),
-                kind TEXT NOT NULL CHECK(kind IN ('chat', 'contract', 'risk', 'document')),
-                title TEXT NOT NULL,
-                risk TEXT,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS contact_messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                email TEXT NOT NULL,
-                subject TEXT,
-                message TEXT NOT NULL,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            );
-            """
-        )
 
 
 def log_activity(kind, title, risk=None):
@@ -202,7 +148,13 @@ def extract_citations(documents):
         metadata = document.metadata or {}
         source = metadata.get("source", "Unknown source")
         page = metadata.get("page")
-        label = f"{Path(source).name} (page {page + 1})" if isinstance(page, int) else Path(source).name
+        if metadata.get("act_title"):
+            # Synced from the official website: name the act, section and date.
+            label = f"{metadata['act_title']} - {metadata.get('section', '')} (official, updated {metadata.get('updated_at', '')})"
+        elif isinstance(page, int):
+            label = f"{Path(source).name} (page {page + 1})"
+        else:
+            label = Path(source).name
         if label not in seen:
             citations.append(label)
             seen.add(label)
@@ -536,6 +488,63 @@ def upload_document():
     _retriever = None
     _rag_chain = None
     return jsonify({"message": f"{destination.name} uploaded and indexed."})
+
+
+# ---------------------------------------------------------------------------
+# Law updates (synced from the official Laws of Bangladesh website)
+# ---------------------------------------------------------------------------
+
+_sync_lock = threading.Lock()
+
+
+@app.get("/api/law-updates")
+def law_updates():
+    limit = min(request.args.get("limit", 20, type=int), 200)
+    with get_db() as connection:
+        rows = connection.execute(
+            "SELECT act_id, title, change_type, sections, detected_at FROM law_updates ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        last_sync = connection.execute(
+            "SELECT finished_at, status FROM sync_runs WHERE finished_at IS NOT NULL ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+    site = os.getenv("LAWS_SITE_URL", "http://bdlaws.minlaw.gov.bd")
+    updates = [
+        {
+            **dict(row),
+            "sections": json.loads(row["sections"] or "[]"),
+            "url": f"{site}/act-{row['act_id']}.html",
+        }
+        for row in rows
+    ]
+    return jsonify({"updates": updates, "last_sync": dict(last_sync) if last_sync else None})
+
+
+def run_sync_in_background():
+    from src.law_sync import sync
+
+    with _sync_lock:
+        sync(progress=logger.info)
+
+
+@app.post("/api/admin/sync-laws")
+@login_required
+@admin_required
+def start_law_sync():
+    if _sync_lock.locked():
+        return jsonify({"error": "A law check is already running."}), 409
+    threading.Thread(target=run_sync_in_background, daemon=True).start()
+    return jsonify({"message": "Law check started. This can take a while."}), 202
+
+
+@app.get("/api/admin/sync-status")
+@login_required
+@admin_required
+def law_sync_status():
+    with get_db() as connection:
+        run = connection.execute("SELECT * FROM sync_runs ORDER BY id DESC LIMIT 1").fetchone()
+        tracked = connection.execute("SELECT COUNT(*) FROM laws WHERE tracked = 1").fetchone()[0]
+    return jsonify({"run": dict(run) if run else None, "running": _sync_lock.locked(), "tracked": tracked})
 
 
 @app.errorhandler(413)

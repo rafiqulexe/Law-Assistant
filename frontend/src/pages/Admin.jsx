@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Upload, Users, Loader2, Database } from 'lucide-react';
+import { Upload, Users, Loader2, Database, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,9 +22,37 @@ export default function Admin() {
     }
   };
 
+  const [sync, setSync] = useState(null);
+
+  const loadSync = async () => {
+    try {
+      setSync(await admin.lawSyncStatus());
+    } catch {
+      setSync(null);
+    }
+  };
+
   useEffect(() => {
     load();
+    loadSync();
   }, []);
+
+  // Refresh the status every 10 seconds while a check is running.
+  useEffect(() => {
+    if (!sync?.running) return undefined;
+    const timer = setInterval(loadSync, 10000);
+    return () => clearInterval(timer);
+  }, [sync?.running]);
+
+  const startSync = async () => {
+    try {
+      const data = await admin.startLawSync();
+      toast.success(data.message);
+      loadSync();
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -50,6 +78,37 @@ export default function Admin() {
         <h1 className="text-3xl font-bold text-white">Admin</h1>
         <p className="text-slate-400">Manage the law library and registered users.</p>
       </div>
+
+      <Card className="bg-slate-900/80 border-amber-900/30">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <RefreshCw className="h-5 w-5 text-amber-500" /> Official law sync
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+          <div className="text-sm text-slate-400 space-y-1">
+            <p>Tracked acts: <span className="text-white">{sync?.tracked ?? 0}</span></p>
+            {sync?.run ? (
+              <p>
+                Last run: <span className="text-white">{sync.run.status}</span>
+                {sync.run.finished_at && ` at ${sync.run.finished_at} UTC`}
+                {` - ${sync.run.acts_checked} checked, ${sync.run.updates_found} updates`}
+              </p>
+            ) : (
+              <p>No check has run yet.</p>
+            )}
+            {sync?.run?.error && <p className="text-red-400">{sync.run.error}</p>}
+          </div>
+          <Button
+            onClick={startSync}
+            disabled={sync?.running}
+            className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900"
+          >
+            {sync?.running ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+            {sync?.running ? 'Checking...' : 'Check now'}
+          </Button>
+        </CardContent>
+      </Card>
 
       <div className="grid lg:grid-cols-2 gap-8">
         <Card className="bg-slate-900/80 border-amber-900/30">

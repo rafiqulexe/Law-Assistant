@@ -2,10 +2,11 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingLegalIcons from '@/components/FloatingLegalIcons';
+import LawUpdatesBanner from '@/components/LawUpdatesBanner';
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-slate-950 text-white relative">
+    <div className="min-h-screen bg-slate-950 text-white relative pb-10">
       <style>{`
         :root {
           --color-primary: #f59e0b;
@@ -40,6 +41,7 @@ export default function Layout({ children }) {
         {children}
       </main>
       <Footer />
+      <LawUpdatesBanner />
     </div>
   );
 }

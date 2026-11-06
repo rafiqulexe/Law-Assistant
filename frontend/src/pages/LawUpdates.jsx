@@ -1,0 +1,91 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { BellRing, ExternalLink, FilePlus2, FilePen, Loader2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useLawUpdates, formatDate, describeChange } from '@/lib/lawUpdates';
+
+export default function LawUpdates() {
+  const { data, isLoading } = useLawUpdates(100);
+  const updates = data?.updates || [];
+
+  return (
+    <div className="pt-20 pb-24">
+      <section className="py-12 relative overflow-hidden">
+        <div className="absolute inset-0 hero-glow" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
+              <BellRing className="h-4 w-4 text-amber-400" />
+              <span className="text-amber-400 text-sm font-medium">Law Updates</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className="text-white">Recent changes in </span>
+              <span className="gradient-text">Bangladesh law</span>
+            </h1>
+            <p className="text-lg text-slate-400">
+              LexAI checks the official Laws of Bangladesh website regularly. New laws and
+              amended sections are added to the assistant automatically.
+            </p>
+            {data?.last_sync && (
+              <p className="text-sm text-slate-500 mt-3">
+                Last checked: {formatDate(data.last_sync.finished_at)}
+              </p>
+            )}
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        {isLoading && <Loader2 className="h-6 w-6 animate-spin text-amber-500 mx-auto" />}
+        {!isLoading && updates.length === 0 && (
+          <p className="text-slate-400 text-center">No updates recorded yet.</p>
+        )}
+        {updates.map((update, index) => {
+          const Icon = update.change_type === 'new' ? FilePlus2 : FilePen;
+          return (
+            <Card
+              key={`${update.act_id}-${update.detected_at}`}
+              className={`bg-slate-900/80 ${index === 0 ? 'border-amber-500/60' : 'border-amber-900/30'}`}
+            >
+              <CardContent className="p-5 flex gap-4">
+                <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                  <Icon className="h-5 w-5 text-amber-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <h3 className={`text-white ${index === 0 ? 'font-extrabold' : 'font-semibold'}`}>
+                      {update.title}
+                    </h3>
+                    {index === 0 && <Badge className="bg-amber-500 text-slate-900">Latest</Badge>}
+                  </div>
+                  <p className="text-sm text-slate-400">
+                    {describeChange(update)} - detected {formatDate(update.detected_at)}
+                  </p>
+                  {update.sections?.length > 0 && (
+                    <ul className="mt-2 text-sm text-slate-300 list-disc list-inside space-y-0.5">
+                      {update.sections.slice(0, 8).map((section) => (
+                        <li key={section} className="truncate">{section}</li>
+                      ))}
+                      {update.sections.length > 8 && (
+                        <li className="text-slate-500">and {update.sections.length - 8} more</li>
+                      )}
+                    </ul>
+                  )}
+                  <a
+                    href={update.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-amber-400 hover:text-amber-300 mt-2"
+                  >
+                    Official text <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

@@ -85,6 +85,7 @@ export const legal = {
     return api.upload('/api/extract-text', form);
   },
   contact: (payload) => api.post('/api/contact', payload),
+  lawUpdates: (limit = 20) => api.get(`/api/law-updates?limit=${limit}`),
 };
 
 export const admin = {
@@ -94,4 +95,6 @@ export const admin = {
     form.append('document', file);
     return api.upload('/api/admin/upload', form);
   },
+  startLawSync: () => api.post('/api/admin/sync-laws'),
+  lawSyncStatus: () => api.get('/api/admin/sync-status'),
 };
