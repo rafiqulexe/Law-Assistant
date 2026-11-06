@@ -7,7 +7,7 @@ import time
 from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.document_loaders import CSVLoader, DirectoryLoader, PyPDFLoader
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
 from langchain_pinecone import PineconeVectorStore
@@ -126,26 +126,51 @@ def get_llm(json_mode=False):
 def get_retriever(embedding_model):
     vector_store = load_existing_index(embedding_model)
     return vector_store.as_retriever(
-        search_type="similarity", search_kwargs={"k": int(os.getenv("RETRIEVAL_K", "4"))}
+        search_type="similarity", search_kwargs={"k": int(os.getenv("RETRIEVAL_K", "6"))}
     )
 
 
 def build_rag_chain(retriever, system_prompt):
     prompt = ChatPromptTemplate.from_messages(
-        [("system", system_prompt), ("human", "{input}")]
+        [
+            ("system", system_prompt),
+            # Earlier turns of the conversation, so follow-up questions make sense.
+            MessagesPlaceholder("history", optional=True),
+            ("human", "{input}"),
+        ]
     )
     return create_retrieval_chain(
         retriever, create_stuff_documents_chain(get_llm(), prompt)
     )
 
 
-def translate_to_english(text):
-    """Short English version of a Bangla question, used only to improve search."""
-    prompt = (
-        "Translate this legal question from Bangla to English. Use the formal terms "
-        "found in Bangladesh statutes (for example 'cheque is dishonoured', not "
-        "'check bounces'). Reply with the English question only.\n\n" + text
+def translate_to_english(text, history=None):
+    """Standalone English version of a question, used only to improve search.
+
+    With history, a follow-up like "what is its punishment?" is rewritten to name
+    the subject from the earlier turns.
+    """
+    rules = (
+        "Use the formal terms found in statutes (for example 'cheque is dishonoured', "
+        "not 'check bounces'). Do not add 'in Bangladesh' or 'under the law'. "
+        "Reply with the English question only.\n\n"
     )
+    # Only the user's own questions: the assistant's replies (often "I don't know")
+    # pull the rewrite away from the topic.
+    questions = [content[:300] for role, content in history or [] if role == "user"]
+    if not questions:
+        prompt = "Translate this legal question into one short English question. " + rules + text
+    else:
+        prompt = (
+            "A user is asking follow-up questions about one legal topic.\n"
+            "Earlier questions:\n" + "".join(f"- {q}\n" for q in questions[-2:]) +
+            f"Follow-up question: {text}\n\n"
+            "Rewrite the follow-up as one short English question that keeps the subject "
+            "of the earlier questions (for example the offence, document or act they are "
+            "about), unless the follow-up clearly names a new subject. "
+            "Example: previous 'What is theft?', follow-up 'What is its punishment?' "
+            "becomes 'What is the punishment for theft?'. " + rules
+        )
     return get_llm().invoke(prompt).strip().splitlines()[0][:300]
 
 

@@ -167,16 +167,35 @@ def reply_language(text):
     return "Bangla" if BANGLA_PATTERN.search(text) else "English"
 
 
-def search_query(message, language):
-    # Bangla-only queries match unrelated Bangla text; adding the English
-    # translation lets them find the right sections of the (mostly English) acts.
-    if language != "Bangla":
+def search_query(message, language, history=None):
+    # Bangla-only queries match unrelated Bangla text, and follow-ups like
+    # "what is its punishment?" name no law at all. A standalone English
+    # version fixes both for the (mostly English) acts.
+    if language != "Bangla" and not history:
         return message
     try:
-        return f"{message}\n(English: {translate_to_english(message)})"
+        return f"{message}\n(English: {translate_to_english(message, history)})"
     except Exception:
         logger.exception("Translation failed, searching with the original question")
         return message
+
+
+HISTORY_MESSAGES = 4
+
+
+def recent_history(conversation_id, before_id):
+    """The last few messages before the current one, oldest first."""
+    with get_db() as connection:
+        rows = connection.execute(
+            """SELECT role, content FROM messages WHERE conversation_id = ? AND id < ?
+               ORDER BY id DESC LIMIT ?""",
+            (conversation_id, before_id, HISTORY_MESSAGES),
+        ).fetchall()
+    return [(row["role"], row["content"][:1500]) for row in reversed(rows)]
+
+
+def history_messages(history):
+    return [("human" if role == "user" else "ai", content) for role, content in history]
 
 
 def risk_level(score, high, medium):
@@ -281,14 +300,19 @@ def chat():
             if not owned:
                 return jsonify({"error": "Conversation not found."}), 404
             new_conversation = False
-        connection.execute(
+        message_id = connection.execute(
             "INSERT INTO messages (conversation_id, role, content) VALUES (?, 'user', ?)",
             (conversation_id, message),
-        )
+        ).lastrowid
 
     try:
         language = reply_language(message)
-        result = get_rag_chain().invoke({"input": search_query(message, language), "language": language})
+        history = [] if new_conversation else recent_history(conversation_id, message_id)
+        result = get_rag_chain().invoke({
+            "input": search_query(message, language, history),
+            "language": language,
+            "history": history_messages(history),
+        })
         answer = str(result.get("answer", "")).strip()
         if not answer:
             raise RuntimeError("The retrieval chain returned no answer.")
