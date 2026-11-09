@@ -26,6 +26,7 @@ from src.helper import (
     translate_to_english,
 )
 from src.database import get_db, init_db
+from src.rate_limit import limit
 from src.prompt import contract_prompt, document_prompt, risk_prompt, system_prompt
 
 load_dotenv()
@@ -39,6 +40,8 @@ ALLOWED_UPLOAD_EXTENSIONS = {"pdf", "csv"}
 MAX_TEXT_LENGTH = int(os.getenv("MAX_TEXT_LENGTH", "20000"))
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 BANGLA_PATTERN = re.compile(r"[ঀ-৿]")
+# Shared by chat and the AI tools, so one account cannot keep the model busy.
+AI_REQUESTS_PER_10_MIN = int(os.getenv("AI_REQUESTS_PER_10_MIN", "30"))
 
 app = Flask(__name__, static_folder=None)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -234,6 +237,7 @@ def me():
 
 
 @app.post("/api/login")
+@limit("login", 10, 15 * 60)
 def login():
     data = json_body()
     username = str(data.get("username", "")).strip()
@@ -248,6 +252,7 @@ def login():
 
 
 @app.post("/api/register")
+@limit("register", 5, 60 * 60)
 def register():
     data = json_body()
     username = str(data.get("username", "")).strip()
@@ -277,6 +282,7 @@ def logout():
 
 @app.post("/api/chat")
 @login_required
+@limit("ai", AI_REQUESTS_PER_10_MIN, 10 * 60, per="user")
 def chat():
     data = json_body()
     message = str(data.get("message", "")).strip()
@@ -373,6 +379,7 @@ def conversation(conversation_id):
 
 @app.post("/api/extract-text")
 @login_required
+@limit("ai", AI_REQUESTS_PER_10_MIN, 10 * 60, per="user")
 def extract_text():
     upload = request.files.get("file")
     if not upload or not upload.filename:
@@ -399,6 +406,7 @@ def extract_text():
 
 @app.post("/api/contract/analyze")
 @login_required
+@limit("ai", AI_REQUESTS_PER_10_MIN, 10 * 60, per="user")
 def analyze_contract():
     text, error = required_text("text")
     if error:
@@ -416,6 +424,7 @@ def analyze_contract():
 
 @app.post("/api/risk/check")
 @login_required
+@limit("ai", AI_REQUESTS_PER_10_MIN, 10 * 60, per="user")
 def check_risk():
     text, error = required_text("text")
     if error:
@@ -436,6 +445,7 @@ def check_risk():
 
 @app.post("/api/documents/generate")
 @login_required
+@limit("ai", AI_REQUESTS_PER_10_MIN, 10 * 60, per="user")
 def generate_document():
     data = json_body()
     document_type = str(data.get("document_type", "")).strip()[:100]
@@ -455,6 +465,7 @@ def generate_document():
 
 
 @app.post("/api/contact")
+@limit("contact", 5, 60 * 60)
 def contact():
     data = json_body()
     name = str(data.get("name", "")).strip()[:120]

@@ -52,6 +52,11 @@ Optional: `DATA_DIR`, `DATABASE_PATH`, `FRONTEND_DIST`, `RETRIEVAL_K`, `MAX_TEXT
 `LAW_SYNC_DELAY` (seconds between requests to the official site, default 2), `LAW_SYNC_RECENT_YEARS` (default 1),
 `SESSION_COOKIE_SECURE=1` (when served over HTTPS).
 
+Rate limits: login 10 per 15 minutes and registration 5 per hour for each IP address, the
+contact form 5 per hour, and chat plus the AI tools `AI_REQUESTS_PER_10_MIN` (default 30)
+for each user. Set `TRUST_PROXY=1` behind a proxy that sends `X-Forwarded-For`
+(PythonAnywhere does) and `RATE_LIMITS=0` to switch them off.
+
 ## Running locally
 
 1. Backend (Python 3.10+):
@@ -75,6 +80,16 @@ Optional: `DATA_DIR`, `DATABASE_PATH`, `FRONTEND_DIST`, `RETRIEVAL_K`, `MAX_TEXT
    ```
 
    For production run `npm run build`; Flask then serves `frontend/dist` at `/`.
+
+## Tests
+
+The API tests use a temporary database and stand-ins for the LLM and Pinecone, so they run
+offline in a few seconds:
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest
+```
 
 ## Keeping laws up to date
 
