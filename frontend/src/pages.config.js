@@ -1,17 +1,20 @@
+import { lazy } from 'react';
 import Home from './pages/Home';
-import Features from './pages/Features';
-import FindLawyer from './pages/FindLawyer';
-import ContractAnalyzer from './pages/ContractAnalyzer';
-import DocumentGenerator from './pages/DocumentGenerator';
-import RiskChecker from './pages/RiskChecker';
-import LegalChat from './pages/LegalChat';
-import Dashboard from './pages/Dashboard';
-import Pricing from './pages/Pricing';
-import Blog from './pages/Blog';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Admin from './pages/Admin';
-import LawUpdates from './pages/LawUpdates';
+
+// Each page except Home loads on first visit, so the first screen downloads less code.
+const Features = lazy(() => import('./pages/Features'));
+const FindLawyer = lazy(() => import('./pages/FindLawyer'));
+const ContractAnalyzer = lazy(() => import('./pages/ContractAnalyzer'));
+const DocumentGenerator = lazy(() => import('./pages/DocumentGenerator'));
+const RiskChecker = lazy(() => import('./pages/RiskChecker'));
+const LegalChat = lazy(() => import('./pages/LegalChat'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Blog = lazy(() => import('./pages/Blog'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Admin = lazy(() => import('./pages/Admin'));
+const LawUpdates = lazy(() => import('./pages/LawUpdates'));
 
 // Pages anyone can open.
 export const publicPages = {

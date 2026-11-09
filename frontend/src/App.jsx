@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
@@ -10,8 +11,21 @@ import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import { adminPages, privatePages, publicPages } from './pages.config';
 
+function PageLoading() {
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
+    </div>
+  );
+}
+
 function page(element) {
-  return <Layout>{element}</Layout>;
+  // Navbar and footer stay on screen while a page's code downloads.
+  return (
+    <Layout>
+      <Suspense fallback={<PageLoading />}>{element}</Suspense>
+    </Layout>
+  );
 }
 
 export default function App() {
