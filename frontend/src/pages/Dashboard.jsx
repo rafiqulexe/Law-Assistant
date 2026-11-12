@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { bn as bangla } from 'date-fns/locale';
+import { useI18n } from '@/lib/i18n';
 import { api } from '@/api/client';
 import { useAuth } from '@/lib/AuthContext';
 import { Link } from 'react-router-dom';
@@ -23,18 +25,18 @@ import {
 } from 'lucide-react';
 
 const quickActions = [
-  { icon: FileSearch, title: "Analyze Contract", path: "ContractAnalyzer", color: "amber" },
-  { icon: FileText, title: "Generate Document", path: "DocumentGenerator", color: "amber" },
-  { icon: ShieldCheck, title: "Check Compliance", path: "RiskChecker", color: "amber" },
-  { icon: MessageSquare, title: "Legal Chat", path: "LegalChat", color: "amber" },
-  { icon: Users, title: "Find Lawyer", path: "FindLawyer", color: "amber" },
+  { icon: FileSearch, key: 'dash.analyzeContract', path: 'ContractAnalyzer' },
+  { icon: FileText, key: 'dash.generateDocument', path: 'DocumentGenerator' },
+  { icon: ShieldCheck, key: 'dash.checkCompliance', path: 'RiskChecker' },
+  { icon: MessageSquare, key: 'tool.chat', path: 'LegalChat' },
+  { icon: Users, key: 'dash.findLawyer', path: 'FindLawyer' },
 ];
 
 const statCards = [
-  { key: "contract", label: "Contracts Analyzed", icon: FileSearch },
-  { key: "document", label: "Documents Created", icon: FileText },
-  { key: "risk", label: "Risk Checks", icon: ShieldCheck },
-  { key: "chat", label: "Chat Sessions", icon: MessageSquare },
+  { key: 'contract', label: 'dash.statContracts', icon: FileSearch },
+  { key: 'document', label: 'dash.statDocuments', icon: FileText },
+  { key: 'risk', label: 'dash.statRisk', icon: ShieldCheck },
+  { key: 'chat', label: 'dash.statChats', icon: MessageSquare },
 ];
 
 const activityIcon = {
@@ -46,6 +48,7 @@ const activityIcon = {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t, language, formatNumber } = useI18n();
   const [summary, setSummary] = useState({ counts: {}, recent: [] });
 
   useEffect(() => {
@@ -65,8 +68,8 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Dashboard</h1>
-            <p className="text-slate-400">Welcome back{user ? `, ${user.username}` : ''}! Here's an overview of your legal activities.</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{t('dash.title')}</h1>
+            <p className="text-slate-400">{t('dash.welcome', { name: user ? `, ${user.username}` : '' })}</p>
           </motion.div>
         </div>
       </section>
@@ -88,8 +91,8 @@ export default function Dashboard() {
                       <stat.icon className="h-6 w-6 text-amber-500" />
                     </div>
                   </div>
-                  <p className="text-3xl font-bold text-white mb-1">{counts[stat.key] || 0}</p>
-                  <p className="text-slate-400 text-sm">{stat.label}</p>
+                  <p className="text-3xl font-bold text-white mb-1">{formatNumber(counts[stat.key] || 0)}</p>
+                  <p className="text-slate-400 text-sm">{t(stat.label)}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -107,7 +110,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Zap className="h-5 w-5 text-amber-500" />
-                  Quick Actions
+                  {t('dash.quickActions')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -117,7 +120,7 @@ export default function Dashboard() {
                       className="w-full justify-start bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold h-auto py-4"
                     >
                       <action.icon className="h-5 w-5 mr-3" />
-                      {action.title}
+                      {t(action.key)}
                       <ArrowRight className="h-4 w-4 ml-auto" />
                     </Button>
                   </Link>
@@ -136,13 +139,13 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Clock className="h-5 w-5 text-amber-500" />
-                  Recent Activity
+                  {t('dash.recent')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {summary.recent.length === 0 && (
-                    <p className="text-slate-500">No activity yet. Try one of the quick actions.</p>
+                    <p className="text-slate-500">{t('dash.noActivity')}</p>
                   )}
                   {summary.recent.map((activity, index) => {
                     const style = activityIcon[activity.kind] || activityIcon.chat;
@@ -154,7 +157,7 @@ export default function Dashboard() {
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-medium truncate">{activity.title}</p>
                           <p className="text-slate-500 text-sm">
-                            {formatDistanceToNow(new Date(activity.created_at.replace(' ', 'T') + 'Z'), { addSuffix: true })}
+                            {formatDistanceToNow(new Date(activity.created_at.replace(' ', 'T') + 'Z'), { addSuffix: true, locale: language === 'bn' ? bangla : undefined })}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -164,7 +167,7 @@ export default function Dashboard() {
                               activity.risk === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
                               'bg-red-500/20 text-red-400'
                             }>
-                              {activity.risk} risk
+                              {t(`risk.${activity.risk}`)}
                             </Badge>
                           )}
                           <CheckCircle className="h-5 w-5 text-green-500" />
@@ -189,7 +192,7 @@ export default function Dashboard() {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-amber-500" />
-                Usage Breakdown
+                {t('dash.usage')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -199,8 +202,8 @@ export default function Dashboard() {
                   return (
                     <div key={stat.key}>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-slate-400">{stat.label}</span>
-                        <span className="text-white font-semibold">{value}</span>
+                        <span className="text-slate-400">{t(stat.label)}</span>
+                        <span className="text-white font-semibold">{formatNumber(value)}</span>
                       </div>
                       <Progress value={totalActions ? (value / totalActions) * 100 : 0} className="h-2 bg-slate-700" />
                     </div>

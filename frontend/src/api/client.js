@@ -75,10 +75,10 @@ export const legal = {
     api.post('/api/chat', { message, conversation_id: conversationId ?? null }),
   conversations: () => api.get('/api/conversations'),
   conversation: (id) => api.get(`/api/conversations/${id}`),
-  analyzeContract: (text) => api.post('/api/contract/analyze', { text }),
-  checkRisk: (text) => api.post('/api/risk/check', { text }),
-  generateDocument: (documentType, fields) =>
-    api.post('/api/documents/generate', { document_type: documentType, fields }),
+  analyzeContract: (text, language) => api.post('/api/contract/analyze', { text, language }),
+  checkRisk: (text, language) => api.post('/api/risk/check', { text, language }),
+  generateDocument: (documentType, fields, language) =>
+    api.post('/api/documents/generate', { document_type: documentType, fields, language }),
   extractText: (file) => {
     const form = new FormData();
     form.append('file', file);

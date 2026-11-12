@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { legal } from '@/api/client';
 import { toast } from 'sonner';
 import { downloadTextAsPdf } from '@/lib/pdf';
+import { useI18n } from '@/lib/i18n';
 import { 
   FileSearch, 
   Upload, 
@@ -22,6 +23,7 @@ import {
 } from 'lucide-react';
 
 export default function ContractAnalyzer() {
+  const { t, tError, language, formatNumber } = useI18n();
   const [contractText, setContractText] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -35,7 +37,7 @@ export default function ContractAnalyzer() {
       const data = await legal.extractText(file);
       setContractText(data.text);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(tError(error.message));
       setUploadedFile(null);
     }
   };
@@ -45,10 +47,10 @@ export default function ContractAnalyzer() {
     
     setIsAnalyzing(true);
     try {
-      const result = await legal.analyzeContract(contractText);
+      const result = await legal.analyzeContract(contractText, language);
       setAnalysis(result);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(tError(error.message));
     } finally {
       setIsAnalyzing(false);
     }
@@ -56,23 +58,23 @@ export default function ContractAnalyzer() {
 
   const downloadReport = () => {
     const lines = [
-      `Risk score: ${analysis.riskScore}/10`,
+      t('ca.reportScore', { score: formatNumber(analysis.riskScore) }),
       '',
-      'Summary',
+      t('ca.reportSummary'),
       analysis.summary,
       '',
-      'Key terms',
+      t('ca.reportTerms'),
       ...(analysis.keyTerms || []).map((t) => `- ${t.term}: ${t.explanation}`),
       '',
-      'Risks',
+      t('ca.reportRisks'),
       ...(analysis.risks || []).map((r) => `- [${r.severity}] ${r.risk}`),
       '',
-      'Recommendations',
+      t('tool.recommendations'),
       ...(analysis.recommendations || []).map((r) => `- ${r}`),
       '',
-      'This report is legal information, not legal advice.',
+      t('ca.reportDisclaimer'),
     ];
-    downloadTextAsPdf(lines.join('\n'), 'contract-analysis.pdf', 'Contract Analysis Report');
+    downloadTextAsPdf(lines.join('\n'), 'contract-analysis.pdf', t('ca.reportTitle'));
   };
 
   return (
@@ -88,14 +90,14 @@ export default function ContractAnalyzer() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
               <FileSearch className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">AI Contract Analyzer</span>
+              <span className="text-amber-400 text-sm font-medium">{t('ca.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="text-white">Analyze Any Contract </span>
-              <span className="gradient-text">Instantly</span>
+              <span className="text-white">{t('ca.title1')}</span>
+              <span className="gradient-text">{t('ca.title2')}</span>
             </h1>
             <p className="text-xl text-slate-400">
-              Upload or paste your contract to get AI-powered analysis with risk identification and plain-language explanations.
+              {t('ca.intro')}
             </p>
           </motion.div>
         </div>
@@ -114,7 +116,7 @@ export default function ContractAnalyzer() {
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <FileText className="h-5 w-5 text-amber-500" />
-                    Contract Input
+                    {t('ca.input')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -130,18 +132,18 @@ export default function ContractAnalyzer() {
                     <label htmlFor="file-upload" className="cursor-pointer">
                       <Upload className="h-12 w-12 text-amber-500/50 mx-auto mb-4" />
                       <p className="text-slate-400 mb-2">
-                        {uploadedFile ? uploadedFile.name : 'Drag and drop or click to upload'}
+                        {uploadedFile ? uploadedFile.name : t('ca.upload')}
                       </p>
-                      <p className="text-slate-500 text-sm">Supports TXT, DOC, DOCX, PDF</p>
+                      <p className="text-slate-500 text-sm">{t('ca.supports')}</p>
                     </label>
                   </div>
 
-                  <div className="text-center text-slate-500">or paste your contract below</div>
+                  <div className="text-center text-slate-500">{t('ca.orPaste')}</div>
 
                   <Textarea
                     value={contractText}
                     onChange={(e) => setContractText(e.target.value)}
-                    placeholder="Paste your contract text here..."
+                    placeholder={t('ca.placeholder')}
                     className="min-h-[300px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                   />
 
@@ -153,12 +155,12 @@ export default function ContractAnalyzer() {
                     {isAnalyzing ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Analyzing Contract...
+                        {t('ca.analyzing')}
                       </>
                     ) : (
                       <>
                         <Zap className="h-5 w-5 mr-2" />
-                        Analyze Contract
+                        {t('ca.analyze')}
                       </>
                     )}
                   </Button>
@@ -180,7 +182,7 @@ export default function ContractAnalyzer() {
                       <CardTitle className="text-white flex items-center justify-between">
                         <span className="flex items-center gap-2">
                           <Shield className="h-5 w-5 text-amber-500" />
-                          Risk Assessment
+                          {t('ca.riskAssessment')}
                         </span>
                         <Badge 
                           className={`${
@@ -189,7 +191,7 @@ export default function ContractAnalyzer() {
                             'bg-red-500/20 text-red-400'
                           }`}
                         >
-                          Risk Score: {analysis.riskScore}/10
+                          {t('ca.riskScore', { score: formatNumber(analysis.riskScore) })}
                         </Badge>
                       </CardTitle>
                     </CardHeader>
@@ -207,7 +209,7 @@ export default function ContractAnalyzer() {
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <CheckCircle className="h-5 w-5 text-green-500" />
-                        Key Terms
+                        {t('ca.keyTerms')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -225,7 +227,7 @@ export default function ContractAnalyzer() {
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <AlertTriangle className="h-5 w-5 text-amber-500" />
-                        Potential Risks
+                        {t('ca.potentialRisks')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -246,7 +248,7 @@ export default function ContractAnalyzer() {
                                 'border-green-500/50 text-green-400'
                               }`}
                             >
-                              {item.severity} severity
+                              {t('sev.label', { level: t(`sev.${item.severity}`) })}
                             </Badge>
                           </div>
                         </div>
@@ -259,7 +261,7 @@ export default function ContractAnalyzer() {
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <Info className="h-5 w-5 text-blue-500" />
-                        Recommendations
+                        {t('tool.recommendations')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -280,16 +282,16 @@ export default function ContractAnalyzer() {
                     onClick={downloadReport}
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Download Full Report
+                    {t('ca.download')}
                   </Button>
                 </>
               ) : (
                 <Card className="bg-slate-900/80 border-amber-900/30 h-full flex items-center justify-center min-h-[400px]">
                   <CardContent className="text-center">
                     <FileSearch className="h-16 w-16 text-slate-600 mx-auto mb-4" />
-                    <p className="text-slate-400 text-lg">Upload or paste a contract to see analysis</p>
+                    <p className="text-slate-400 text-lg">{t('ca.emptyTitle')}</p>
                     <p className="text-slate-500 text-sm mt-2">
-                      Our AI will identify risks, explain terms, and provide recommendations
+                      {t('ca.emptyText')}
                     </p>
                   </CardContent>
                 </Card>

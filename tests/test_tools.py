@@ -61,3 +61,12 @@ def test_unknown_api_route_is_json_404(client):
     response = client.get("/api/nothing-here")
     assert response.status_code == 404
     assert response.get_json()["error"] == "Not found."
+
+
+def test_tools_answer_in_the_chosen_language(user, monkeypatch):
+    prompts = []
+    monkeypatch.setattr(lexai, "ask_for_text", lambda prompt: prompts.append(prompt) or "দলিল")
+    user.post("/api/documents/generate", {"document_type": "Affidavit", "fields": {}, "language": "bn"})
+    user.post("/api/documents/generate", {"document_type": "Affidavit", "fields": {}})
+    assert "Write the whole document in Bangla." in prompts[0]
+    assert "Write the whole document in English." in prompts[1]

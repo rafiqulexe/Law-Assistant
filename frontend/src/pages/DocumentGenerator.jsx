@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { legal } from '@/api/client';
 import { toast } from 'sonner';
 import { downloadTextAsPdf } from '@/lib/pdf';
+import { useI18n } from '@/lib/i18n';
 import { 
   FileText, 
   FileSignature, 
@@ -86,6 +87,7 @@ const fieldLabels = {
 };
 
 export default function DocumentGenerator() {
+  const { t, tError, language } = useI18n();
   const [selectedType, setSelectedType] = useState(null);
   const [formData, setFormData] = useState({});
   const [generatedDocument, setGeneratedDocument] = useState('');
@@ -107,10 +109,12 @@ export default function DocumentGenerator() {
       const fields = Object.fromEntries(
         Object.entries(formData).map(([key, value]) => [fieldLabels[key] || key, value])
       );
-      const result = await legal.generateDocument(selectedType.fullName, fields);
+      // The type name becomes the document's title, so send it in the chosen language.
+      const typeName = language === 'bn' ? t(`doc.${selectedType.id}.full`) : selectedType.fullName;
+      const result = await legal.generateDocument(typeName, fields, language);
       setGeneratedDocument(result.document);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(tError(error.message));
     } finally {
       setIsGenerating(false);
     }
@@ -129,14 +133,14 @@ export default function DocumentGenerator() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
               <FileText className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">AI Document Generator</span>
+              <span className="text-amber-400 text-sm font-medium">{t('dg.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="text-white">Create Legal Documents </span>
-              <span className="gradient-text">in Minutes</span>
+              <span className="text-white">{t('dg.title1')}</span>
+              <span className="gradient-text">{t('dg.title2')}</span>
             </h1>
             <p className="text-xl text-slate-400">
-              Generate professional NDAs, contracts, and legal documents with AI-powered templates.
+              {t('dg.intro')}
             </p>
           </motion.div>
         </div>
@@ -163,11 +167,11 @@ export default function DocumentGenerator() {
                         <type.icon className="h-7 w-7 text-amber-500" />
                       </div>
                       <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-amber-400 transition-colors">
-                        {type.name}
+                        {t(`doc.${type.id}.name`)}
                       </h3>
-                      <p className="text-slate-400 text-sm mb-4">{type.description}</p>
+                      <p className="text-slate-400 text-sm mb-4">{t(`doc.${type.id}.desc`)}</p>
                       <div className="flex items-center text-amber-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                        Create Document <ArrowRight className="ml-2 h-4 w-4" />
+                        {t('dg.create')} <ArrowRight className="ml-2 h-4 w-4" />
                       </div>
                     </CardContent>
                   </Card>
@@ -186,7 +190,7 @@ export default function DocumentGenerator() {
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-white flex items-center gap-2">
                         <selectedType.icon className="h-5 w-5 text-amber-500" />
-                        {selectedType.fullName}
+                        {t(`doc.${selectedType.id}.full`)}
                       </CardTitle>
                       <Button
                         variant="ghost"
@@ -194,26 +198,26 @@ export default function DocumentGenerator() {
                         onClick={() => setSelectedType(null)}
                         className="text-slate-400 hover:text-white"
                       >
-                        Change Type
+                        {t('dg.changeType')}
                       </Button>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {selectedType.fields.map((field) => (
                       <div key={field} className="space-y-2">
-                        <Label className="text-slate-300">{fieldLabels[field]}</Label>
+                        <Label className="text-slate-300">{t(`field.${field}`)}</Label>
                         {field === 'services' || field === 'serviceDescription' || field === 'dataCollected' ? (
                           <Textarea
                             value={formData[field] || ''}
                             onChange={(e) => handleInputChange(field, e.target.value)}
-                            placeholder={`Enter ${fieldLabels[field].toLowerCase()}...`}
+                            placeholder={t('dg.enter', { field: t(`field.${field}`) })}
                             className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                           />
                         ) : (
                           <Input
                             value={formData[field] || ''}
                             onChange={(e) => handleInputChange(field, e.target.value)}
-                            placeholder={`Enter ${fieldLabels[field].toLowerCase()}...`}
+                            placeholder={t('dg.enter', { field: t(`field.${field}`) })}
                             className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                           />
                         )}
@@ -228,12 +232,12 @@ export default function DocumentGenerator() {
                       {isGenerating ? (
                         <>
                           <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                          Generating Document...
+                          {t('dg.generating')}
                         </>
                       ) : (
                         <>
                           <Sparkles className="h-5 w-5 mr-2" />
-                          Generate Document
+                          {t('dg.generate')}
                         </>
                       )}
                     </Button>
@@ -250,7 +254,7 @@ export default function DocumentGenerator() {
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <FileText className="h-5 w-5 text-amber-500" />
-                      Generated Document
+                      {t('dg.generated')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -267,31 +271,31 @@ export default function DocumentGenerator() {
                             className="flex-1 border-amber-900/30 text-slate-300 hover:text-amber-400"
                             onClick={() => {
                               navigator.clipboard.writeText(generatedDocument);
-                              toast.success('Copied to clipboard');
+                              toast.success(t('dg.copied'));
                             }}
                           >
                             <Check className="h-4 w-4 mr-2" />
-                            Copy to Clipboard
+                            {t('dg.copy')}
                           </Button>
                           <Button 
                             className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900"
                             onClick={() => downloadTextAsPdf(
                               generatedDocument,
                               `${selectedType.id}-document.pdf`,
-                              selectedType.fullName
+                              t(`doc.${selectedType.id}.full`)
                             )}
                           >
                             <Download className="h-4 w-4 mr-2" />
-                            Download PDF
+                            {t('dg.pdf')}
                           </Button>
                         </div>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center h-[400px] text-center">
                         <FileText className="h-16 w-16 text-slate-600 mb-4" />
-                        <p className="text-slate-400 text-lg">Fill in the form to generate your document</p>
+                        <p className="text-slate-400 text-lg">{t('dg.emptyTitle')}</p>
                         <p className="text-slate-500 text-sm mt-2">
-                          Our AI will create a professional, ready-to-use legal document
+                          {t('dg.emptyText')}
                         </p>
                       </div>
                     )}

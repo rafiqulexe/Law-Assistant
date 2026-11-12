@@ -4,6 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { queryClientInstance } from '@/lib/query-client';
 import { AuthProvider } from '@/lib/AuthContext';
+import { LanguageProvider } from '@/lib/i18n';
 import Layout from '@/Layout';
 import PageNotFound from '@/lib/PageNotFound';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -30,6 +31,7 @@ function page(element) {
 
 export default function App() {
   return (
+    <LanguageProvider>
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
@@ -64,5 +66,6 @@ export default function App() {
         <Toaster theme="dark" richColors position="top-right" />
       </QueryClientProvider>
     </AuthProvider>
+    </LanguageProvider>
   );
 }

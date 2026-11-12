@@ -1,30 +1,32 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useI18n } from '@/lib/i18n';
 import { Scale, Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram } from 'lucide-react';
 
 const footerLinks = {
   product: [
-    { name: 'Contract Analyzer', path: 'ContractAnalyzer' },
-    { name: 'Document Generator', path: 'DocumentGenerator' },
-    { name: 'Risk Checker', path: 'RiskChecker' },
-    { name: 'Legal Chat', path: 'LegalChat' },
-    { name: 'Find a Lawyer', path: 'FindLawyer' },
+    { key: 'tool.contract', path: 'ContractAnalyzer' },
+    { key: 'tool.document', path: 'DocumentGenerator' },
+    { key: 'tool.risk', path: 'RiskChecker' },
+    { key: 'tool.chat', path: 'LegalChat' },
+    { key: 'nav.findLawyer', path: 'FindLawyer' },
   ],
   company: [
-    { name: 'About Us', path: 'About' },
-    { name: 'Blog', path: 'Blog' },
-    { name: 'Pricing', path: 'Pricing' },
-    { name: 'Contact', path: 'Contact' },
+    { key: 'footer.aboutUs', path: 'About' },
+    { key: 'nav.blog', path: 'Blog' },
+    { key: 'nav.pricing', path: 'Pricing' },
+    { key: 'nav.contact', path: 'Contact' },
   ],
   legal: [
-    { name: 'Privacy Policy', path: 'Home' },
-    { name: 'Terms of Service', path: 'Home' },
-    { name: 'Cookie Policy', path: 'Home' },
+    { key: 'footer.privacy', path: 'Home' },
+    { key: 'footer.terms', path: 'Home' },
+    { key: 'footer.cookies', path: 'Home' },
   ],
 };
 
 export default function Footer() {
+  const { t } = useI18n();
   return (
     <footer className="bg-slate-950 border-t border-amber-900/20 relative overflow-hidden">
       {/* Background decorations */}
@@ -42,7 +44,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-slate-400 mb-6 max-w-sm leading-relaxed">
-              AI-powered legal assistant transforming how you handle contracts, compliance, and legal documents. Find the perfect lawyer for your needs.
+              {t('footer.about')}
             </p>
             <div className="flex gap-4">
               {[Linkedin, Twitter, Facebook, Instagram].map((Icon, i) => (
@@ -59,7 +61,7 @@ export default function Footer() {
 
           {/* Product Links */}
           <div>
-            <h4 className="text-amber-400 font-semibold mb-4 uppercase text-sm tracking-wider">Product</h4>
+            <h4 className="text-amber-400 font-semibold mb-4 uppercase text-sm tracking-wider">{t('footer.product')}</h4>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.path}>
@@ -67,7 +69,7 @@ export default function Footer() {
                     to={createPageUrl(link.path)}
                     className="text-slate-400 hover:text-amber-400 transition-colors text-sm"
                   >
-                    {link.name}
+                    {t(link.key)}
                   </Link>
                 </li>
               ))}
@@ -76,7 +78,7 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <h4 className="text-amber-400 font-semibold mb-4 uppercase text-sm tracking-wider">Company</h4>
+            <h4 className="text-amber-400 font-semibold mb-4 uppercase text-sm tracking-wider">{t('footer.company')}</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.path}>
@@ -84,7 +86,7 @@ export default function Footer() {
                     to={createPageUrl(link.path)}
                     className="text-slate-400 hover:text-amber-400 transition-colors text-sm"
                   >
-                    {link.name}
+                    {t(link.key)}
                   </Link>
                 </li>
               ))}
@@ -93,7 +95,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-amber-400 font-semibold mb-4 uppercase text-sm tracking-wider">Contact</h4>
+            <h4 className="text-amber-400 font-semibold mb-4 uppercase text-sm tracking-wider">{t('footer.contact')}</h4>
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Mail className="h-4 w-4 text-amber-500" />
@@ -114,16 +116,16 @@ export default function Footer() {
         {/* Bottom */}
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-500 text-sm">
-            © 2024 LexAI. All rights reserved.
+            {t('footer.rights', { year: new Date().getFullYear() })}
           </p>
           <div className="flex gap-6">
             {footerLinks.legal.map((link) => (
               <Link
-                key={link.name}
+                key={link.key}
                 to={createPageUrl(link.path)}
                 className="text-slate-500 hover:text-amber-400 transition-colors text-sm"
               >
-                {link.name}
+                {t(link.key)}
               </Link>
             ))}
           </div>

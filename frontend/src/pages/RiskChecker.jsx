@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { legal } from '@/api/client';
+import { useI18n } from '@/lib/i18n';
 import { toast } from 'sonner';
 import { 
   ShieldCheck, 
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function RiskChecker() {
+  const { t, tError, language, formatNumber } = useI18n();
   const [documentText, setDocumentText] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -30,10 +32,10 @@ export default function RiskChecker() {
     
     setIsAnalyzing(true);
     try {
-      const result = await legal.checkRisk(documentText);
+      const result = await legal.checkRisk(documentText, language);
       setAnalysis(result);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(tError(error.message));
     } finally {
       setIsAnalyzing(false);
     }
@@ -80,14 +82,14 @@ export default function RiskChecker() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
               <ShieldCheck className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">Risk & Compliance Checker</span>
+              <span className="text-amber-400 text-sm font-medium">{t('rc.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="text-white">Ensure Your Documents Are </span>
-              <span className="gradient-text">Compliant</span>
+              <span className="text-white">{t('rc.title1')}</span>
+              <span className="gradient-text">{t('rc.title2')}</span>
             </h1>
             <p className="text-xl text-slate-400">
-              Automated compliance verification and risk assessment for your business documents.
+              {t('rc.intro')}
             </p>
           </motion.div>
         </div>
@@ -106,14 +108,14 @@ export default function RiskChecker() {
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
                     <FileWarning className="h-5 w-5 text-amber-500" />
-                    Document Input
+                    {t('rc.input')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Textarea
                     value={documentText}
                     onChange={(e) => setDocumentText(e.target.value)}
-                    placeholder="Paste your document, contract, or policy text here for compliance analysis..."
+                    placeholder={t('rc.placeholder')}
                     className="min-h-[400px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                   />
 
@@ -125,12 +127,12 @@ export default function RiskChecker() {
                     {isAnalyzing ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Analyzing Compliance...
+                        {t('rc.analyzing')}
                       </>
                     ) : (
                       <>
                         <ShieldCheck className="h-5 w-5 mr-2" />
-                        Check Compliance
+                        {t('rc.check')}
                       </>
                     )}
                   </Button>
@@ -152,14 +154,14 @@ export default function RiskChecker() {
                       <CardTitle className="text-white flex items-center justify-between">
                         <span className="flex items-center gap-2">
                           <Shield className="h-5 w-5 text-amber-500" />
-                          Compliance Score
+                          {t('rc.score')}
                         </span>
                         <span className={`text-3xl font-bold ${
                           analysis.complianceScore >= 80 ? 'text-green-400' :
                           analysis.complianceScore >= 60 ? 'text-yellow-400' :
                           'text-red-400'
                         }`}>
-                          {analysis.complianceScore}%
+                          {formatNumber(analysis.complianceScore)}%
                         </span>
                       </CardTitle>
                     </CardHeader>
@@ -170,10 +172,10 @@ export default function RiskChecker() {
                       />
                       <p className="text-slate-400 mt-4 text-sm">
                         {analysis.complianceScore >= 80 
-                          ? 'Your document meets most compliance requirements.'
+                          ? t('rc.good')
                           : analysis.complianceScore >= 60
-                          ? 'Some compliance issues need attention.'
-                          : 'Significant compliance issues detected.'}
+                          ? t('rc.fair')
+                          : t('rc.poor')}
                       </p>
                     </CardContent>
                   </Card>
@@ -183,7 +185,7 @@ export default function RiskChecker() {
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <ListChecks className="h-5 w-5 text-amber-500" />
-                        Compliance Checks
+                        {t('rc.checks')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -205,7 +207,7 @@ export default function RiskChecker() {
                       <CardHeader>
                         <CardTitle className="text-white flex items-center gap-2">
                           <AlertTriangle className="h-5 w-5 text-amber-500" />
-                          Identified Risks
+                          {t('rc.risks')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
@@ -214,7 +216,7 @@ export default function RiskChecker() {
                             <div className="flex items-center justify-between mb-2">
                               <p className="text-white font-medium">{risk.title}</p>
                               <Badge className={getSeverityColor(risk.severity)}>
-                                {risk.severity}
+                                {t(`sev.${risk.severity}`)}
                               </Badge>
                             </div>
                             <p className="text-slate-400 text-sm">{risk.description}</p>
@@ -229,7 +231,7 @@ export default function RiskChecker() {
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <Lightbulb className="h-5 w-5 text-amber-500" />
-                        Recommendations
+                        {t('tool.recommendations')}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -250,7 +252,7 @@ export default function RiskChecker() {
                       <CardHeader>
                         <CardTitle className="text-white flex items-center gap-2">
                           <BookOpen className="h-5 w-5 text-amber-500" />
-                          Sources
+                          {t('tool.sources')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -267,9 +269,9 @@ export default function RiskChecker() {
                 <Card className="bg-slate-900/80 border-amber-900/30 h-full flex items-center justify-center min-h-[400px]">
                   <CardContent className="text-center">
                     <ShieldCheck className="h-16 w-16 text-slate-600 mx-auto mb-4" />
-                    <p className="text-slate-400 text-lg">Paste a document to check compliance</p>
+                    <p className="text-slate-400 text-lg">{t('rc.emptyTitle')}</p>
                     <p className="text-slate-500 text-sm mt-2">
-                      We'll check it against Bangladesh law, missing clauses and potential risks
+                      {t('rc.emptyText')}
                     </p>
                   </CardContent>
                 </Card>

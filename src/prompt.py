@@ -20,6 +20,7 @@ Read the contract below and reply with JSON only, using exactly these keys:
 }}
 List 5-7 key terms. Consider the Contract Act 1872 and other Bangladesh law where relevant.
 Do not invent section numbers.
+Write every text value in {language}. Keep the JSON keys and the severity words exactly as shown, in English.
 
 Contract:
 {text}
@@ -38,6 +39,7 @@ Review the document below and reply with JSON only, using exactly these keys:
 }}
 Check for missing clauses, ambiguous language, liability risks and conflicts with Bangladesh law.
 Only cite laws that appear in the passages above.
+Write every text value in {language}. Keep the JSON keys and the status and severity words exactly as shown, in English.
 
 Document:
 {text}
@@ -52,6 +54,7 @@ Requirements:
 - Include the standard clauses for this type of document, with governing law set to Bangladesh.
 - Leave signature, date and witness lines at the end.
 - Write plain text only, no markdown symbols.
+- Write the whole document in {language}.
 
 Reply with the document text only, no introduction or notes before or after it.
 """

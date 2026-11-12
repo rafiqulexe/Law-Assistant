@@ -113,6 +113,11 @@ def json_body():
     return request.get_json(silent=True) or {}
 
 
+def tool_language():
+    # The tools answer in the language the user picked for the site.
+    return "Bangla" if json_body().get("language") == "bn" else "English"
+
+
 def required_text(field):
     text = str(json_body().get(field, "")).strip()
     if not text:
@@ -412,7 +417,7 @@ def analyze_contract():
     if error:
         return error
     try:
-        result = ask_for_json(contract_prompt.format(text=text))
+        result = ask_for_json(contract_prompt.format(text=text, language=tool_language()))
         score = float(result.get("riskScore", 0))
     except Exception:
         logger.exception("Contract analysis failed")
@@ -432,7 +437,7 @@ def check_risk():
     try:
         passages = get_shared_retriever().invoke(text[:2000])
         context = "\n\n".join(doc.page_content for doc in passages)
-        result = ask_for_json(risk_prompt.format(context=context, text=text))
+        result = ask_for_json(risk_prompt.format(context=context, text=text, language=tool_language()))
         score = float(result.get("complianceScore", 0))
     except Exception:
         logger.exception("Risk check failed")
@@ -454,7 +459,7 @@ def generate_document():
         return jsonify({"error": "Choose a document type and fill in the form."}), 400
     details = "\n".join(f"{str(k)[:60]}: {str(v)[:500]}" for k, v in fields.items())
     try:
-        document = ask_for_text(document_prompt.format(document_type=document_type, fields=details))
+        document = ask_for_text(document_prompt.format(document_type=document_type, fields=details, language=tool_language()))
         if not document:
             raise ValueError("Empty document")
     except Exception:

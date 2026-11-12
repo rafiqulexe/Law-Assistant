@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/AuthContext';
+import { useI18n } from '@/lib/i18n';
 
 // Only allow redirects to paths inside this app.
 function safeNext(value) {
@@ -16,6 +17,7 @@ function safeNext(value) {
 export default function Login({ mode = 'login' }) {
   const isRegister = mode === 'register';
   const { login, register } = useAuth();
+  const { t, tError } = useI18n();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [username, setUsername] = useState('');
@@ -35,7 +37,7 @@ export default function Login({ mode = 'login' }) {
       }
       navigate(safeNext(params.get('next')), { replace: true });
     } catch (err) {
-      setError(err.message);
+      setError(tError(err.message));
     } finally {
       setIsSubmitting(false);
     }
@@ -53,10 +55,10 @@ export default function Login({ mode = 'login' }) {
             <Scale className="w-7 h-7 text-amber-500" />
           </div>
           <h1 className="text-3xl font-bold text-white">
-            {isRegister ? 'Create your account' : 'Welcome back'}
+            {isRegister ? t('login.createTitle') : t('login.welcome')}
           </h1>
           <p className="text-slate-400 mt-2">
-            {isRegister ? 'Start asking questions about Bangladesh law.' : 'Sign in to continue to LexAI.'}
+            {isRegister ? t('login.createText') : t('login.welcomeText')}
           </p>
         </div>
 
@@ -64,7 +66,7 @@ export default function Login({ mode = 'login' }) {
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-slate-300">Username</Label>
+                <Label htmlFor="username" className="text-slate-300">{t('login.username')}</Label>
                 <Input
                   id="username"
                   autoComplete="username"
@@ -76,7 +78,7 @@ export default function Login({ mode = 'login' }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-slate-300">Password</Label>
+                <Label htmlFor="password" className="text-slate-300">{t('login.password')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -87,7 +89,7 @@ export default function Login({ mode = 'login' }) {
                   required
                   minLength={isRegister ? 8 : undefined}
                 />
-                {isRegister && <p className="text-xs text-slate-500">At least 8 characters.</p>}
+                {isRegister && <p className="text-xs text-slate-500">{t('login.passwordHint')}</p>}
               </div>
 
               {error && <p className="text-sm text-red-400">{error}</p>}
@@ -98,16 +100,16 @@ export default function Login({ mode = 'login' }) {
                 className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
               >
                 {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                {isRegister ? 'Create account' : 'Sign in'}
+                {isRegister ? t('login.createAccount') : t('login.signIn')}
               </Button>
             </form>
           </CardContent>
         </Card>
 
         <p className="text-center text-sm text-slate-400 mt-6">
-          {isRegister ? 'Already have an account? ' : "Don't have an account? "}
+          {isRegister ? t('login.haveAccount') : t('login.noAccount')}
           <Link to={isRegister ? '/Login' : '/Register'} className="text-amber-400 hover:text-amber-300">
-            {isRegister ? 'Sign in' : 'Create one'}
+            {isRegister ? t('login.signIn') : t('login.createOne')}
           </Link>
         </p>
       </motion.div>

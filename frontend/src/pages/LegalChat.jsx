@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { legal } from '@/api/client';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
+import { useI18n } from '@/lib/i18n';
 import { 
   MessageSquare, 
   Send, 
@@ -23,20 +24,10 @@ import {
   BookOpen
 } from 'lucide-react';
 
-const suggestedQuestions = [
-  "What is the punishment for theft under the Penal Code?",
-  "How do I file a case under the Dowry Prohibition Act?",
-  "What happens if a cheque bounces under the Negotiable Instruments Act?",
-  "যৌতুক নিরোধ আইনে শাস্তি কী?",
-  "What is bail under the Code of Criminal Procedure?",
-  "How does the Artha Rin Adalat Ain work?"
-];
+const suggestedQuestions = ['chat.q1', 'chat.q2', 'chat.q3', 'chat.q4'];
 
-const welcomeMessage = {
-  role: 'assistant',
-  content: "Assalamu Alaikum! I'm LexAI, your legal information assistant for Bangladesh law. Ask me about the Penal Code, CrPC, Evidence Act and other laws in English or Bangla.",
-  citations: []
-};
+// Rendered from the current language, so switching language also changes the greeting.
+const welcomeMessage = { role: 'assistant', welcome: true, citations: [] };
 
 export default function LegalChat() {
   const [messages, setMessages] = useState([welcomeMessage]);
@@ -45,6 +36,7 @@ export default function LegalChat() {
   const [conversationId, setConversationId] = useState(null);
   const [history, setHistory] = useState([]);
   const messagesEndRef = useRef(null);
+  const { t, tError } = useI18n();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -76,7 +68,7 @@ export default function LegalChat() {
         citations: row.citations ? row.citations.split('\n') : []
       })));
     } catch (error) {
-      toast.error(error.message);
+      toast.error(tError(error.message));
     }
   };
 
@@ -101,7 +93,7 @@ export default function LegalChat() {
         loadHistory();
       }
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: error.message, citations: [] }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: tError(error.message), citations: [] }]);
     } finally {
       setIsLoading(false);
     }
@@ -127,14 +119,14 @@ export default function LegalChat() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
               <MessageSquare className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">AI Legal Assistant</span>
+              <span className="text-amber-400 text-sm font-medium">{t('chat.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-white">Your AI </span>
-              <span className="gradient-text">Legal Guide</span>
+              <span className="text-white">{t('chat.title1')}</span>
+              <span className="gradient-text">{t('chat.title2')}</span>
             </h1>
             <p className="text-lg text-slate-400">
-              Answers grounded in Bangladesh law, with the source of every answer shown.
+              {t('chat.intro')}
             </p>
           </motion.div>
         </div>
@@ -149,14 +141,14 @@ export default function LegalChat() {
                 onClick={startNewChat}
                 className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900"
               >
-                <Plus className="h-4 w-4 mr-2" /> New chat
+                <Plus className="h-4 w-4 mr-2" /> {t('chat.newChat')}
               </Button>
               <p className="text-xs uppercase tracking-wider text-slate-500 flex items-center gap-1 pt-2">
-                <History className="h-3 w-3" /> History
+                <History className="h-3 w-3" /> {t('chat.history')}
               </p>
               <div className="space-y-1 max-h-[420px] overflow-y-auto">
                 {history.length === 0 && (
-                  <p className="text-sm text-slate-500">No conversations yet.</p>
+                  <p className="text-sm text-slate-500">{t('chat.noHistory')}</p>
                 )}
                 {history.map((item) => (
                   <button
@@ -187,10 +179,10 @@ export default function LegalChat() {
                     <Scale className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">LexAI Assistant</h3>
+                    <h3 className="text-white font-semibold">{t('chat.assistantName')}</h3>
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-green-500" />
-                      <span className="text-slate-400 text-sm">Online</span>
+                      <span className="text-slate-400 text-sm">{t('chat.online')}</span>
                     </div>
                   </div>
                 </div>
@@ -225,13 +217,13 @@ export default function LegalChat() {
                           <p className="whitespace-pre-wrap">{message.content}</p>
                         ) : (
                           <div className="prose prose-invert prose-sm max-w-none">
-                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                            <ReactMarkdown>{message.welcome ? t('chat.welcome') : message.content}</ReactMarkdown>
                           </div>
                         )}
                         {message.citations?.length > 0 && (
                           <div className="mt-3 pt-3 border-t border-slate-700 space-y-1">
                             <p className="text-xs text-amber-400 flex items-center gap-1">
-                              <BookOpen className="h-3 w-3" /> Sources
+                              <BookOpen className="h-3 w-3" /> {t('chat.sources')}
                             </p>
                             {message.citations.map((citation) => (
                               <p key={citation} className="text-xs text-slate-400">{citation}</p>
@@ -254,7 +246,7 @@ export default function LegalChat() {
                       <div className="bg-slate-800 rounded-2xl p-4">
                         <div className="flex items-center gap-2">
                           <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
-                          <span className="text-slate-400">Thinking...</span>
+                          <span className="text-slate-400">{t('chat.thinking')}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -265,17 +257,17 @@ export default function LegalChat() {
                 {/* Suggested Questions */}
                 {messages.length <= 1 && (
                   <div className="px-6 pb-4">
-                    <p className="text-slate-500 text-sm mb-3">Suggested questions:</p>
+                    <p className="text-slate-500 text-sm mb-3">{t('chat.suggested')}</p>
                     <div className="flex flex-wrap gap-2">
-                      {suggestedQuestions.slice(0, 4).map((question, index) => (
+                      {suggestedQuestions.map((key, index) => (
                         <Badge
                           key={index}
                           variant="outline"
                           className="border-amber-900/30 text-slate-400 hover:text-amber-400 hover:border-amber-500/50 cursor-pointer transition-colors"
-                          onClick={() => sendMessage(question)}
+                          onClick={() => sendMessage(t(key))}
                         >
                           <HelpCircle className="h-3 w-3 mr-1" />
-                          {question}
+                          {t(key)}
                         </Badge>
                       ))}
                     </div>
@@ -289,7 +281,7 @@ export default function LegalChat() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyPress}
-                      placeholder="Ask a legal question..."
+                      placeholder={t('chat.placeholder')}
                       className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                       disabled={isLoading}
                     />
@@ -307,7 +299,7 @@ export default function LegalChat() {
                   </div>
                   <p className="text-slate-500 text-xs mt-3 text-center">
                     <Sparkles className="h-3 w-3 inline mr-1" />
-                    This AI provides general information only and does not constitute legal advice.
+                    {t('chat.disclaimer')}
                   </p>
                 </div>
               </CardContent>
@@ -317,9 +309,9 @@ export default function LegalChat() {
           {/* Feature Cards */}
           <div className="grid md:grid-cols-3 gap-6 mt-8">
             {[
-              { icon: FileText, title: "Contract Questions", desc: "Get help understanding contract terms" },
-              { icon: Shield, title: "Compliance Guidance", desc: "Learn about legal requirements" },
-              { icon: Scale, title: "Legal Concepts", desc: "Understand complex legal topics" }
+              { icon: FileText, title: t('chat.card1Title'), desc: t('chat.card1Text') },
+              { icon: Shield, title: t('chat.card2Title'), desc: t('chat.card2Text') },
+              { icon: Scale, title: t('chat.card3Title'), desc: t('chat.card3Text') }
             ].map((item, index) => (
               <motion.div
                 key={index}
