@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { useI18n } from '@/lib/i18n';
 import { 
   Check, 
   X,
@@ -14,90 +15,105 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-const plans = [
-  {
-    name: "Starter",
-    icon: Zap,
-    monthlyPrice: 29,
-    yearlyPrice: 290,
-    description: "Perfect for individuals getting started with legal AI",
-    features: [
-      { text: "10 Contract Analyses/month", included: true },
-      { text: "5 Document Generations/month", included: true },
-      { text: "Basic Compliance Checks", included: true },
-      { text: "50 AI Chat Messages/month", included: true },
-      { text: "Lawyer Directory Access", included: true },
-      { text: "Email Support", included: true },
-      { text: "Priority Processing", included: false },
-      { text: "Custom Templates", included: false },
-      { text: "API Access", included: false },
-    ],
-    cta: "Get Started",
-    popular: false
-  },
-  {
-    name: "Professional",
-    icon: Crown,
-    monthlyPrice: 79,
-    yearlyPrice: 790,
-    description: "Ideal for professionals and small businesses",
-    features: [
-      { text: "50 Contract Analyses/month", included: true },
-      { text: "30 Document Generations/month", included: true },
-      { text: "Advanced Compliance Checks", included: true },
-      { text: "200 AI Chat Messages/month", included: true },
-      { text: "Lawyer Directory Access", included: true },
-      { text: "Priority Email & Chat Support", included: true },
-      { text: "Priority Processing", included: true },
-      { text: "Custom Templates", included: true },
-      { text: "API Access", included: false },
-    ],
-    cta: "Start Free Trial",
-    popular: true
-  },
-  {
-    name: "Enterprise",
-    icon: Building2,
-    monthlyPrice: 199,
-    yearlyPrice: 1990,
-    description: "For organizations with advanced legal needs",
-    features: [
-      { text: "Unlimited Contract Analyses", included: true },
-      { text: "Unlimited Document Generations", included: true },
-      { text: "Full Compliance Suite", included: true },
-      { text: "Unlimited AI Chat", included: true },
-      { text: "Lawyer Directory Access", included: true },
-      { text: "24/7 Dedicated Support", included: true },
-      { text: "Priority Processing", included: true },
-      { text: "Custom Templates", included: true },
-      { text: "Full API Access", included: true },
-    ],
-    cta: "Contact Sales",
-    popular: false
-  },
+const planMeta = [
+  { icon: Zap, monthlyPrice: 29, yearlyPrice: 290, popular: false, included: [true, true, true, true, true, true, false, false, false] },
+  { icon: Crown, monthlyPrice: 79, yearlyPrice: 790, popular: true, included: [true, true, true, true, true, true, true, true, false] },
+  { icon: Building2, monthlyPrice: 199, yearlyPrice: 1990, popular: false, included: [true, true, true, true, true, true, true, true, true] },
 ];
 
-const faqs = [
-  {
-    question: "Can I change my plan later?",
-    answer: "Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle."
+const text = {
+  en: {
+    badge: "Simple Pricing",
+    title1: "Choose Your ",
+    title2: "Plan",
+    intro: "Start with a free trial. No credit card required.",
+    monthly: "Monthly",
+    yearly: "Yearly",
+    save: "Save 20%",
+    popular: "Most Popular",
+    perMonth: "month",
+    perYear: "year",
+    plans: [
+      {
+        name: "Starter",
+        description: "Perfect for individuals getting started with legal AI",
+        features: ["10 Contract Analyses/month", "5 Document Generations/month", "Basic Compliance Checks", "50 AI Chat Messages/month", "Lawyer Directory Access", "Email Support", "Priority Processing", "Custom Templates", "API Access"],
+        cta: "Get Started",
+      },
+      {
+        name: "Professional",
+        description: "Ideal for professionals and small businesses",
+        features: ["50 Contract Analyses/month", "30 Document Generations/month", "Advanced Compliance Checks", "200 AI Chat Messages/month", "Lawyer Directory Access", "Priority Email & Chat Support", "Priority Processing", "Custom Templates", "API Access"],
+        cta: "Start Free Trial",
+      },
+      {
+        name: "Enterprise",
+        description: "For organizations with advanced legal needs",
+        features: ["Unlimited Contract Analyses", "Unlimited Document Generations", "Full Compliance Suite", "Unlimited AI Chat", "Lawyer Directory Access", "24/7 Dedicated Support", "Priority Processing", "Custom Templates", "Full API Access"],
+        cta: "Contact Sales",
+      },
+    ],
+    faqTitle: "Frequently Asked Questions",
+    faqIntro: "Have questions? We've got answers.",
+    faqs: [
+      { question: "Can I change my plan later?", answer: "Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle." },
+      { question: "What payment methods do you accept?", answer: "We accept all major credit cards, PayPal, and bank transfers for enterprise accounts." },
+      { question: "Is there a free trial?", answer: "Yes, all paid plans come with a 14-day free trial. No credit card required to start." },
+      { question: "What happens if I exceed my limits?", answer: "We'll notify you before you reach your limits. You can upgrade your plan or purchase additional credits as needed." },
+    ],
   },
-  {
-    question: "What payment methods do you accept?",
-    answer: "We accept all major credit cards, PayPal, and bank transfers for enterprise accounts."
+  bn: {
+    badge: "সহজ মূল্য",
+    title1: "আপনার ",
+    title2: "প্ল্যান বেছে নিন",
+    intro: "বিনামূল্যে ট্রায়াল দিয়ে শুরু করুন। কোনো ক্রেডিট কার্ড লাগবে না।",
+    monthly: "মাসিক",
+    yearly: "বার্ষিক",
+    save: "২০% সাশ্রয়",
+    popular: "সবচেয়ে জনপ্রিয়",
+    perMonth: "মাস",
+    perYear: "বছর",
+    plans: [
+      {
+        name: "স্টার্টার",
+        description: "যাঁরা প্রথমবার আইনি এআই ব্যবহার শুরু করছেন, তাঁদের জন্য",
+        features: ["মাসে ১০টি চুক্তি বিশ্লেষণ", "মাসে ৫টি দলিল তৈরি", "মৌলিক আইন মেনে চলা যাচাই", "মাসে ৫০টি এআই চ্যাট বার্তা", "আইনজীবী তালিকা দেখার সুযোগ", "ইমেইল সহায়তা", "অগ্রাধিকার প্রক্রিয়াকরণ", "নিজস্ব টেমপ্লেট", "API ব্যবহারের সুযোগ"],
+        cta: "শুরু করুন",
+      },
+      {
+        name: "প্রফেশনাল",
+        description: "পেশাজীবী ও ক্ষুদ্র ব্যবসার জন্য উপযুক্ত",
+        features: ["মাসে ৫০টি চুক্তি বিশ্লেষণ", "মাসে ৩০টি দলিল তৈরি", "উন্নত আইন মেনে চলা যাচাই", "মাসে ২০০টি এআই চ্যাট বার্তা", "আইনজীবী তালিকা দেখার সুযোগ", "অগ্রাধিকার ইমেইল ও চ্যাট সহায়তা", "অগ্রাধিকার প্রক্রিয়াকরণ", "নিজস্ব টেমপ্লেট", "API ব্যবহারের সুযোগ"],
+        cta: "বিনামূল্যে ট্রায়াল শুরু করুন",
+      },
+      {
+        name: "এন্টারপ্রাইজ",
+        description: "বড় পরিসরের আইনি প্রয়োজনের প্রতিষ্ঠানের জন্য",
+        features: ["সীমাহীন চুক্তি বিশ্লেষণ", "সীমাহীন দলিল তৈরি", "পূর্ণাঙ্গ আইন মেনে চলা যাচাই", "সীমাহীন এআই চ্যাট", "আইনজীবী তালিকা দেখার সুযোগ", "২৪/৭ নিবেদিত সহায়তা", "অগ্রাধিকার প্রক্রিয়াকরণ", "নিজস্ব টেমপ্লেট", "পূর্ণ API ব্যবহারের সুযোগ"],
+        cta: "বিক্রয় দলের সঙ্গে যোগাযোগ",
+      },
+    ],
+    faqTitle: "সচরাচর জিজ্ঞাসা",
+    faqIntro: "প্রশ্ন আছে? উত্তর এখানে।",
+    faqs: [
+      { question: "পরে কি প্ল্যান বদলানো যাবে?", answer: "হ্যাঁ, যেকোনো সময় প্ল্যান বাড়ানো বা কমানো যাবে। পরিবর্তন কার্যকর হবে পরের বিলিং চক্র থেকে।" },
+      { question: "কীভাবে পেমেন্ট করা যায়?", answer: "সব প্রধান ক্রেডিট কার্ড, PayPal এবং এন্টারপ্রাইজ অ্যাকাউন্টের জন্য ব্যাংক ট্রান্সফার গ্রহণ করা হয়।" },
+      { question: "বিনামূল্যে ট্রায়াল আছে কি?", answer: "হ্যাঁ, প্রতিটি পেইড প্ল্যানে ১৪ দিনের বিনামূল্যে ট্রায়াল আছে। শুরু করতে কোনো ক্রেডিট কার্ড লাগবে না।" },
+      { question: "সীমা পেরিয়ে গেলে কী হবে?", answer: "সীমায় পৌঁছানোর আগেই আপনাকে জানানো হবে। প্রয়োজনে প্ল্যান বাড়াতে বা বাড়তি ক্রেডিট কিনতে পারবেন।" },
+    ],
   },
-  {
-    question: "Is there a free trial?",
-    answer: "Yes, all paid plans come with a 14-day free trial. No credit card required to start."
-  },
-  {
-    question: "What happens if I exceed my limits?",
-    answer: "We'll notify you before you reach your limits. You can upgrade your plan or purchase additional credits as needed."
-  },
-];
+};
 
 export default function Pricing() {
   const [isYearly, setIsYearly] = useState(false);
+  const { language, formatNumber } = useI18n();
+  const c = text[language] || text.en;
+  const plans = planMeta.map((meta, index) => ({
+    ...meta,
+    ...c.plans[index],
+    features: c.plans[index].features.map((featureText, i) => ({ text: featureText, included: meta.included[i] })),
+  }));
+  const faqs = c.faqs;
 
   return (
     <div className="pt-20">
@@ -112,28 +128,28 @@ export default function Pricing() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
               <Sparkles className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">Simple Pricing</span>
+              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              <span className="text-white">Choose Your </span>
-              <span className="gradient-text">Plan</span>
+              <span className="text-white">{c.title1}</span>
+              <span className="gradient-text">{c.title2}</span>
             </h1>
             <p className="text-xl text-slate-400 mb-8">
-              Start with a free trial. No credit card required.
+              {c.intro}
             </p>
 
             {/* Billing Toggle */}
             <div className="flex items-center justify-center gap-4">
-              <span className={`text-sm ${!isYearly ? 'text-white' : 'text-slate-400'}`}>Monthly</span>
+              <span className={`text-sm ${!isYearly ? 'text-white' : 'text-slate-400'}`}>{c.monthly}</span>
               <Switch
                 checked={isYearly}
                 onCheckedChange={setIsYearly}
                 className="data-[state=checked]:bg-amber-500"
               />
               <span className={`text-sm ${isYearly ? 'text-white' : 'text-slate-400'}`}>
-                Yearly 
+                {c.yearly}
                 <Badge className="ml-2 bg-green-500/20 text-green-400 border-green-500/30">
-                  Save 20%
+                  {c.save}
                 </Badge>
               </span>
             </div>
@@ -161,7 +177,7 @@ export default function Pricing() {
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                       <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-semibold px-4 py-1">
-                        Most Popular
+                        {c.popular}
                       </Badge>
                     </div>
                   )}
@@ -173,9 +189,9 @@ export default function Pricing() {
                     <p className="text-slate-400 text-sm">{plan.description}</p>
                     <div className="mt-4">
                       <span className="text-5xl font-bold text-white">
-                        ${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
+                        ${formatNumber(isYearly ? plan.yearlyPrice : plan.monthlyPrice)}
                       </span>
-                      <span className="text-slate-400">/{isYearly ? 'year' : 'month'}</span>
+                      <span className="text-slate-400">/{isYearly ? c.perYear : c.perMonth}</span>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6">
@@ -221,10 +237,10 @@ export default function Pricing() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Frequently Asked Questions
+              {c.faqTitle}
             </h2>
             <p className="text-slate-400">
-              Have questions? We've got answers.
+              {c.faqIntro}
             </p>
           </motion.div>
 

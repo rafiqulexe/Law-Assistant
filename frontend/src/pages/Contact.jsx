@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { legal } from '@/api/client';
+import { useI18n } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,34 +29,82 @@ import {
   Instagram
 } from 'lucide-react';
 
-const contactInfo = [
-  {
-    icon: Mail,
-    title: "Email Us",
-    content: "support@lexai.com",
-    subtitle: "We respond within 24 hours"
-  },
-  {
-    icon: Phone,
-    title: "Call Us",
-    content: "+1 (555) 123-4567",
-    subtitle: "Mon-Fri, 9am-6pm EST"
-  },
-  {
-    icon: MapPin,
-    title: "Visit Us",
-    content: "123 Legal Street",
-    subtitle: "San Francisco, CA 94102"
-  },
-  {
-    icon: Clock,
-    title: "Business Hours",
-    content: "Monday - Friday",
-    subtitle: "9:00 AM - 6:00 PM EST"
-  },
+const contactMeta = [
+  { icon: Mail, content: "support@lexai.com" },
+  { icon: Phone, content: "+1 (555) 123-4567" },
+  { icon: MapPin, content: "123 Legal Street" },
+  { icon: Clock },
 ];
 
+const text = {
+  en: {
+    badge: "Contact Us",
+    title1: "Get in ",
+    title2: "Touch",
+    intro: "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+    info: [
+      { title: "Email Us", subtitle: "We respond within 24 hours" },
+      { title: "Call Us", subtitle: "Mon-Fri, 9am-6pm EST" },
+      { title: "Visit Us", subtitle: "San Francisco, CA 94102" },
+      { title: "Business Hours", content: "Monday - Friday", subtitle: "9:00 AM - 6:00 PM EST" },
+    ],
+    formTitle: "Send Us a Message",
+    sentTitle: "Message Sent!",
+    sentText: "Thank you for reaching out. We'll get back to you within 24 hours.",
+    sendAnother: "Send Another Message",
+    name: "Full Name",
+    namePlaceholder: "John Doe",
+    email: "Email Address",
+    subject: "Subject",
+    subjectPlaceholder: "Select a subject",
+    subjects: { general: "General Inquiry", support: "Technical Support", sales: "Sales & Pricing", partnership: "Partnership", feedback: "Feedback" },
+    message: "Message",
+    messagePlaceholder: "How can we help you?",
+    sending: "Sending...",
+    send: "Send Message",
+    city: "San Francisco, CA 94102",
+    connect: "Connect With Us",
+    faqTitle: "Have Questions?",
+    faqText: "Check out our FAQ section for quick answers to common questions.",
+    faqButton: "View FAQs",
+  },
+  bn: {
+    badge: "যোগাযোগ",
+    title1: "আমাদের সঙ্গে ",
+    title2: "যোগাযোগ করুন",
+    intro: "কোনো প্রশ্ন আছে? আমরা শুনতে চাই। একটি বার্তা পাঠান, যত দ্রুত সম্ভব উত্তর দেব।",
+    info: [
+      { title: "ইমেইল করুন", subtitle: "২৪ ঘণ্টার মধ্যে উত্তর দিই" },
+      { title: "ফোন করুন", subtitle: "সোম-শুক্র, সকাল ৯টা - সন্ধ্যা ৬টা (EST)" },
+      { title: "আমাদের ঠিকানা", subtitle: "San Francisco, CA 94102" },
+      { title: "অফিস সময়", content: "সোমবার - শুক্রবার", subtitle: "সকাল ৯:০০ - সন্ধ্যা ৬:০০ (EST)" },
+    ],
+    formTitle: "আমাদের বার্তা পাঠান",
+    sentTitle: "বার্তা পাঠানো হয়েছে!",
+    sentText: "যোগাযোগের জন্য ধন্যবাদ। ২৪ ঘণ্টার মধ্যে আমরা আপনার সঙ্গে যোগাযোগ করব।",
+    sendAnother: "আরেকটি বার্তা পাঠান",
+    name: "পুরো নাম",
+    namePlaceholder: "যেমন: রহিম উদ্দিন",
+    email: "ইমেইল ঠিকানা",
+    subject: "বিষয়",
+    subjectPlaceholder: "একটি বিষয় বেছে নিন",
+    subjects: { general: "সাধারণ জিজ্ঞাসা", support: "কারিগরি সহায়তা", sales: "বিক্রয় ও মূল্য", partnership: "অংশীদারিত্ব", feedback: "মতামত" },
+    message: "বার্তা",
+    messagePlaceholder: "কীভাবে সাহায্য করতে পারি?",
+    sending: "পাঠানো হচ্ছে...",
+    send: "বার্তা পাঠান",
+    city: "San Francisco, CA 94102",
+    connect: "আমাদের সঙ্গে যুক্ত থাকুন",
+    faqTitle: "প্রশ্ন আছে?",
+    faqText: "সাধারণ প্রশ্নের দ্রুত উত্তর পেতে আমাদের সচরাচর জিজ্ঞাসা অংশ দেখুন।",
+    faqButton: "সচরাচর জিজ্ঞাসা দেখুন",
+  },
+};
+
 export default function Contact() {
+  const { language, tError } = useI18n();
+  const c = text[language] || text.en;
+  const contactInfo = contactMeta.map((meta, index) => ({ ...meta, ...c.info[index] }));
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -73,7 +122,7 @@ export default function Contact() {
       await legal.contact(formData);
       setIsSubmitted(true);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(tError(error.message));
     } finally {
       setIsSending(false);
     }
@@ -92,14 +141,14 @@ export default function Contact() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
               <MessageSquare className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">Contact Us</span>
+              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              <span className="text-white">Get in </span>
-              <span className="gradient-text">Touch</span>
+              <span className="text-white">{c.title1}</span>
+              <span className="gradient-text">{c.title2}</span>
             </h1>
             <p className="text-xl text-slate-400">
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              {c.intro}
             </p>
           </motion.div>
         </div>
@@ -145,7 +194,7 @@ export default function Contact() {
             >
               <Card className="bg-slate-900/80 border-amber-900/30">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-white">Send Us a Message</CardTitle>
+                  <CardTitle className="text-2xl text-white">{c.formTitle}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {isSubmitted ? (
@@ -157,33 +206,33 @@ export default function Contact() {
                       <div className="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center mb-4">
                         <CheckCircle className="h-8 w-8 text-green-500" />
                       </div>
-                      <h3 className="text-xl font-semibold text-white mb-2">Message Sent!</h3>
+                      <h3 className="text-xl font-semibold text-white mb-2">{c.sentTitle}</h3>
                       <p className="text-slate-400">
-                        Thank you for reaching out. We'll get back to you within 24 hours.
+                        {c.sentText}
                       </p>
                       <Button
                         onClick={() => setIsSubmitted(false)}
                         variant="outline"
                         className="mt-6 border-amber-900/30 text-slate-300 hover:text-amber-400"
                       >
-                        Send Another Message
+                        {c.sendAnother}
                       </Button>
                     </motion.div>
                   ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label className="text-slate-300">Full Name</Label>
+                          <Label className="text-slate-300">{c.name}</Label>
                           <Input
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
-                            placeholder="John Doe"
+                            placeholder={c.namePlaceholder}
                             className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                             required
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-slate-300">Email Address</Label>
+                          <Label className="text-slate-300">{c.email}</Label>
                           <Input
                             type="email"
                             value={formData.email}
@@ -196,30 +245,30 @@ export default function Contact() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Subject</Label>
+                        <Label className="text-slate-300">{c.subject}</Label>
                         <Select 
                           value={formData.subject}
                           onValueChange={(value) => setFormData({...formData, subject: value})}
                         >
                           <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
-                            <SelectValue placeholder="Select a subject" />
+                            <SelectValue placeholder={c.subjectPlaceholder} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-slate-700">
-                            <SelectItem value="general">General Inquiry</SelectItem>
-                            <SelectItem value="support">Technical Support</SelectItem>
-                            <SelectItem value="sales">Sales & Pricing</SelectItem>
-                            <SelectItem value="partnership">Partnership</SelectItem>
-                            <SelectItem value="feedback">Feedback</SelectItem>
+                            <SelectItem value="general">{c.subjects.general}</SelectItem>
+                            <SelectItem value="support">{c.subjects.support}</SelectItem>
+                            <SelectItem value="sales">{c.subjects.sales}</SelectItem>
+                            <SelectItem value="partnership">{c.subjects.partnership}</SelectItem>
+                            <SelectItem value="feedback">{c.subjects.feedback}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="text-slate-300">Message</Label>
+                        <Label className="text-slate-300">{c.message}</Label>
                         <Textarea
                           value={formData.message}
                           onChange={(e) => setFormData({...formData, message: e.target.value})}
-                          placeholder="How can we help you?"
+                          placeholder={c.messagePlaceholder}
                           className="min-h-[150px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                           required
                         />
@@ -231,7 +280,7 @@ export default function Contact() {
                         className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6"
                       >
                         <Send className="h-5 w-5 mr-2" />
-                        {isSending ? 'Sending...' : 'Send Message'}
+                        {isSending ? c.sending : c.send}
                       </Button>
                     </form>
                   )}
@@ -252,7 +301,7 @@ export default function Contact() {
                   <div className="text-center">
                     <MapPin className="h-12 w-12 text-amber-500/50 mx-auto mb-3" />
                     <p className="text-slate-400">123 Legal Street</p>
-                    <p className="text-slate-500 text-sm">San Francisco, CA 94102</p>
+                    <p className="text-slate-500 text-sm">{c.city}</p>
                   </div>
                 </div>
               </Card>
@@ -260,7 +309,7 @@ export default function Contact() {
               {/* Social Links */}
               <Card className="bg-slate-900/80 border-amber-900/30">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Connect With Us</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">{c.connect}</h3>
                   <div className="flex gap-4">
                     {[
                       { icon: Linkedin, href: "#", label: "LinkedIn" },
@@ -284,15 +333,15 @@ export default function Contact() {
               {/* FAQ Teaser */}
               <Card className="bg-gradient-to-br from-amber-500/10 to-slate-900 border-amber-500/30">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-white mb-2">Have Questions?</h3>
+                  <h3 className="text-lg font-semibold text-white mb-2">{c.faqTitle}</h3>
                   <p className="text-slate-400 mb-4">
-                    Check out our FAQ section for quick answers to common questions.
+                    {c.faqText}
                   </p>
                   <Button 
                     variant="outline"
                     className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
                   >
-                    View FAQs
+                    {c.faqButton}
                   </Button>
                 </CardContent>
               </Card>

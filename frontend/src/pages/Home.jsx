@@ -1,5 +1,6 @@
 import React from 'react';
 import SupportSection from '@/components/SupportSection';
+import { useI18n } from '@/lib/i18n';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
@@ -25,83 +26,118 @@ import {
 const heroImages = [
   {
     src: "/images/justice.jpg",
-    alt: "Lady Justice statue",
     className: "col-span-2 row-span-2"
   },
   {
     src: "/images/office.jpg",
-    alt: "Lawyer office",
     className: "col-span-1 row-span-1"
   },
   {
     src: "/images/law-book.jpg",
-    alt: "Law book",
     className: "col-span-1 row-span-1"
   },
 ];
 
-const features = [
-  {
-    icon: FileSearch,
-    title: "AI Contract Analyzer",
-    description: "Upload any contract and get instant summaries, risk highlights, and plain-language explanations.",
-    path: "ContractAnalyzer"
-  },
-  {
-    icon: FileText,
-    title: "Document Generator",
-    description: "Create NDAs, contracts, and legal documents in minutes with AI-powered templates.",
-    path: "DocumentGenerator"
-  },
-  {
-    icon: ShieldCheck,
-    title: "Risk & Compliance",
-    description: "Automated compliance checking and risk assessment for your business documents.",
-    path: "RiskChecker"
-  },
-  {
-    icon: MessageSquare,
-    title: "Legal Assistant Chat",
-    description: "Get instant answers to your legal questions from our AI-powered assistant.",
-    path: "LegalChat"
-  },
-  {
-    icon: Users,
-    title: "Find a Lawyer",
-    description: "Connect with verified lawyers near you, filtered by specialty and ratings.",
-    path: "FindLawyer"
-  },
+const featureLinks = [
+  { icon: FileSearch, path: "ContractAnalyzer" },
+  { icon: FileText, path: "DocumentGenerator" },
+  { icon: ShieldCheck, path: "RiskChecker" },
+  { icon: MessageSquare, path: "LegalChat" },
+  { icon: Users, path: "FindLawyer" },
 ];
 
-const stats = [
-  { value: "50K+", label: "Documents Analyzed" },
-  { value: "10K+", label: "Happy Users" },
-  { value: "98%", label: "Accuracy Rate" },
-  { value: "5K+", label: "Lawyers Listed" },
-];
-
-const testimonials = [
-  {
-    name: "Sarah Mitchell",
-    role: "Startup Founder",
-    content: "LexAI saved us thousands in legal fees. The contract analyzer caught issues our lawyers missed.",
-    rating: 5
+const text = {
+  en: {
+    badge: "AI-Powered Legal Technology",
+    title1: "Your AI",
+    title2: "Legal Partner",
+    intro: "Analyze contracts, generate documents, ensure compliance, and find the perfect lawyer — all powered by cutting-edge AI technology.",
+    explore: "Explore LexAI",
+    security: "Bank-Level Security",
+    coverage: "Global Coverage",
+    trusted: "Trusted by 10K+",
+    professionals: "Legal Professionals",
+    imageAlts: ["Lady Justice statue", "Lawyer office", "Law book"],
+    toolsTitle1: "Powerful ",
+    toolsTitle2: "AI Legal Tools",
+    toolsIntro: "Everything you need to handle legal matters with confidence, powered by advanced artificial intelligence.",
+    learnMore: "Learn More",
+    features: [
+      { title: "AI Contract Analyzer", description: "Upload any contract and get instant summaries, risk highlights, and plain-language explanations." },
+      { title: "Document Generator", description: "Create NDAs, contracts, and legal documents in minutes with AI-powered templates." },
+      { title: "Risk & Compliance", description: "Automated compliance checking and risk assessment for your business documents." },
+      { title: "Legal Assistant Chat", description: "Get instant answers to your legal questions from our AI-powered assistant." },
+      { title: "Find a Lawyer", description: "Connect with verified lawyers near you, filtered by specialty and ratings." },
+    ],
+    stats: [
+      { value: "50K+", label: "Documents Analyzed" },
+      { value: "10K+", label: "Happy Users" },
+      { value: "98%", label: "Accuracy Rate" },
+      { value: "5K+", label: "Lawyers Listed" },
+    ],
+    trustTitle1: "Trusted by ",
+    trustTitle2: "Thousands",
+    trustIntro: "See what our users are saying about LexAI",
+    testimonials: [
+      { name: "Sarah Mitchell", role: "Startup Founder", content: "LexAI saved us thousands in legal fees. The contract analyzer caught issues our lawyers missed." },
+      { name: "James Rodriguez", role: "Real Estate Agent", content: "Finding the right lawyer used to take weeks. Now I can connect with specialists in minutes." },
+      { name: "Emily Chen", role: "Small Business Owner", content: "The document generator is a game-changer. Professional contracts without the hefty legal bills." },
+    ],
+    ctaTitle1: "Ready to Transform Your",
+    ctaTitle2: "Legal Workflow?",
+    ctaText: "Join thousands of professionals using LexAI to save time, reduce costs, and make better legal decisions.",
+    ctaButton: "Get Started Free",
   },
-  {
-    name: "James Rodriguez",
-    role: "Real Estate Agent",
-    content: "Finding the right lawyer used to take weeks. Now I can connect with specialists in minutes.",
-    rating: 5
+  bn: {
+    badge: "এআই-চালিত আইনি প্রযুক্তি",
+    title1: "আপনার এআই",
+    title2: "আইনি সহায়ক",
+    intro: "চুক্তি বিশ্লেষণ, দলিল তৈরি, আইন মেনে চলা যাচাই আর সঠিক আইনজীবী খোঁজা — সবই আধুনিক এআই প্রযুক্তির সাহায্যে।",
+    explore: "LexAI ঘুরে দেখুন",
+    security: "ব্যাংক-মানের নিরাপত্তা",
+    coverage: "বিশ্বজুড়ে সেবা",
+    trusted: "১০ হাজার+ মানুষের আস্থা",
+    professionals: "আইন পেশাজীবী",
+    imageAlts: ["ন্যায়বিচারের প্রতীক মূর্তি", "আইনজীবীর অফিস", "আইনের বই"],
+    toolsTitle1: "শক্তিশালী ",
+    toolsTitle2: "এআই আইনি টুল",
+    toolsIntro: "আত্মবিশ্বাসের সঙ্গে আইনি বিষয় সামলাতে যা যা দরকার, সবই উন্নত কৃত্রিম বুদ্ধিমত্তার সাহায্যে।",
+    learnMore: "আরও জানুন",
+    features: [
+      { title: "এআই চুক্তি বিশ্লেষণ", description: "যেকোনো চুক্তি আপলোড করুন, সঙ্গে সঙ্গে পান সারসংক্ষেপ, ঝুঁকির দিক আর সহজ ভাষায় ব্যাখ্যা।" },
+      { title: "দলিল তৈরি", description: "এআই টেমপ্লেট দিয়ে কয়েক মিনিটে NDA, চুক্তি আর অন্যান্য আইনি দলিল তৈরি করুন।" },
+      { title: "ঝুঁকি ও আইন মেনে চলা", description: "আপনার ব্যবসার দলিল আইন মেনে চলছে কি না আর কোথায় ঝুঁকি আছে, তা স্বয়ংক্রিয়ভাবে যাচাই করুন।" },
+      { title: "আইনি সহকারী চ্যাট", description: "আপনার আইনি প্রশ্নের তাৎক্ষণিক উত্তর পান আমাদের এআই সহকারীর কাছ থেকে।" },
+      { title: "আইনজীবী খুঁজুন", description: "বিশেষজ্ঞতা আর রেটিং দেখে আপনার কাছাকাছি যাচাই করা আইনজীবীর সঙ্গে যোগাযোগ করুন।" },
+    ],
+    stats: [
+      { value: "৫০ হাজার+", label: "বিশ্লেষণ করা দলিল" },
+      { value: "১০ হাজার+", label: "সন্তুষ্ট ব্যবহারকারী" },
+      { value: "৯৮%", label: "নির্ভুলতার হার" },
+      { value: "৫ হাজার+", label: "তালিকাভুক্ত আইনজীবী" },
+    ],
+    trustTitle1: "হাজারো মানুষের ",
+    trustTitle2: "আস্থা",
+    trustIntro: "LexAI নিয়ে ব্যবহারকারীরা কী বলছেন দেখুন",
+    testimonials: [
+      { name: "সারাহ মিচেল", role: "স্টার্টআপ প্রতিষ্ঠাতা", content: "LexAI আমাদের আইনি খরচে অনেক টাকা বাঁচিয়েছে। আমাদের আইনজীবীরা যে সমস্যা ধরতে পারেননি, চুক্তি বিশ্লেষণ সেটাও ধরেছে।" },
+      { name: "জেমস রদ্রিগেজ", role: "রিয়েল এস্টেট এজেন্ট", content: "আগে সঠিক আইনজীবী খুঁজতে কয়েক সপ্তাহ লাগত। এখন কয়েক মিনিটেই বিশেষজ্ঞের সঙ্গে যোগাযোগ করতে পারি।" },
+      { name: "এমিলি চেন", role: "ক্ষুদ্র ব্যবসার মালিক", content: "দলিল তৈরির টুলটা সত্যিই সব বদলে দিয়েছে। মোটা আইনি বিল ছাড়াই পেশাদার মানের চুক্তি।" },
+    ],
+    ctaTitle1: "আপনার আইনি কাজের ধরন",
+    ctaTitle2: "বদলাতে প্রস্তুত?",
+    ctaText: "সময় বাঁচাতে, খরচ কমাতে আর ভালো আইনি সিদ্ধান্ত নিতে হাজারো পেশাজীবী LexAI ব্যবহার করছেন।",
+    ctaButton: "বিনামূল্যে শুরু করুন",
   },
-  {
-    name: "Emily Chen",
-    role: "Small Business Owner",
-    content: "The document generator is a game-changer. Professional contracts without the hefty legal bills.",
-    rating: 5
-  },
-];
+};
 
 export default function Home() {
+  const { language } = useI18n();
+  const c = text[language] || text.en;
+  const features = featureLinks.map((link, index) => ({ ...link, ...c.features[index] }));
+  const stats = c.stats;
+  const testimonials = c.testimonials.map((item) => ({ ...item, rating: 5 }));
+
   return (
     <div className="relative">
       {/* Hero Section */}
@@ -127,17 +163,17 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-8"
               >
                 <Zap className="h-4 w-4 text-amber-400" />
-                <span className="text-amber-400 text-sm font-medium">AI-Powered Legal Technology</span>
+                <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
               </motion.div>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
-                <span className="text-white">Your AI</span>
+                <span className="text-white">{c.title1}</span>
                 <br />
-                <span className="gradient-text">Legal Partner</span>
+                <span className="gradient-text">{c.title2}</span>
               </h1>
               
               <p className="text-lg sm:text-xl text-slate-400 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Analyze contracts, generate documents, ensure compliance, and find the perfect lawyer — all powered by cutting-edge AI technology.
+                {c.intro}
               </p>
               
               <motion.div
@@ -150,7 +186,7 @@ export default function Home() {
                     size="lg"
                     className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:via-amber-700 hover:to-amber-800 text-slate-900 font-bold text-lg px-10 py-7 rounded-xl shadow-2xl shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-300 group"
                   >
-                    Explore LexAI
+                    {c.explore}
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
@@ -165,11 +201,11 @@ export default function Home() {
               >
                 <div className="flex items-center gap-2 text-slate-400 text-sm">
                   <Lock className="h-4 w-4 text-amber-500" />
-                  <span>Bank-Level Security</span>
+                  <span>{c.security}</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-400 text-sm">
                   <Globe className="h-4 w-4 text-amber-500" />
-                  <span>Global Coverage</span>
+                  <span>{c.coverage}</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -277,7 +313,7 @@ export default function Home() {
                   <div className="absolute inset-0 border-2 border-amber-500/30 rounded-2xl z-20" />
                   <img 
                     src={heroImages[0].src}
-                    alt={heroImages[0].alt}
+                    alt={c.imageAlts[0]}
                     className="w-full h-64 sm:h-80 object-cover"
                   />
                   
@@ -293,8 +329,8 @@ export default function Home() {
                         <CheckCircle className="h-6 w-6 text-white" />
                       </div>
                       <div>
-                        <p className="text-white font-semibold">Trusted by 10K+</p>
-                        <p className="text-slate-400 text-sm">Legal Professionals</p>
+                        <p className="text-white font-semibold">{c.trusted}</p>
+                        <p className="text-slate-400 text-sm">{c.professionals}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -310,7 +346,7 @@ export default function Home() {
                   <div className="absolute inset-0 border-2 border-amber-500/20 rounded-2xl z-20" />
                   <img 
                     src={heroImages[1].src}
-                    alt={heroImages[1].alt}
+                    alt={c.imageAlts[1]}
                     className="w-full h-40 sm:h-48 object-cover"
                   />
                 </motion.div>
@@ -324,7 +360,7 @@ export default function Home() {
                   <div className="absolute inset-0 border-2 border-amber-500/20 rounded-2xl z-20" />
                   <img 
                     src={heroImages[2].src}
-                    alt={heroImages[2].alt}
+                    alt={c.imageAlts[2]}
                     className="w-full h-40 sm:h-48 object-cover"
                   />
                 </motion.div>
@@ -368,11 +404,11 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              <span className="text-white">Powerful </span>
-              <span className="gradient-text">AI Legal Tools</span>
+              <span className="text-white">{c.toolsTitle1}</span>
+              <span className="gradient-text">{c.toolsTitle2}</span>
             </h2>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-              Everything you need to handle legal matters with confidence, powered by advanced artificial intelligence.
+              {c.toolsIntro}
             </p>
           </motion.div>
 
@@ -397,7 +433,7 @@ export default function Home() {
                       {feature.description}
                     </p>
                     <div className="mt-6 flex items-center text-amber-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                      {c.learnMore} <ArrowRight className="ml-2 h-4 w-4" />
                     </div>
                   </div>
                 </Link>
@@ -417,10 +453,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              <span className="text-white">Trusted by </span>
-              <span className="gradient-text">Thousands</span>
+              <span className="text-white">{c.trustTitle1}</span>
+              <span className="gradient-text">{c.trustTitle2}</span>
             </h2>
-            <p className="text-slate-400 text-lg">See what our users are saying about LexAI</p>
+            <p className="text-slate-400 text-lg">{c.trustIntro}</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -461,19 +497,19 @@ export default function Home() {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl" />
             <div className="relative">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                <span className="text-white">Ready to Transform Your</span>
+                <span className="text-white">{c.ctaTitle1}</span>
                 <br />
-                <span className="gradient-text">Legal Workflow?</span>
+                <span className="gradient-text">{c.ctaTitle2}</span>
               </h2>
               <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
-                Join thousands of professionals using LexAI to save time, reduce costs, and make better legal decisions.
+                {c.ctaText}
               </p>
               <Link to={createPageUrl('Features')}>
                 <Button 
                   size="lg"
                   className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-lg px-10 py-6 rounded-xl shadow-xl shadow-amber-500/30"
                 >
-                  Get Started Free
+                  {c.ctaButton}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

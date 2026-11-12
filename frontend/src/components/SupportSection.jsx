@@ -1,12 +1,40 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Coffee, Heart, Sparkles, ArrowUpRight, Quote } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
-const MESSAGE_PARAGRAPHS = [
-  "I'm Rafiqul Islam, a developer from Bangladesh. I built LexAI because finding a clear answer in our laws should not need a lawyer's office or a day of searching through old PDFs.",
-  "LexAI is free to use. It reads the official Laws of Bangladesh, keeps itself up to date when laws change, and explains them in Bangla and English.",
-  "Servers, AI models and the time to keep improving it all cost money. If LexAI helped you, any support keeps it free for the next person who needs it.",
-];
+const text = {
+  en: {
+    badge: "Support LexAI",
+    title1: "Help keep legal answers",
+    title2: "free for everyone.",
+    paragraphs: [
+      "I'm Rafiqul Islam, a developer from Bangladesh. I built LexAI because finding a clear answer in our laws should not need a lawyer's office or a day of searching through old PDFs.",
+      "LexAI is free to use. It reads the official Laws of Bangladesh, keeps itself up to date when laws change, and explains them in Bangla and English.",
+      "Servers, AI models and the time to keep improving it all cost money. If LexAI helped you, any support keeps it free for the next person who needs it.",
+    ],
+    quote: "Every taka keeps the law within reach.",
+    button: "Support LexAI",
+    imageAlt: "Developer working on the LexAI project",
+    captionTitle: "Built in Bangladesh",
+    captionText: "Made in Bangladesh, for the people of Bangladesh.",
+  },
+  bn: {
+    badge: "LexAI-কে সহায়তা করুন",
+    title1: "আইনি উত্তর সবার জন্য",
+    title2: "বিনামূল্যে রাখতে সাহায্য করুন।",
+    paragraphs: [
+      "আমি রফিকুল ইসলাম, বাংলাদেশের একজন ডেভেলপার। আমাদের আইনে একটা পরিষ্কার উত্তর খুঁজতে উকিলের চেম্বারে যেতে হবে বা পুরোনো PDF ঘেঁটে সারাদিন কাটাতে হবে — এমন হওয়া উচিত নয়। এই ভাবনা থেকেই LexAI বানিয়েছি।",
+      "LexAI ব্যবহার করা বিনামূল্যে। এটি বাংলাদেশের সরকারি আইন পড়ে, আইন বদলালে নিজেকে হালনাগাদ রাখে, আর বাংলা ও ইংরেজিতে সহজ করে বুঝিয়ে দেয়।",
+      "সার্ভার, এআই মডেল আর এটিকে নিয়মিত উন্নত করার সময় — সবকিছুতেই খরচ আছে। LexAI আপনার কাজে লাগলে, আপনার যেকোনো সহায়তা পরের মানুষটির জন্য এটিকে বিনামূল্যে রাখবে।",
+    ],
+    quote: "প্রতিটি টাকা আইনকে মানুষের নাগালে রাখে।",
+    button: "LexAI-কে সহায়তা করুন",
+    imageAlt: "LexAI প্রজেক্টে কাজ করছেন একজন ডেভেলপার",
+    captionTitle: "বাংলাদেশে তৈরি",
+    captionText: "বাংলাদেশের মানুষের জন্য, বাংলাদেশেই বানানো।",
+  },
+};
 
 // VITE_SUPPORT_URL in frontend/.env can point the button somewhere else.
 const SUPPORT_URL = import.meta.env.VITE_SUPPORT_URL || 'https://rafiqul-portfolio-bice.vercel.app/';
@@ -24,6 +52,8 @@ const PARTICLES = [
 
 export default function SupportSection() {
   const shouldReduceMotion = useReducedMotion();
+  const { language } = useI18n();
+  const c = text[language] || text.en;
 
   return (
     <section className="relative overflow-hidden border-y border-amber-900/20 bg-slate-950 py-24 md:py-32">
@@ -62,17 +92,17 @@ export default function SupportSection() {
           >
             <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-2">
               <Heart className="h-4 w-4 text-amber-400" />
-              <span className="text-sm font-medium text-amber-400">Support LexAI</span>
+              <span className="text-sm font-medium text-amber-400">{c.badge}</span>
             </div>
 
             <h2 className="text-3xl font-bold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl xl:text-6xl">
-              <span className="text-white">Help keep legal answers</span>
+              <span className="text-white">{c.title1}</span>
               <br />
-              <span className="gradient-text">free for everyone.</span>
+              <span className="gradient-text">{c.title2}</span>
             </h2>
 
             <div className="mt-8 space-y-5">
-              {MESSAGE_PARAGRAPHS.map((paragraph, index) => (
+              {c.paragraphs.map((paragraph, index) => (
                 <p
                   key={index}
                   className={`leading-relaxed ${
@@ -87,7 +117,7 @@ export default function SupportSection() {
             <div className="mt-10 flex items-start gap-4 rounded-2xl border border-amber-500/30 bg-slate-900/70 p-6 shadow-lg shadow-amber-500/10 backdrop-blur-sm">
               <Quote className="h-6 w-6 flex-shrink-0 text-amber-500" />
               <p className="text-xl font-bold uppercase tracking-wide text-amber-400 sm:text-2xl">
-                Every taka keeps the law within reach.
+                {c.quote}
               </p>
             </div>
 
@@ -98,7 +128,7 @@ export default function SupportSection() {
                 className="group inline-flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 px-10 py-5 text-lg font-bold uppercase tracking-wide text-slate-900 shadow-2xl shadow-amber-500/30 transition-all duration-300 hover:from-amber-400 hover:via-amber-500 hover:to-amber-600 hover:shadow-amber-500/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:w-auto"
               >
                 <Coffee className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
-                Support LexAI
+                {c.button}
                 <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
               </a>
             </div>
@@ -139,7 +169,7 @@ export default function SupportSection() {
             >
               <img
                 src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900"
-                alt="Developer working on the LexAI project"
+                alt={c.imageAlt}
                 className="h-[320px] w-full object-cover sm:h-[400px] lg:h-[480px]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
@@ -158,10 +188,10 @@ export default function SupportSection() {
               <div className="absolute inset-x-4 bottom-4 z-20 rounded-2xl border border-amber-500/30 bg-slate-950/80 p-5 backdrop-blur-sm">
                 <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-amber-400">
                   <Heart className="h-4 w-4" />
-                  Built in Bangladesh
+                  {c.captionTitle}
                 </p>
                 <p className="mt-1 text-sm text-slate-300">
-                  Made in Bangladesh, for the people of Bangladesh.
+                  {c.captionText}
                 </p>
               </div>
             </motion.div>

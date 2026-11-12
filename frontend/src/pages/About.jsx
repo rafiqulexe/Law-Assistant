@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useI18n } from '@/lib/i18n';
 import { 
   Scale, 
   Target, 
@@ -16,64 +17,103 @@ import {
   Twitter
 } from 'lucide-react';
 
-const values = [
-  {
-    icon: Lightbulb,
-    title: "Innovation",
-    description: "Pushing the boundaries of legal technology with cutting-edge AI solutions."
-  },
-  {
-    icon: Heart,
-    title: "Accessibility",
-    description: "Making legal assistance available to everyone, regardless of background."
-  },
-  {
-    icon: Scale,
-    title: "Integrity",
-    description: "Maintaining the highest standards of accuracy and ethical AI practices."
-  },
-  {
-    icon: Users,
-    title: "Community",
-    description: "Building a supportive ecosystem for legal professionals and individuals alike."
-  },
+const valueIcons = [Lightbulb, Heart, Scale, Users];
+
+const teamImages = [
+  "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+  "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
 ];
 
-const team = [
-  {
-    name: "Alexandra Chen",
-    role: "CEO & Co-Founder",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
-    bio: "Former BigLaw partner with 15 years of experience. Harvard Law graduate."
+const text = {
+  en: {
+    badge: "About LexAI",
+    title1: "Democratizing ",
+    title2: "Legal Access",
+    intro: "We're on a mission to make legal assistance accessible, affordable, and intelligent through the power of artificial intelligence.",
+    missionTitle: "Our Mission",
+    mission: "To empower individuals and businesses with AI-driven legal tools that simplify complex legal processes, reduce costs, and provide instant access to legal guidance — making justice more accessible to all.",
+    visionTitle: "Our Vision",
+    vision: "A world where everyone has equal access to legal understanding and protection, where AI augments human legal expertise to create faster, fairer, and more efficient legal outcomes for society.",
+    stats: [
+      { value: "50K+", label: "Documents Processed" },
+      { value: "10K+", label: "Happy Users" },
+      { value: "5K+", label: "Lawyers Listed" },
+      { value: "99.9%", label: "Uptime" },
+    ],
+    valuesTitle1: "Our Core ",
+    valuesTitle2: "Values",
+    valuesIntro: "The principles that guide everything we do at LexAI.",
+    values: [
+      { title: "Innovation", description: "Pushing the boundaries of legal technology with cutting-edge AI solutions." },
+      { title: "Accessibility", description: "Making legal assistance available to everyone, regardless of background." },
+      { title: "Integrity", description: "Maintaining the highest standards of accuracy and ethical AI practices." },
+      { title: "Community", description: "Building a supportive ecosystem for legal professionals and individuals alike." },
+    ],
+    teamTitle1: "Meet Our ",
+    teamTitle2: "Leadership",
+    teamIntro: "A team of legal experts and technologists united by a common vision.",
+    team: [
+      { name: "Alexandra Chen", role: "CEO & Co-Founder", bio: "Former BigLaw partner with 15 years of experience. Harvard Law graduate." },
+      { name: "Marcus Johnson", role: "CTO & Co-Founder", bio: "AI researcher from MIT. Previously led ML teams at Google and OpenAI." },
+      { name: "Sarah Williams", role: "Chief Legal Officer", bio: "20+ years in legal tech. Former General Counsel at Fortune 500 companies." },
+      { name: "David Park", role: "VP of Product", bio: "Product leader with experience at Slack and Notion. Stanford MBA." },
+    ],
+    ctaTitle1: "Ready to Get Started with ",
+    ctaTitle2: "LexAI?",
+    ctaText: "Join thousands of users who trust LexAI for their legal needs.",
+    explore: "Explore Features",
+    contact: "Contact Us",
   },
-  {
-    name: "Marcus Johnson",
-    role: "CTO & Co-Founder",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
-    bio: "AI researcher from MIT. Previously led ML teams at Google and OpenAI."
+  bn: {
+    badge: "LexAI সম্পর্কে",
+    title1: "আইনি সেবা ",
+    title2: "সবার নাগালে",
+    intro: "কৃত্রিম বুদ্ধিমত্তার সাহায্যে আইনি সহায়তাকে সহজলভ্য, সাশ্রয়ী আর বুদ্ধিদীপ্ত করাই আমাদের লক্ষ্য।",
+    missionTitle: "আমাদের লক্ষ্য",
+    mission: "এআই-চালিত আইনি টুল দিয়ে ব্যক্তি ও প্রতিষ্ঠানকে শক্তিশালী করা — জটিল আইনি প্রক্রিয়া সহজ করা, খরচ কমানো আর তাৎক্ষণিক আইনি দিকনির্দেশনা দেওয়া, যাতে ন্যায়বিচার সবার কাছে পৌঁছায়।",
+    visionTitle: "আমাদের স্বপ্ন",
+    vision: "এমন একটি পৃথিবী, যেখানে সবাই সমানভাবে আইন বুঝতে ও আইনের সুরক্ষা পেতে পারে, আর এআই মানুষের আইনি দক্ষতার পাশে থেকে দ্রুত, ন্যায্য ও কার্যকর ফলাফল আনে।",
+    stats: [
+      { value: "৫০ হাজার+", label: "প্রক্রিয়া করা দলিল" },
+      { value: "১০ হাজার+", label: "সন্তুষ্ট ব্যবহারকারী" },
+      { value: "৫ হাজার+", label: "তালিকাভুক্ত আইনজীবী" },
+      { value: "৯৯.৯%", label: "সচল থাকার হার" },
+    ],
+    valuesTitle1: "আমাদের মূল ",
+    valuesTitle2: "মূল্যবোধ",
+    valuesIntro: "যে নীতিগুলো LexAI-এর প্রতিটি কাজের দিশা দেয়।",
+    values: [
+      { title: "উদ্ভাবন", description: "আধুনিক এআই সমাধান দিয়ে আইনি প্রযুক্তির সীমানা এগিয়ে নেওয়া।" },
+      { title: "সহজলভ্যতা", description: "পটভূমি যা-ই হোক, আইনি সহায়তা সবার হাতের নাগালে আনা।" },
+      { title: "সততা", description: "নির্ভুলতা আর নৈতিক এআই চর্চার সর্বোচ্চ মান বজায় রাখা।" },
+      { title: "সম্প্রদায়", description: "আইন পেশাজীবী ও সাধারণ মানুষ — দুই পক্ষের জন্যই সহায়ক পরিবেশ গড়ে তোলা।" },
+    ],
+    teamTitle1: "আমাদের ",
+    teamTitle2: "নেতৃত্ব",
+    teamIntro: "একই স্বপ্নে একসঙ্গে কাজ করা আইন বিশেষজ্ঞ আর প্রযুক্তিবিদদের একটি দল।",
+    team: [
+      { name: "আলেকজান্দ্রা চেন", role: "সিইও ও সহ-প্রতিষ্ঠাতা", bio: "বড় আইন প্রতিষ্ঠানের সাবেক পার্টনার, ১৫ বছরের অভিজ্ঞতা। হার্ভার্ড ল স্কুলের স্নাতক।" },
+      { name: "মার্কাস জনসন", role: "সিটিও ও সহ-প্রতিষ্ঠাতা", bio: "MIT-এর এআই গবেষক। আগে Google ও OpenAI-তে মেশিন লার্নিং দলের নেতৃত্ব দিয়েছেন।" },
+      { name: "সারাহ উইলিয়ামস", role: "প্রধান আইন কর্মকর্তা", bio: "আইনি প্রযুক্তিতে ২০ বছরেরও বেশি অভিজ্ঞতা। Fortune 500 প্রতিষ্ঠানের সাবেক জেনারেল কাউন্সেল।" },
+      { name: "ডেভিড পার্ক", role: "প্রোডাক্ট বিভাগের ভিপি", bio: "Slack ও Notion-এ কাজের অভিজ্ঞতাসম্পন্ন প্রোডাক্ট লিডার। স্ট্যানফোর্ড থেকে MBA।" },
+    ],
+    ctaTitle1: "LexAI দিয়ে শুরু করতে ",
+    ctaTitle2: "প্রস্তুত?",
+    ctaText: "আইনি প্রয়োজনে LexAI-এর ওপর আস্থা রাখা হাজারো ব্যবহারকারীর সঙ্গে যোগ দিন।",
+    explore: "ফিচারগুলো দেখুন",
+    contact: "যোগাযোগ করুন",
   },
-  {
-    name: "Sarah Williams",
-    role: "Chief Legal Officer",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400",
-    bio: "20+ years in legal tech. Former General Counsel at Fortune 500 companies."
-  },
-  {
-    name: "David Park",
-    role: "VP of Product",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-    bio: "Product leader with experience at Slack and Notion. Stanford MBA."
-  },
-];
-
-const stats = [
-  { value: "50K+", label: "Documents Processed" },
-  { value: "10K+", label: "Happy Users" },
-  { value: "5K+", label: "Lawyers Listed" },
-  { value: "99.9%", label: "Uptime" },
-];
+};
 
 export default function About() {
+  const { language } = useI18n();
+  const c = text[language] || text.en;
+  const values = c.values.map((item, index) => ({ ...item, icon: valueIcons[index] }));
+  const team = c.team.map((member, index) => ({ ...member, image: teamImages[index] }));
+  const stats = c.stats;
+
   return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -87,14 +127,14 @@ export default function About() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
               <Scale className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">About LexAI</span>
+              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              <span className="text-white">Democratizing </span>
-              <span className="gradient-text">Legal Access</span>
+              <span className="text-white">{c.title1}</span>
+              <span className="gradient-text">{c.title2}</span>
             </h1>
             <p className="text-xl text-slate-400 leading-relaxed">
-              We're on a mission to make legal assistance accessible, affordable, and intelligent through the power of artificial intelligence.
+              {c.intro}
             </p>
           </motion.div>
         </div>
@@ -113,10 +153,10 @@ export default function About() {
                 <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
                   <Target className="h-6 w-6 text-amber-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Our Mission</h2>
+                <h2 className="text-2xl font-bold text-white">{c.missionTitle}</h2>
               </div>
               <p className="text-slate-400 leading-relaxed">
-                To empower individuals and businesses with AI-driven legal tools that simplify complex legal processes, reduce costs, and provide instant access to legal guidance — making justice more accessible to all.
+                {c.mission}
               </p>
             </motion.div>
 
@@ -129,10 +169,10 @@ export default function About() {
                 <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
                   <Eye className="h-6 w-6 text-amber-500" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Our Vision</h2>
+                <h2 className="text-2xl font-bold text-white">{c.visionTitle}</h2>
               </div>
               <p className="text-slate-400 leading-relaxed">
-                A world where everyone has equal access to legal understanding and protection, where AI augments human legal expertise to create faster, fairer, and more efficient legal outcomes for society.
+                {c.vision}
               </p>
             </motion.div>
           </div>
@@ -170,11 +210,11 @@ export default function About() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="text-white">Our Core </span>
-              <span className="gradient-text">Values</span>
+              <span className="text-white">{c.valuesTitle1}</span>
+              <span className="gradient-text">{c.valuesTitle2}</span>
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
-              The principles that guide everything we do at LexAI.
+              {c.valuesIntro}
             </p>
           </motion.div>
 
@@ -212,11 +252,11 @@ export default function About() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="text-white">Meet Our </span>
-              <span className="gradient-text">Leadership</span>
+              <span className="text-white">{c.teamTitle1}</span>
+              <span className="gradient-text">{c.teamTitle2}</span>
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
-              A team of legal experts and technologists united by a common vision.
+              {c.teamIntro}
             </p>
           </motion.div>
 
@@ -267,11 +307,11 @@ export default function About() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              <span className="text-white">Ready to Get Started with </span>
-              <span className="gradient-text">LexAI?</span>
+              <span className="text-white">{c.ctaTitle1}</span>
+              <span className="gradient-text">{c.ctaTitle2}</span>
             </h2>
             <p className="text-xl text-slate-400 mb-10">
-              Join thousands of users who trust LexAI for their legal needs.
+              {c.ctaText}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to={createPageUrl('Features')}>
@@ -279,7 +319,7 @@ export default function About() {
                   size="lg"
                   className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
                 >
-                  Explore Features
+                  {c.explore}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -289,7 +329,7 @@ export default function About() {
                   variant="outline"
                   className="border-amber-900/30 text-slate-300 hover:text-amber-400"
                 >
-                  Contact Us
+                  {c.contact}
                 </Button>
               </Link>
             </div>
