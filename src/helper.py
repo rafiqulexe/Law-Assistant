@@ -113,7 +113,29 @@ def index_documents(documents, embedding_model, batch_size=500, on_progress=None
             on_progress(start + len(batch), len(documents), skipped=len(done))
 
 
+def hosted_llm(json_mode):
+    """Any service with an OpenAI-style API: OpenAI itself, or Gemini, Groq and
+    others through LLM_BASE_URL. Used where Ollama cannot run (shared hosting)."""
+    from langchain_core.output_parsers import StrOutputParser
+    from langchain_openai import ChatOpenAI
+
+    options = {"response_format": {"type": "json_object"}} if json_mode else {}
+    chat = ChatOpenAI(
+        model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
+        api_key=os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY"),
+        base_url=os.getenv("LLM_BASE_URL") or None,
+        temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0.2")),
+        max_tokens=int(os.getenv("OLLAMA_MAX_TOKENS", "2048")),
+        timeout=120,
+        model_kwargs=options,
+    )
+    # Chat models return a message object; the rest of the code expects plain text.
+    return chat | StrOutputParser()
+
+
 def get_llm(json_mode=False):
+    if os.getenv("LLM_PROVIDER", "ollama").lower() != "ollama":
+        return hosted_llm(json_mode)
     return OllamaLLM(
         model=os.getenv("OLLAMA_MODEL", "gemma3:12b"),
         base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),

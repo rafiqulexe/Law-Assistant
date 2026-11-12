@@ -52,6 +52,11 @@ Optional: `DATA_DIR`, `DATABASE_PATH`, `FRONTEND_DIST`, `RETRIEVAL_K`, `MAX_TEXT
 `LAW_SYNC_DELAY` (seconds between requests to the official site, default 2), `LAW_SYNC_RECENT_YEARS` (default 1),
 `SESSION_COOKIE_SECURE=1` (when served over HTTPS).
 
+Hosted LLM (for servers that cannot run Ollama): set `LLM_PROVIDER=openai`, `LLM_API_KEY` and
+`LLM_MODEL` (default `gpt-4o-mini`). Any service with an OpenAI-style API works through
+`LLM_BASE_URL`, for example Gemini (`https://generativelanguage.googleapis.com/v1beta/openai/`)
+or Groq (`https://api.groq.com/openai/v1`). Without `LLM_PROVIDER` the app uses Ollama.
+
 Rate limits: login 10 per 15 minutes and registration 5 per hour for each IP address, the
 contact form 5 per hour, and chat plus the AI tools `AI_REQUESTS_PER_10_MIN` (default 30)
 for each user. Set `TRUST_PROXY=1` behind a proxy that sends `X-Forwarded-For`
@@ -90,6 +95,33 @@ offline in a few seconds:
 pip install -r requirements-dev.txt
 python -m pytest
 ```
+
+## Deploying (PythonAnywhere)
+
+Needs a paid plan: the free one has too little disk for the embedding model and blocks
+Pinecone and the official law site.
+
+1. In a Bash console: clone the repository, create a virtualenv and install the packages.
+   Install CPU-only PyTorch first to save disk space:
+
+   ```bash
+   pip install torch --index-url https://download.pytorch.org/whl/cpu
+   pip install -r requirements.txt
+   ```
+
+2. Run `npm run build` on your own machine and upload `frontend/dist` (it is not in git).
+3. Create `.env` in the project folder with `SECRET_KEY`, `PINECONE_API_KEY`,
+   `PINECONE_INDEX_NAME`, the hosted LLM settings above, `SESSION_COOKIE_SECURE=1` and
+   `TRUST_PROXY=1`.
+4. Web tab: add a web app with manual configuration, set the virtualenv, and make the WSGI
+   file import `application` from this project's `wsgi.py`. Turn on "Force HTTPS".
+5. Tasks tab: add a daily task that only does the law check on the first of the month:
+
+   ```bash
+   [ "$(date +\%d)" = "01" ] && cd ~/Law-Assistant && .venv/bin/python sync_laws.py
+   ```
+
+6. Open the site and try sign-up, a chat question and each tool.
 
 ## Keeping laws up to date
 
