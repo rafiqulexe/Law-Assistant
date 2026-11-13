@@ -114,6 +114,39 @@ pip install -r requirements-dev.txt
 python -m pytest
 ```
 
+## Deploying for free (Hugging Face Spaces)
+
+The `Dockerfile` builds the frontend, installs Tesseract (Bangla and English) and runs the
+app with Gunicorn on port 7860. A free Space has enough memory for the embedding model.
+The answers come from a hosted LLM; Gemini's free tier is the default.
+
+1. Create a Hugging Face account and a token with write access
+   (Settings > Access Tokens). Get a Gemini API key from Google AI Studio.
+2. Add to `.env`:
+
+   ```
+   HF_TOKEN=...
+   HF_SPACE=your-name/bidhanshala
+   SPACE_LLM_API_KEY=...            # the Gemini key
+   SPACE_ADMIN_USERNAMES=your-name  # these accounts become admins when they register
+   ```
+
+   `SPACE_LLM_MODEL` (default `gemini-2.5-flash`) and `SPACE_LLM_BASE_URL` switch to another
+   provider. Pinecone settings are read from the same file.
+3. Run `python deploy_space.py`. It creates the Space, sets the secrets and uploads the code
+   (not `Data/`, which is already in Pinecone). The first build takes about 10 minutes.
+4. Open `https://<your-name>-bidhanshala.hf.space` and register the admin account.
+
+Limits of the free Space: it sleeps after 48 hours without visitors and takes a minute or two
+to wake. It has no persistent disk, so accounts, chats and the law-update list are reset
+whenever it restarts or is redeployed. The law library itself lives in Pinecone and is not
+affected. Use the direct `.hf.space` address rather than the page on huggingface.co.
+
+To try the image locally: `docker build -t bidhanshala .` then
+`docker run -p 7860:7860 --env-file .env bidhanshala`. Docker reads `.env` literally: write
+`NAME=value` with no spaces or quotes, and point `LLM_BASE_URL` at a hosted LLM (or at
+`http://host.docker.internal:11434/v1` for Ollama on the same machine).
+
 ## Deploying (PythonAnywhere)
 
 Needs a paid plan: the free one has too little disk for the embedding model and blocks

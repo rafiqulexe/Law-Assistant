@@ -49,3 +49,9 @@ def test_non_admin_cannot_touch_admin_routes(api):
     assert api.get("/api/admin/messages").status_code == 403
     assert api.post("/api/admin/users/1/admin", {"is_admin": True}).status_code == 403
     assert api.post("/api/admin/messages/1/delete").status_code == 403
+
+
+def test_listed_username_registers_as_admin(api, monkeypatch):
+    monkeypatch.setenv("ADMIN_USERNAMES", "someone, Rafiq")
+    api.sign_up()
+    assert api.get("/api/admin/users").status_code == 200

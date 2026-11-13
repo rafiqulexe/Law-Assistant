@@ -1,0 +1,17 @@
+.git
+.env
+.claude
+.venv
+venv
+__pycache__
+*.pyc
+*.egg-info
+instance
+Data
+research
+docs
+tests
+CLAUDE.md
+AGENTS.md
+frontend/node_modules
+frontend/dist

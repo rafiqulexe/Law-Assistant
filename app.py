@@ -50,7 +50,8 @@ if not app.config["SECRET_KEY"]:
     raise RuntimeError("SECRET_KEY must be configured in the environment.")
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+# "None" lets the session work when the site is shown inside another page (Hugging Face Spaces).
+app.config["SESSION_COOKIE_SAMESITE"] = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
 app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "0") == "1"
 
 _embeddings = None
@@ -94,6 +95,12 @@ def login_required(view):
         return view(*args, **kwargs)
 
     return wrapped
+
+
+def listed_admin(username):
+    """ADMIN_USERNAMES makes these accounts admins, for hosts where the database starts empty."""
+    names = {name.strip().lower() for name in os.getenv("ADMIN_USERNAMES", "").split(",")}
+    return username.lower() in names - {""}
 
 
 def admin_required(view):
@@ -273,8 +280,8 @@ def register():
     try:
         with get_db() as connection:
             connection.execute(
-                "INSERT INTO users (username, password_hash) VALUES (?, ?)",
-                (username, generate_password_hash(password)),
+                "INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, ?)",
+                (username, generate_password_hash(password), int(listed_admin(username))),
             )
     except sqlite3.IntegrityError:
         return jsonify({"error": "That username is already registered."}), 409
