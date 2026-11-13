@@ -1,522 +1,348 @@
-import React from 'react';
-import SupportSection from '@/components/SupportSection';
-import { useI18n } from '@/lib/i18n';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { 
-  ArrowRight, 
-  FileSearch, 
-  FileText, 
-  ShieldCheck, 
-  MessageSquare, 
-  Users,
-  Star,
-  CheckCircle,
-  Zap,
-  Globe,
-  Lock,
-  Scale,
-  Gavel,
+import {
+  ArrowRight,
+  ArrowUp,
+  BadgeCheck,
   BookOpen,
-  Shield
+  FileSignature,
+  FileText,
+  MessageCircle,
+  Plus,
+  Search,
+  ShieldCheck,
 } from 'lucide-react';
-
-const heroImages = [
-  {
-    src: "/images/justice.jpg",
-    className: "col-span-2 row-span-2"
-  },
-  {
-    src: "/images/office.jpg",
-    className: "col-span-1 row-span-1"
-  },
-  {
-    src: "/images/law-book.jpg",
-    className: "col-span-1 row-span-1"
-  },
-];
-
-const featureLinks = [
-  { icon: FileSearch, path: "ContractAnalyzer" },
-  { icon: FileText, path: "DocumentGenerator" },
-  { icon: ShieldCheck, path: "RiskChecker" },
-  { icon: MessageSquare, path: "LegalChat" },
-  { icon: Users, path: "FindLawyer" },
-];
-
-const text = {
-  en: {
-    badge: "AI-Powered Legal Technology",
-    title1: "Your AI",
-    title2: "Legal Partner",
-    intro: "Analyze contracts, generate documents, ensure compliance, and find the perfect lawyer — all powered by cutting-edge AI technology.",
-    explore: "Explore Bidhanshala",
-    security: "Bank-Level Security",
-    coverage: "Global Coverage",
-    trusted: "Trusted by 10K+",
-    professionals: "Legal Professionals",
-    imageAlts: ["Lady Justice statue", "Lawyer office", "Law book"],
-    toolsTitle1: "Powerful ",
-    toolsTitle2: "AI Legal Tools",
-    toolsIntro: "Everything you need to handle legal matters with confidence, powered by advanced artificial intelligence.",
-    learnMore: "Learn More",
-    features: [
-      { title: "AI Contract Analyzer", description: "Upload any contract and get instant summaries, risk highlights, and plain-language explanations." },
-      { title: "Document Generator", description: "Create NDAs, contracts, and legal documents in minutes with AI-powered templates." },
-      { title: "Risk & Compliance", description: "Automated compliance checking and risk assessment for your business documents." },
-      { title: "Legal Assistant Chat", description: "Get instant answers to your legal questions from our AI-powered assistant." },
-      { title: "Find a Lawyer", description: "Connect with verified lawyers near you, filtered by specialty and ratings." },
-    ],
-    stats: [
-      { value: "50K+", label: "Documents Analyzed" },
-      { value: "10K+", label: "Happy Users" },
-      { value: "98%", label: "Accuracy Rate" },
-      { value: "5K+", label: "Lawyers Listed" },
-    ],
-    trustTitle1: "Trusted by ",
-    trustTitle2: "Thousands",
-    trustIntro: "See what our users are saying about Bidhanshala",
-    testimonials: [
-      { name: "Sarah Mitchell", role: "Startup Founder", content: "Bidhanshala saved us thousands in legal fees. The contract analyzer caught issues our lawyers missed." },
-      { name: "James Rodriguez", role: "Real Estate Agent", content: "Finding the right lawyer used to take weeks. Now I can connect with specialists in minutes." },
-      { name: "Emily Chen", role: "Small Business Owner", content: "The document generator is a game-changer. Professional contracts without the hefty legal bills." },
-    ],
-    ctaTitle1: "Ready to Transform Your",
-    ctaTitle2: "Legal Workflow?",
-    ctaText: "Join thousands of professionals using Bidhanshala to save time, reduce costs, and make better legal decisions.",
-    ctaButton: "Get Started Free",
-  },
-  bn: {
-    badge: "এআই-চালিত আইনি প্রযুক্তি",
-    title1: "আপনার এআই",
-    title2: "আইনি সহায়ক",
-    intro: "চুক্তি বিশ্লেষণ, দলিল তৈরি, আইন মেনে চলা যাচাই আর সঠিক আইনজীবী খোঁজা — সবই আধুনিক এআই প্রযুক্তির সাহায্যে।",
-    explore: "বিধানশালা ঘুরে দেখুন",
-    security: "ব্যাংক-মানের নিরাপত্তা",
-    coverage: "বিশ্বজুড়ে সেবা",
-    trusted: "১০ হাজার+ মানুষের আস্থা",
-    professionals: "আইন পেশাজীবী",
-    imageAlts: ["ন্যায়বিচারের প্রতীক মূর্তি", "আইনজীবীর অফিস", "আইনের বই"],
-    toolsTitle1: "শক্তিশালী ",
-    toolsTitle2: "এআই আইনি টুল",
-    toolsIntro: "আত্মবিশ্বাসের সঙ্গে আইনি বিষয় সামলাতে যা যা দরকার, সবই উন্নত কৃত্রিম বুদ্ধিমত্তার সাহায্যে।",
-    learnMore: "আরও জানুন",
-    features: [
-      { title: "এআই চুক্তি বিশ্লেষণ", description: "যেকোনো চুক্তি আপলোড করুন, সঙ্গে সঙ্গে পান সারসংক্ষেপ, ঝুঁকির দিক আর সহজ ভাষায় ব্যাখ্যা।" },
-      { title: "দলিল তৈরি", description: "এআই টেমপ্লেট দিয়ে কয়েক মিনিটে NDA, চুক্তি আর অন্যান্য আইনি দলিল তৈরি করুন।" },
-      { title: "ঝুঁকি ও আইন মেনে চলা", description: "আপনার ব্যবসার দলিল আইন মেনে চলছে কি না আর কোথায় ঝুঁকি আছে, তা স্বয়ংক্রিয়ভাবে যাচাই করুন।" },
-      { title: "আইনি সহকারী চ্যাট", description: "আপনার আইনি প্রশ্নের তাৎক্ষণিক উত্তর পান আমাদের এআই সহকারীর কাছ থেকে।" },
-      { title: "আইনজীবী খুঁজুন", description: "বিশেষজ্ঞতা আর রেটিং দেখে আপনার কাছাকাছি যাচাই করা আইনজীবীর সঙ্গে যোগাযোগ করুন।" },
-    ],
-    stats: [
-      { value: "৫০ হাজার+", label: "বিশ্লেষণ করা দলিল" },
-      { value: "১০ হাজার+", label: "সন্তুষ্ট ব্যবহারকারী" },
-      { value: "৯৮%", label: "নির্ভুলতার হার" },
-      { value: "৫ হাজার+", label: "তালিকাভুক্ত আইনজীবী" },
-    ],
-    trustTitle1: "হাজারো মানুষের ",
-    trustTitle2: "আস্থা",
-    trustIntro: "বিধানশালা নিয়ে ব্যবহারকারীরা কী বলছেন দেখুন",
-    testimonials: [
-      { name: "সারাহ মিচেল", role: "স্টার্টআপ প্রতিষ্ঠাতা", content: "বিধানশালা আমাদের আইনি খরচে অনেক টাকা বাঁচিয়েছে। আমাদের আইনজীবীরা যে সমস্যা ধরতে পারেননি, চুক্তি বিশ্লেষণ সেটাও ধরেছে।" },
-      { name: "জেমস রদ্রিগেজ", role: "রিয়েল এস্টেট এজেন্ট", content: "আগে সঠিক আইনজীবী খুঁজতে কয়েক সপ্তাহ লাগত। এখন কয়েক মিনিটেই বিশেষজ্ঞের সঙ্গে যোগাযোগ করতে পারি।" },
-      { name: "এমিলি চেন", role: "ক্ষুদ্র ব্যবসার মালিক", content: "দলিল তৈরির টুলটা সত্যিই সব বদলে দিয়েছে। মোটা আইনি বিল ছাড়াই পেশাদার মানের চুক্তি।" },
-    ],
-    ctaTitle1: "আপনার আইনি কাজের ধরন",
-    ctaTitle2: "বদলাতে প্রস্তুত?",
-    ctaText: "সময় বাঁচাতে, খরচ কমাতে আর ভালো আইনি সিদ্ধান্ত নিতে হাজারো পেশাজীবী বিধানশালা ব্যবহার করছেন।",
-    ctaButton: "বিনামূল্যে শুরু করুন",
-  },
-};
-
-export default function Home() {
-  const { language } = useI18n();
-  const c = text[language] || text.en;
-  const features = featureLinks.map((link, index) => ({ ...link, ...c.features[index] }));
-  const stats = c.stats;
-  const testimonials = c.testimonials.map((item) => ({ ...item, rating: 5 }));
-
+import { useEffect, useState } from 'react';
+import { legal } from '@/api/client';
+import { useApp } from '@/lib/app';
+import { EXAMPLE_QUESTIONS, FAQS } from '@/lib/data';
+import { changedSections } from '@/lib/laws';
+import { Page } from '@/components/Layout';
+import { Badge, Button, Card, Chip, cx } from '@/components/ui';
+export function AskHero({ big = true }) {
+  const { t, tr, go, setPendingQuestion } = useApp();
+  const [q, setQ] = useState('');
+  const submit = (text) => {
+    if (!text.trim()) return;
+    setPendingQuestion(text.trim());
+    go('/ask');
+  };
   return (
-    <div className="relative">
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0 hero-glow" />
-        <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-brand-700/10 rounded-full blur-[120px]" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center lg:text-left"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-8"
-              >
-                <Zap className="h-4 w-4 text-brand-400" />
-                <span className="text-brand-400 text-sm font-medium">{c.badge}</span>
-              </motion.div>
-              
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
-                <span className="text-white">{c.title1}</span>
-                <br />
-                <span className="gradient-text">{c.title2}</span>
-              </h1>
-              
-              <p className="text-lg sm:text-xl text-slate-400 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                {c.intro}
-              </p>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <Link to={createPageUrl('Features')}>
-                  <Button 
-                    size="lg"
-                    className="bg-gradient-to-r from-brand-500 via-brand-600 to-brand-700 hover:from-brand-600 hover:via-brand-700 hover:to-brand-800 text-slate-900 font-bold text-lg px-10 py-7 rounded-xl shadow-2xl shadow-brand-500/30 hover:shadow-brand-500/50 transition-all duration-300 group"
-                  >
-                    {c.explore}
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </motion.div>
-              
-              {/* Trust Indicators */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="mt-12 flex items-center gap-6 justify-center lg:justify-start"
-              >
-                <div className="flex items-center gap-2 text-slate-400 text-sm">
-                  <Lock className="h-4 w-4 text-brand-500" />
-                  <span>{c.security}</span>
-                </div>
-                <div className="flex items-center gap-2 text-slate-400 text-sm">
-                  <Globe className="h-4 w-4 text-brand-500" />
-                  <span>{c.coverage}</span>
-                </div>
-              </motion.div>
-            </motion.div>
-            
-            {/* Right - Image Grid */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
-            >
-              {/* Floating icons around images */}
-              <motion.div
-                className="absolute -top-8 -left-8 z-30"
-                animate={{ 
-                  opacity: [0.3, 0.8, 0.3],
-                  y: [0, -30, -60],
-                  scale: [0.8, 1, 0.8]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <Scale className="h-12 w-12 text-brand-400" strokeWidth={1.5} />
-              </motion.div>
-
-              <motion.div
-                className="absolute top-1/4 -right-12 z-30"
-                animate={{ 
-                  opacity: [0.3, 0.8, 0.3],
-                  y: [0, -40, -80],
-                  rotate: [0, 15, 0]
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.5
-                }}
-              >
-                <Gavel className="h-14 w-14 text-brand-500" strokeWidth={1.5} />
-              </motion.div>
-
-              <motion.div
-                className="absolute bottom-1/4 -left-10 z-30"
-                animate={{ 
-                  opacity: [0.3, 0.8, 0.3],
-                  y: [0, -35, -70],
-                  rotate: [0, -10, 0]
-                }}
-                transition={{
-                  duration: 4.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1
-                }}
-              >
-                <FileText className="h-10 w-10 text-brand-400" strokeWidth={1.5} />
-              </motion.div>
-
-              <motion.div
-                className="absolute -bottom-8 right-1/4 z-30"
-                animate={{ 
-                  opacity: [0.3, 0.8, 0.3],
-                  y: [0, -30, -60],
-                  scale: [0.9, 1.1, 0.9]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1.5
-                }}
-              >
-                <Shield className="h-11 w-11 text-brand-500" strokeWidth={1.5} />
-              </motion.div>
-
-              <motion.div
-                className="absolute top-12 left-1/3 z-30"
-                animate={{ 
-                  opacity: [0.3, 0.8, 0.3],
-                  y: [0, -45, -90],
-                  x: [0, 10, 0]
-                }}
-                transition={{
-                  duration: 5.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 2
-                }}
-              >
-                <BookOpen className="h-9 w-9 text-brand-400" strokeWidth={1.5} />
-              </motion.div>
-
-              <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto">
-                {/* Main large image */}
-                <motion.div 
-                  className="col-span-2 relative rounded-2xl overflow-hidden shadow-2xl shadow-brand-500/20 z-20"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent z-10" />
-                  <div className="absolute inset-0 border-2 border-brand-500/30 rounded-2xl z-20" />
-                  <img 
-                    src={heroImages[0].src}
-                    alt={c.imageAlts[0]}
-                    className="w-full h-64 sm:h-80 object-cover"
-                  />
-                  
-                  {/* Floating badge over image */}
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8 }}
-                    className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur-sm border border-brand-500/30 rounded-2xl p-4 shadow-xl z-30"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
-                        <CheckCircle className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-white font-semibold">{c.trusted}</p>
-                        <p className="text-slate-400 text-sm">{c.professionals}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                </motion.div>
-                
-                {/* Two smaller images */}
-                <motion.div 
-                  className="relative rounded-2xl overflow-hidden shadow-xl shadow-brand-500/10 z-20"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent z-10" />
-                  <div className="absolute inset-0 border-2 border-brand-500/20 rounded-2xl z-20" />
-                  <img 
-                    src={heroImages[1].src}
-                    alt={c.imageAlts[1]}
-                    className="w-full h-40 sm:h-48 object-cover"
-                  />
-                </motion.div>
-                
-                <motion.div 
-                  className="relative rounded-2xl overflow-hidden shadow-xl shadow-brand-500/10 z-20"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent z-10" />
-                  <div className="absolute inset-0 border-2 border-brand-500/20 rounded-2xl z-20" />
-                  <img 
-                    src={heroImages[2].src}
-                    alt={c.imageAlts[2]}
-                    className="w-full h-40 sm:h-48 object-cover"
-                  />
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
+    <div className="w-full">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit(q);
+        }}
+        className={cx(
+          'flex items-center gap-2 rounded-[22px] border border-line bg-surface p-2 pl-5 shadow-soft transition-[border-color,box-shadow] focus-within:border-[var(--focus)] focus-within:ring-4 focus-within:ring-accent/15',
+          big && 'sm:min-h-[68px]',
+        )}
+      >
+        <Search className="size-5 shrink-0 text-muted" strokeWidth={1.75} aria-hidden />
+        <label htmlFor="hero-q" className="sr-only">
+          {t('Ask a legal question', 'আইনি প্রশ্ন করুন')}
+        </label>
+        <input
+          id="hero-q"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={t('Ask a legal question in Bangla or English…', 'বাংলা বা ইংরেজিতে আইনি প্রশ্ন করুন…')}
+          className="h-11 min-w-0 flex-1 bg-transparent text-[17px] outline-none placeholder:text-muted/80"
+        />
+        <Button
+          type="submit"
+          pill
+          size="md"
+          disabled={!q.trim()}
+          iconOnly={!big}
+          aria-label={t('Ask', 'জিজ্ঞাসা')}
+          className={big ? 'hidden sm:inline-flex' : ''}
+        >
+          {big ? t('Ask', 'জিজ্ঞাসা করুন') : <ArrowUp className="size-5" />}
+        </Button>
+        {big && (
+          <Button
+            type="submit"
+            pill
+            iconOnly
+            disabled={!q.trim()}
+            aria-label={t('Ask', 'জিজ্ঞাসা')}
+            className="sm:hidden"
+          >
+            <ArrowUp className="size-5" />
+          </Button>
+        )}
+      </form>
+      <div className="mt-4 flex flex-wrap justify-center gap-2">
+        {EXAMPLE_QUESTIONS.map((e) => (
+          <Chip key={e.en} onClick={() => submit(tr(e))}>
+            {tr(e)}
+          </Chip>
+        ))}
+      </div>
+    </div>
+  );
+}
+export default function Home() {
+  const { t, go, date, num } = useApp();
+  const [laws, setLaws] = useState(null);
+  useEffect(() => {
+    legal
+      .lawUpdates(4)
+      .then(setLaws)
+      .catch(() => setLaws({ updates: [], tracked: 0 }));
+  }, []);
+  const [openFaq, setOpenFaq] = useState(0);
+  const tools = [
+    {
+      p: '/ask',
+      Icon: MessageCircle,
+      h: t('Ask AI', 'এআই-কে জিজ্ঞাসা'),
+      b: t(
+        'Plain-language answers with the exact sections they come from.',
+        'সহজ ভাষায় উত্তর, সঙ্গে সুনির্দিষ্ট ধারা।',
+      ),
+      cta: t('Ask a question', 'প্রশ্ন করুন'),
+    },
+    {
+      p: '/contract',
+      Icon: FileSignature,
+      h: t('Contract Analyzer', 'চুক্তি বিশ্লেষক'),
+      b: t(
+        'Upload a contract. Get a risk score and the clauses to fix.',
+        'চুক্তি আপলোড করুন। ঝুঁকি স্কোর ও সংশোধনযোগ্য ধারা পান।',
+      ),
+      cta: t('Check a contract', 'চুক্তি যাচাই করুন'),
+    },
+    {
+      p: '/documents',
+      Icon: FileText,
+      h: t('Document Generator', 'দলিল তৈরি'),
+      b: t(
+        'Draft an NDA, rental or service agreement in minutes.',
+        'কয়েক মিনিটে এনডিএ, ভাড়া বা সেবা চুক্তি তৈরি করুন।',
+      ),
+      cta: t('Create a document', 'দলিল তৈরি করুন'),
+    },
+  ];
+  const steps = [
+    {
+      h: t('Ask in your words', 'নিজের ভাষায় জিজ্ঞাসা করুন'),
+      b: t(
+        'Type a question or upload a document, in Bangla or English.',
+        'বাংলা বা ইংরেজিতে প্রশ্ন লিখুন বা নথি আপলোড করুন।',
+      ),
+    },
+    {
+      h: t('We search the law', 'আমরা আইন খুঁজি'),
+      b: t(
+        'Bidhanshala finds the relevant acts and sections from official sources.',
+        'বিধানশালা সরকারি উৎস থেকে প্রাসঙ্গিক আইন ও ধারা খুঁজে বের করে।',
+      ),
+    },
+    {
+      h: t('Get a clear answer', 'স্পষ্ট উত্তর পান'),
+      b: t(
+        'Read a short answer, open each source, and decide your next step.',
+        'সংক্ষিপ্ত উত্তর পড়ুন, প্রতিটি উৎস দেখুন, পরবর্তী পদক্ষেপ ঠিক করুন।',
+      ),
+    },
+  ];
+  return (
+    <>
+      {/* Hero */}
+      <section className="anim-fade-up mx-auto flex max-w-[760px] flex-col items-center px-4 pt-20 pb-16 text-center sm:pt-28">
+        <Badge tone="accent" icon={<BadgeCheck className="size-3.5" />}>
+          {t('Grounded in official Bangladesh law', 'বাংলাদেশের সরকারি আইনের ভিত্তিতে')}
+        </Badge>
+        <h1 className="mt-6 text-[40px] leading-[1.08] font-semibold tracking-[-0.025em] sm:text-[56px]">
+          {t('Bangladesh law,', 'বাংলাদেশের আইন,')}
+          <br />
+          <span className="text-muted">{t('in one place.', 'এক জায়গায়।')}</span>
+        </h1>
+        <p className="mt-5 max-w-[560px] text-[17px] text-muted sm:text-[19px]">
+          {t(
+            'Ask any legal question and get a clear answer, with the exact act and section it comes from.',
+            'যেকোনো আইনি প্রশ্ন করুন, সুনির্দিষ্ট আইন ও ধারাসহ স্পষ্ট উত্তর পান।',
+          )}
+        </p>
+        <div className="mt-10 w-full">
+          <AskHero />
         </div>
       </section>
-
-      {/* Support */}
-      <SupportSection />
-
-      {/* Stats Section */}
-      <section className="py-20 border-y border-brand-900/20 bg-slate-900/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
-              >
-                <p className="text-4xl md:text-5xl font-bold gradient-text mb-2">{stat.value}</p>
-                <p className="text-slate-400">{stat.label}</p>
-              </motion.div>
+      <Page className="pt-0 sm:pt-0">
+        {/* Tools */}
+        <section aria-labelledby="tools-h" className="mt-8">
+          <h2 id="tools-h" className="sr-only">
+            {t('Tools', 'টুলস')}
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {tools.map((x) => (
+              <button key={x.p} onClick={() => go(x.p)} className="group text-left">
+                <Card className="flex h-full flex-col p-6 transition-[transform,box-shadow] duration-200 group-hover:-translate-y-0.5 group-hover:shadow-pop">
+                  <span className="flex size-11 items-center justify-center rounded-[14px] bg-accent-tint text-accent-text">
+                    <x.Icon className="size-[22px]" strokeWidth={1.75} />
+                  </span>
+                  <h3 className="mt-5 text-[19px] font-semibold tracking-tight">{x.h}</h3>
+                  <p className="mt-1.5 flex-1 text-[15px] text-muted">{x.b}</p>
+                  <span className="mt-6 inline-flex items-center gap-1.5 text-[15px] font-medium text-accent-text">
+                    {x.cta} <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Card>
+              </button>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Features Section */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              <span className="text-white">{c.toolsTitle1}</span>
-              <span className="gradient-text">{c.toolsTitle2}</span>
-            </h2>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-              {c.toolsIntro}
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Link to={createPageUrl(feature.path)}>
-                  <div className="group h-full bg-gradient-to-br from-slate-900 to-slate-900/50 border border-brand-900/20 hover:border-brand-500/50 rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-brand-500/10 card-glow">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-700/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <feature.icon className="h-7 w-7 text-brand-500" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-brand-400 transition-colors">
-                      {feature.title}
-                    </h3>
-                    <p className="text-slate-400 leading-relaxed">
-                      {feature.description}
-                    </p>
-                    <div className="mt-6 flex items-center text-brand-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      {c.learnMore} <ArrowRight className="ml-2 h-4 w-4" />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+        {/* How it works */}
+        <section aria-labelledby="how-h" className="mt-28">
+          <h2 id="how-h" className="text-center text-[28px] font-semibold tracking-tight">
+            {t('How it works', 'কীভাবে কাজ করে')}
+          </h2>
+          <ol className="mt-12 grid gap-10 md:grid-cols-3 md:gap-6">
+            {steps.map((s, i) => (
+              <li key={s.h} className="flex flex-col items-center text-center md:px-6">
+                <span className="flex size-10 items-center justify-center rounded-full border border-line bg-surface text-[15px] font-semibold tabular-nums">
+                  {t(String(i + 1), '১২৩'[i])}
+                </span>
+                <h3 className="mt-4 text-[17px] font-semibold">{s.h}</h3>
+                <p className="mt-1.5 max-w-[280px] text-[15px] text-muted">{s.b}</p>
+              </li>
             ))}
-          </div>
-        </div>
-      </section>
+          </ol>
+        </section>
 
-      {/* Testimonials Section */}
-      <section className="py-24 bg-slate-900/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              <span className="text-white">{c.trustTitle1}</span>
-              <span className="gradient-text">{c.trustTitle2}</span>
-            </h2>
-            <p className="text-slate-400 text-lg">{c.trustIntro}</p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-slate-900/50 border border-brand-900/20 rounded-2xl p-8"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-brand-500 text-brand-500" />
-                  ))}
-                </div>
-                <p className="text-slate-300 mb-6 leading-relaxed">"{testimonial.content}"</p>
-                <div>
-                  <p className="text-white font-semibold">{testimonial.name}</p>
-                  <p className="text-slate-500 text-sm">{testimonial.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-brand-500/10 to-brand-700/10 border border-brand-500/30 rounded-3xl p-12 md:p-16 relative overflow-hidden"
-          >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl" />
-            <div className="relative">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                <span className="text-white">{c.ctaTitle1}</span>
-                <br />
-                <span className="gradient-text">{c.ctaTitle2}</span>
+        {/* Trust */}
+        <section aria-labelledby="trust-h" className="mt-28">
+          <Card className="grid gap-10 overflow-hidden p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+            <div className="flex flex-col justify-center">
+              <span className="flex size-11 items-center justify-center rounded-[14px] bg-fg text-bg">
+                <ShieldCheck className="size-[22px]" strokeWidth={1.75} />
+              </span>
+              <h2 id="trust-h" className="mt-5 text-[28px] font-semibold tracking-tight">
+                {t('Grounded in official Bangladesh law', 'বাংলাদেশের সরকারি আইনের ভিত্তিতে')}
               </h2>
-              <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
-                {c.ctaText}
+              <p className="mt-3 text-[17px] text-muted">
+                {t(
+                  'We check the Laws of Bangladesh website for changes. When an act changes, our answers change with it — and every answer shows the sections it used.',
+                  'আমরা বাংলাদেশের আইনের সরকারি ওয়েবসাইটে পরিবর্তন যাচাই করি। কোনো আইন বদলালে আমাদের উত্তরও বদলায় — এবং প্রতিটি উত্তরে ব্যবহৃত ধারাগুলো দেখানো হয়।',
+                )}
               </p>
-              <Link to={createPageUrl('Features')}>
-                <Button 
-                  size="lg"
-                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-bold text-lg px-10 py-6 rounded-xl shadow-xl shadow-brand-500/30"
-                >
-                  {c.ctaButton}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
+              <div className="mt-6 flex gap-8">
+                <div>
+                  <div className="text-[28px] font-semibold tabular-nums">{laws ? num(laws.tracked) : '–'}</div>
+                  <div className="text-[13px] text-muted">{t('Acts tracked', 'আইন পর্যবেক্ষণে')}</div>
+                </div>
+                <div>
+                  <div className="text-[28px] font-semibold tabular-nums">{t('Monthly', 'মাসিক')}</div>
+                  <div className="text-[13px] text-muted">
+                    {t('Sync with bdlaws', 'bdlaws-এর সঙ্গে সিঙ্ক')}
+                  </div>
+                </div>
+              </div>
             </div>
-          </motion.div>
-        </div>
-      </section>
+            <div>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-[15px] font-semibold">
+                  {t('Latest law updates', 'সর্বশেষ আইন হালনাগাদ')}
+                </h3>
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                  onClick={() => go('/updates')}
+                  iconRight={<ArrowRight className="size-4" />}
+                >
+                  {t('See all', 'সব দেখুন')}
+                </Button>
+              </div>
+              {laws && laws.updates.length === 0 && (
+                <p className="rounded-2xl border border-line bg-surface-2 p-4 text-[15px] text-muted">
+                  {t('No changes found yet.', 'এখনো কোনো পরিবর্তন পাওয়া যায়নি।')}
+                </p>
+              )}
+              <ul className="divide-y divide-line rounded-2xl border border-line bg-surface-2 empty:hidden">
+                {(laws?.updates || []).map((u) => (
+                  <li key={`${u.act_id}-${u.detected_at}`} className="flex items-start gap-3 p-4">
+                    <BookOpen
+                      className="mt-0.5 size-[18px] shrink-0 text-muted"
+                      strokeWidth={1.75}
+                      aria-hidden
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[15px] font-medium">{u.title}</p>
+                      <p className="text-[13px] text-muted">
+                        {changedSections(u, t, num)} · {date(u.detected_at)}
+                      </p>
+                    </div>
+                    <Badge tone={u.change_type === 'new' ? 'new' : 'amended'}>
+                      {u.change_type === 'new' ? t('New', 'নতুন') : t('Amended', 'সংশোধিত')}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Card>
+        </section>
+
+        {/* FAQ */}
+        <section aria-labelledby="faq-h" className="mx-auto mt-28 max-w-[720px]">
+          <h2 id="faq-h" className="text-center text-[28px] font-semibold tracking-tight">
+            {t('Questions, answered', 'সাধারণ প্রশ্ন')}
+          </h2>
+          <FaqList openFaq={openFaq} setOpenFaq={setOpenFaq} />
+        </section>
+
+        {/* CTA */}
+        <section className="mt-28">
+          <div className="flex flex-col items-center rounded-[28px] bg-fg px-6 py-16 text-center text-bg">
+            <h2 className="text-[28px] font-semibold tracking-tight sm:text-[34px]">
+              {t('Have a legal question?', 'আইনি প্রশ্ন আছে?')}
+            </h2>
+            <p className="mt-2 max-w-md text-[17px] opacity-70">
+              {t(
+                'Ask it now. It’s free, private and takes a few seconds.',
+                'এখনই জিজ্ঞাসা করুন। বিনামূল্যে, গোপনীয়, কয়েক সেকেন্ডেই।',
+              )}
+            </p>
+            <Button
+              size="lg"
+              pill
+              className="mt-8"
+              icon={<Plus className="size-5" />}
+              onClick={() => go('/ask')}
+            >
+              {t('Start a new chat', 'নতুন চ্যাট শুরু করুন')}
+            </Button>
+          </div>
+        </section>
+      </Page>
+    </>
+  );
+}
+export function FaqList({ openFaq, setOpenFaq }) {
+  const { tr } = useApp();
+  return (
+    <div className="mt-8 divide-y divide-line rounded-[20px] border border-line bg-surface">
+      {FAQS.map((f, i) => {
+        const open = openFaq === i;
+        return (
+          <div key={f.q.en}>
+            <button
+              aria-expanded={open}
+              onClick={() => setOpenFaq(open ? null : i)}
+              className="flex min-h-14 w-full items-center justify-between gap-4 px-5 py-3 text-left text-[17px] font-medium"
+            >
+              {tr(f.q)}
+              <Plus
+                className={cx(
+                  'size-5 shrink-0 text-muted transition-transform duration-200',
+                  open && 'rotate-45',
+                )}
+              />
+            </button>
+            {open && <p className="anim-fade -mt-1 px-5 pb-5 text-[15px] text-muted">{tr(f.a)}</p>}
+          </div>
+        );
+      })}
     </div>
   );
 }

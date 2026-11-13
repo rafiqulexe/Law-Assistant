@@ -1,11 +1,12 @@
 import app as webapp
 
 
-def test_contract_score_is_kept_between_1_and_10(user, monkeypatch):
-    monkeypatch.setattr(webapp, "ask_for_json", lambda _prompt: {"summary": "ok", "riskScore": 42})
+def test_contract_score_is_kept_between_0_and_100(user, monkeypatch):
+    monkeypatch.setattr(webapp, "ask_for_json", lambda _prompt: {"summary": "ok", "riskScore": 142})
     response = user.post("/api/contract/analyze", {"text": "The tenant pays rent monthly."})
     assert response.status_code == 200
-    assert response.get_json()["riskScore"] == 10
+    assert response.get_json()["riskScore"] == 100
+    assert user.get("/api/dashboard").get_json()["recent"][0]["risk"] == "high"
 
 
 def test_contract_needs_text(user):
@@ -20,11 +21,20 @@ def test_contract_model_failure(user, monkeypatch):
     assert user.post("/api/contract/analyze", {"text": "Some contract"}).status_code == 503
 
 
-def test_risk_check_returns_sources(user, monkeypatch):
-    monkeypatch.setattr(webapp, "ask_for_json", lambda _prompt: {"complianceScore": 120, "checks": []})
-    data = user.post("/api/risk/check", {"text": "Some document"}).get_json()
-    assert data["complianceScore"] == 100
-    assert data["sources"] == ["The Penal Code, 1860 - Punishment for theft (official, updated 2026-11-07)"]
+def test_risk_check_returns_verdict_and_sources(user, monkeypatch):
+    monkeypatch.setattr(webapp, "ask_for_json", lambda _prompt: {"level": "HIGH", "headline": "Void", "steps": ["Ask"]})
+    data = user.post("/api/risk/check", {"text": "Some clause"}).get_json()
+    assert data["level"] == "high"
+    assert data["steps"] == ["Ask"]
+    source = data["sources"][0]
+    assert source["label"] == "The Penal Code, 1860 - Punishment for theft (official, updated 2026-11-07)"
+    assert source["url"] == "http://bdlaws.minlaw.gov.bd/act-11.html"
+    assert source["text"].startswith("379.")
+
+
+def test_risk_check_unknown_level_becomes_medium(user, monkeypatch):
+    monkeypatch.setattr(webapp, "ask_for_json", lambda _prompt: {"level": "critical"})
+    assert user.post("/api/risk/check", {"text": "Some clause"}).get_json()["level"] == "medium"
 
 
 def test_document_generation(user, monkeypatch):
@@ -55,6 +65,7 @@ def test_law_updates_are_public(client):
     response = client.get("/api/law-updates")
     assert response.status_code == 200
     assert response.get_json()["updates"] == []
+    assert response.get_json()["tracked"] == 0
 
 
 def test_unknown_api_route_is_json_404(client):

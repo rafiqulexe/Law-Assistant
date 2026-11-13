@@ -1,105 +1,218 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
 
-/* Site accent: emerald to teal, with cyan for highlights. Change these to restyle the site. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens — light (default) and dark */
 :root {
-  --brand-50: 236 253 245;
-  --brand-100: 209 250 229;
-  --brand-200: 167 243 208;
-  --brand-300: 110 231 183;
-  --brand-400: 52 211 153;
-  --brand-500: 16 185 129;
-  --brand-600: 5 150 105;
-  --brand-700: 4 120 87;
-  --brand-800: 6 95 70;
-  --brand-900: 6 78 59;
-  --brand-950: 2 44 34;
-  --brand-highlight: 34 211 238;
-  --page-background: 7 11 20;
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-2: #fafafc;
+  --fg: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #e5e5ea;
+  --bubble: #ececf0;
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --accent-ink: #01170f; /* label colour on accent fills (7:1) */
+  --accent-text: #047857; /* accent used as text on surfaces (5.5:1) */
+  --accent-tint: rgb(16 185 129 / 0.1);
+  --cyan: #22d3ee;
+  --focus: #047857;
+  --low: #15803d;
+  --low-tint: rgb(22 163 74 / 0.1);
+  --med: #b45309;
+  --med-tint: rgb(245 158 11 / 0.14);
+  --high: #dc2626;
+  --high-tint: rgb(220 38 38 / 0.1);
+  --nav: rgb(255 255 255 / 0.72);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 10px 40px rgb(0 0 0 / 0.12);
+  color-scheme: light;
+}
+.dark {
+  --bg: #0b0f14;
+  --surface: #151a21;
+  --surface-2: #11161c;
+  --fg: #f5f5f7;
+  --muted: #a1a1aa;
+  --line: #262d36;
+  --bubble: #222a33;
+  --accent: #10b981;
+  --accent-hover: #34d399;
+  --accent-ink: #01170f;
+  --accent-text: #34d399;
+  --accent-tint: rgb(16 185 129 / 0.14);
+  --focus: #34d399;
+  --low: #4ade80;
+  --low-tint: rgb(74 222 128 / 0.12);
+  --med: #fbbf24;
+  --med-tint: rgb(251 191 36 / 0.12);
+  --high: #f87171;
+  --high-tint: rgb(248 113 113 / 0.12);
+  --nav: rgb(11 15 20 / 0.72);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 40px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-bubble: var(--bubble);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
+  --color-accent-tint: var(--accent-tint);
+  --color-cyan: var(--cyan);
+  --color-low: var(--low);
+  --color-low-tint: var(--low-tint);
+  --color-med: var(--med);
+  --color-med-tint: var(--med-tint);
+  --color-high: var(--high);
+  --color-high-tint: var(--high-tint);
+  --font-sans: "Inter", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --font-bn: "Hind Siliguri", "Inter", sans-serif;
+  --shadow-soft: var(--shadow);
+  --shadow-pop: var(--shadow-lg);
 }
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  html {
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-
   body {
-    @apply bg-background text-foreground;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  html[lang="bn"] body {
+    font-family: var(--font-bn);
+    line-height: 1.6;
+  }
+  html[lang="bn"] h1,
+  html[lang="bn"] h2,
+  html[lang="bn"] h3 {
+    line-height: 1.35;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  ::selection {
+    background: rgb(16 185 129 / 0.25);
+  }
+}
+
+/* Motion — gentle fades, spring sheets */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(6px);
+  }
+}
+@keyframes sheet-r {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes sheet-l {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes sheet-b {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+}
+@keyframes dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.anim-fade-up {
+  animation: fade-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.anim-fade {
+  animation: fade 180ms ease-out both;
+}
+.anim-pop {
+  animation: pop 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.anim-sheet-r {
+  animation: sheet-r 420ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.anim-sheet-l {
+  animation: sheet-l 420ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.anim-sheet-b {
+  animation: sheet-b 420ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.anim-toast {
+  animation: toast-in 260ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.thinking-dot {
+  animation: dot 1.2s infinite ease-in-out both;
+}
+.glass {
+  background: var(--nav);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+.paper {
+  font-family: "Inter", "Hind Siliguri", Georgia, serif;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    inset: 0;
+    box-shadow: none !important;
+    border: 0 !important;
   }
 }

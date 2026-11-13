@@ -163,24 +163,49 @@ def get_rag_chain():
     return _rag_chain
 
 
-def extract_citations(documents):
-    citations = []
+def citation_label(metadata):
+    source = metadata.get("source", "Unknown source")
+    page = metadata.get("page")
+    if metadata.get("act_title"):
+        # Synced from the official website: name the act, section and date.
+        return f"{metadata['act_title']} - {metadata.get('section', '')} (official, updated {metadata.get('updated_at', '')})"
+    if isinstance(page, int):
+        return f"{Path(source).name} (page {page + 1})"
+    return Path(source).name
+
+
+def extract_sources(documents):
+    """One entry per distinct source: a label, plus the act, section, passage and link when known."""
+    sources = []
     seen = set()
     for document in documents:
         metadata = document.metadata or {}
-        source = metadata.get("source", "Unknown source")
-        page = metadata.get("page")
-        if metadata.get("act_title"):
-            # Synced from the official website: name the act, section and date.
-            label = f"{metadata['act_title']} - {metadata.get('section', '')} (official, updated {metadata.get('updated_at', '')})"
-        elif isinstance(page, int):
-            label = f"{Path(source).name} (page {page + 1})"
-        else:
-            label = Path(source).name
-        if label not in seen:
-            citations.append(label)
-            seen.add(label)
-    return citations
+        label = citation_label(metadata)
+        if label in seen:
+            continue
+        seen.add(label)
+        source = str(metadata.get("source", ""))
+        sources.append({
+            "label": label,
+            "act": metadata.get("act_title") or Path(source).stem,
+            "section": metadata.get("section", ""),
+            "text": (document.page_content or "").strip()[:1500],
+            "url": source if source.startswith("http") else "",
+        })
+    return sources
+
+
+def extract_citations(documents):
+    return [source["label"] for source in extract_sources(documents)]
+
+
+def stored_sources(raw):
+    """Messages saved before sources were stored as JSON hold one label per line."""
+    if not raw:
+        return []
+    if raw.startswith("["):
+        return json.loads(raw)
+    return [{"label": label, "act": "", "section": "", "text": "", "url": ""} for label in raw.splitlines()]
 
 
 def reply_language(text):
@@ -340,7 +365,7 @@ def chat():
         answer = str(result.get("answer", "")).strip()
         if not answer:
             raise RuntimeError("The retrieval chain returned no answer.")
-        citations = extract_citations(result.get("context", []))
+        sources = extract_sources(result.get("context", []))
     except Exception:
         logger.exception("Chat request failed")
         with get_db() as connection:
@@ -358,11 +383,16 @@ def chat():
     with get_db() as connection:
         connection.execute(
             "INSERT INTO messages (conversation_id, role, content, citations) VALUES (?, 'assistant', ?, ?)",
-            (conversation_id, answer, "\n".join(citations)),
+            (conversation_id, answer, json.dumps(sources, ensure_ascii=False)),
         )
     if new_conversation:
         log_activity("chat", message)
-    return jsonify({"answer": answer, "citations": citations, "conversation_id": conversation_id})
+    return jsonify({
+        "answer": answer,
+        "sources": sources,
+        "citations": [source["label"] for source in sources],
+        "conversation_id": conversation_id,
+    })
 
 
 @app.get("/api/conversations")
@@ -388,7 +418,48 @@ def conversation(conversation_id):
             """,
             (conversation_id, session["user_id"]),
         ).fetchall()
-    return jsonify([dict(row) for row in rows])
+    messages = []
+    for row in rows:
+        sources = stored_sources(row["citations"])
+        messages.append({
+            "role": row["role"],
+            "content": row["content"],
+            "created_at": row["created_at"],
+            "sources": sources,
+            "citations": [source["label"] for source in sources],
+        })
+    return jsonify(messages)
+
+
+@app.post("/api/conversations/<int:conversation_id>/rename")
+@login_required
+def rename_conversation(conversation_id):
+    title = str(json_body().get("title", "")).strip()[:80]
+    if not title:
+        return jsonify({"error": "Please enter a title."}), 400
+    with get_db() as connection:
+        updated = connection.execute(
+            "UPDATE conversations SET title = ? WHERE id = ? AND user_id = ?",
+            (title, conversation_id, session["user_id"]),
+        ).rowcount
+    if not updated:
+        return jsonify({"error": "Conversation not found."}), 404
+    return jsonify({"id": conversation_id, "title": title})
+
+
+@app.post("/api/conversations/<int:conversation_id>/delete")
+@login_required
+def delete_conversation(conversation_id):
+    with get_db() as connection:
+        owned = connection.execute(
+            "SELECT id FROM conversations WHERE id = ? AND user_id = ?",
+            (conversation_id, session["user_id"]),
+        ).fetchone()
+        if not owned:
+            return jsonify({"error": "Conversation not found."}), 404
+        connection.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
+        connection.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+    return jsonify({"deleted": conversation_id})
 
 
 # ---------------------------------------------------------------------------
@@ -451,8 +522,8 @@ def analyze_contract():
     except Exception:
         logger.exception("Contract analysis failed")
         return jsonify({"error": "The contract could not be analyzed right now."}), 503
-    result["riskScore"] = max(1, min(10, round(score)))
-    log_activity("contract", f"Contract analyzed: {text[:60]}", risk_level(score, 7, 4))
+    result["riskScore"] = max(0, min(100, round(score)))
+    log_activity("contract", f"Contract analyzed: {text[:60]}", risk_level(score, 70, 35))
     return jsonify(result)
 
 
@@ -467,13 +538,14 @@ def check_risk():
         passages = get_shared_retriever().invoke(text[:2000])
         context = "\n\n".join(doc.page_content for doc in passages)
         result = ask_for_json(risk_prompt.format(context=context, text=text, language=tool_language()))
-        score = float(result.get("complianceScore", 0))
     except Exception:
         logger.exception("Risk check failed")
         return jsonify({"error": "The document could not be checked right now."}), 503
-    result["complianceScore"] = max(0, min(100, round(score)))
-    result["sources"] = extract_citations(passages)
-    log_activity("risk", f"Risk check: {text[:60]}", risk_level(100 - score, 60, 30))
+    level = str(result.get("level", "")).lower()
+    result["level"] = level if level in ("low", "medium", "high") else "medium"
+    result["steps"] = [str(step) for step in result.get("steps") or []]
+    result["sources"] = extract_sources(passages)
+    log_activity("risk", f"Risk check: {text[:60]}", result["level"])
     return jsonify(result)
 
 
@@ -632,6 +704,7 @@ def law_updates():
         last_sync = connection.execute(
             "SELECT finished_at, status FROM sync_runs WHERE finished_at IS NOT NULL ORDER BY id DESC LIMIT 1"
         ).fetchone()
+        tracked = connection.execute("SELECT COUNT(*) FROM laws WHERE tracked = 1").fetchone()[0]
     site = os.getenv("LAWS_SITE_URL", "http://bdlaws.minlaw.gov.bd")
     updates = [
         {
@@ -641,7 +714,7 @@ def law_updates():
         }
         for row in rows
     ]
-    return jsonify({"updates": updates, "last_sync": dict(last_sync) if last_sync else None})
+    return jsonify({"updates": updates, "last_sync": dict(last_sync) if last_sync else None, "tracked": tracked})
 
 
 def run_sync_in_background():

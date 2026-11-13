@@ -14,9 +14,9 @@ Read the contract below and reply with JSON only, using exactly these keys:
 {{
   "summary": "2-3 sentence plain-language summary",
   "keyTerms": [{{"term": "short name", "explanation": "what it means for the reader"}}],
-  "risks": [{{"risk": "description of the problem", "severity": "low | medium | high"}}],
+  "risks": [{{"title": "short title", "risk": "why it is a problem for the reader", "severity": "low | medium | high", "clause": "clause number as written in the contract, or empty"}}],
   "recommendations": ["what to negotiate or check"],
-  "riskScore": 1-10 number, 10 is the highest risk
+  "riskScore": 0-100 number, 100 is the highest risk
 }}
 List 5-7 key terms. Consider the Contract Act 1872 and other Bangladesh law where relevant.
 Do not invent section numbers.
@@ -26,22 +26,21 @@ Contract:
 {text}
 """
 
-risk_prompt = """You check documents for legal risk and compliance under Bangladesh law.
+risk_prompt = """You help people in Bangladesh judge whether a clause or a situation is legally risky for them.
 Relevant passages from the law library:
 {context}
 
-Review the document below and reply with JSON only, using exactly these keys:
+Read the text below and reply with JSON only, using exactly these keys:
 {{
-  "complianceScore": 0-100 number,
-  "checks": [{{"name": "what was checked", "status": "pass | fail | warning", "details": "short explanation"}}],
-  "risks": [{{"title": "short title", "severity": "low | medium | high | critical", "description": "why it matters"}}],
-  "recommendations": ["concrete improvement"]
+  "level": "low | medium | high",
+  "headline": "one short sentence with your verdict",
+  "explanation": "2-4 sentences in plain language: what the law says and why it matters here",
+  "steps": ["a concrete next step for the reader"]
 }}
-Check for missing clauses, ambiguous language, liability risks and conflicts with Bangladesh law.
-Only cite laws that appear in the passages above.
-Write every text value in {language}. Keep the JSON keys and the status and severity words exactly as shown, in English.
+Give 2-4 steps. Only cite laws that appear in the passages above. Do not invent section numbers.
+Write every text value in {language}. Keep the JSON keys and the level word exactly as shown, in English.
 
-Document:
+Text:
 {text}
 """
 

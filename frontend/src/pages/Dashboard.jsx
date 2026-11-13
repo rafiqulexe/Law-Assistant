@@ -1,219 +1,160 @@
-import React, { useEffect, useState } from 'react';
-import { formatDistanceToNow } from 'date-fns';
-import { bn as bangla } from 'date-fns/locale';
-import { useI18n } from '@/lib/i18n';
+import { ArrowRight, FileSignature, FileText, Inbox, MessageCircle, Plus, ShieldAlert } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { api } from '@/api/client';
-import { useAuth } from '@/lib/AuthContext';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { 
-  FileSearch, 
-  FileText, 
-  ShieldCheck, 
-  MessageSquare, 
-  Users,
-  ArrowRight,
-  Clock,
-  CheckCircle,
-  Zap,
-  BarChart3
-} from 'lucide-react';
+import { useApp } from '@/lib/app';
+import { Page } from '@/components/Layout';
+import { Button, Card, EmptyState, ErrorState, ListRow, RiskBadge, Skeleton, StatTile } from '@/components/ui';
 
-const quickActions = [
-  { icon: FileSearch, key: 'dash.analyzeContract', path: 'ContractAnalyzer' },
-  { icon: FileText, key: 'dash.generateDocument', path: 'DocumentGenerator' },
-  { icon: ShieldCheck, key: 'dash.checkCompliance', path: 'RiskChecker' },
-  { icon: MessageSquare, key: 'tool.chat', path: 'LegalChat' },
-  { icon: Users, key: 'dash.findLawyer', path: 'FindLawyer' },
-];
-
-const statCards = [
-  { key: 'contract', label: 'dash.statContracts', icon: FileSearch },
-  { key: 'document', label: 'dash.statDocuments', icon: FileText },
-  { key: 'risk', label: 'dash.statRisk', icon: ShieldCheck },
-  { key: 'chat', label: 'dash.statChats', icon: MessageSquare },
-];
-
-const activityIcon = {
-  contract: { icon: FileSearch, box: 'bg-blue-500/20', color: 'text-blue-400' },
-  document: { icon: FileText, box: 'bg-green-500/20', color: 'text-green-400' },
-  risk: { icon: ShieldCheck, box: 'bg-yellow-500/20', color: 'text-yellow-400' },
-  chat: { icon: MessageSquare, box: 'bg-purple-500/20', color: 'text-purple-400' },
+const KINDS = {
+  chat: { Icon: MessageCircle, path: '/ask', label: ['Chat', 'চ্যাট'] },
+  contract: { Icon: FileSignature, path: '/contract', label: ['Contract', 'চুক্তি'] },
+  risk: { Icon: ShieldAlert, path: '/risk', label: ['Risk check', 'ঝুঁকি যাচাই'] },
+  document: { Icon: FileText, path: '/documents', label: ['Document', 'দলিল'] },
 };
 
 export default function Dashboard() {
-  const { user } = useAuth();
-  const { t, language, formatNumber } = useI18n();
-  const [summary, setSummary] = useState({ counts: {}, recent: [] });
+  const { t, num, user, go, date, tError } = useApp();
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    api.get('/api/dashboard').then(setSummary).catch(() => {});
-  }, []);
+  const load = () => {
+    setError('');
+    api
+      .get('/api/dashboard')
+      .then(setData)
+      .catch((err) => setError(tError(err.message)));
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(load, []);
 
-  const counts = summary.counts || {};
-  const totalActions = Object.values(counts).reduce((sum, value) => sum + value, 0);
+  const h = new Date().getHours();
+  const greet =
+    h < 12
+      ? t('Good morning', 'শুভ সকাল')
+      : h < 17
+        ? t('Good afternoon', 'শুভ অপরাহ্ণ')
+        : t('Good evening', 'শুভ সন্ধ্যা');
+  const counts = data?.counts || {};
+  const stats = [
+    { kind: 'chat', label: t('Questions asked', 'জিজ্ঞাসিত প্রশ্ন') },
+    { kind: 'contract', label: t('Contracts analysed', 'বিশ্লেষিত চুক্তি') },
+    { kind: 'risk', label: t('Risk checks', 'ঝুঁকি যাচাই') },
+    { kind: 'document', label: t('Documents', 'দলিল') },
+  ];
+  const quick = [
+    { p: '/ask', l: t('New chat', 'নতুন চ্যাট'), Icon: Plus },
+    { p: '/contract', l: t('Analyze a contract', 'চুক্তি বিশ্লেষণ'), Icon: FileSignature },
+    { p: '/risk', l: t('Check a risk', 'ঝুঁকি যাচাই'), Icon: ShieldAlert },
+    { p: '/documents', l: t('Create a document', 'দলিল তৈরি'), Icon: FileText },
+  ];
 
   return (
-    <div className="pt-20 pb-24">
-      {/* Header */}
-      <section className="py-12 relative overflow-hidden">
-        <div className="absolute inset-0 hero-glow" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{t('dash.title')}</h1>
-            <p className="text-slate-400">{t('dash.welcome', { name: user ? `, ${user.username}` : '' })}</p>
-          </motion.div>
+    <Page>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[15px] text-muted">{greet},</p>
+          <h1 className="text-[28px] font-semibold tracking-tight sm:text-[34px]">{user?.name}</h1>
         </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Stats */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card className="bg-slate-900/80 border-brand-900/30">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
-                      <stat.icon className="h-6 w-6 text-brand-500" />
-                    </div>
-                  </div>
-                  <p className="text-3xl font-bold text-white mb-1">{formatNumber(counts[stat.key] || 0)}</p>
-                  <p className="text-slate-400 text-sm">{t(stat.label)}</p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Quick Actions */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-1"
-          >
-            <Card className="bg-slate-900/80 border-brand-900/30 h-full">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-brand-500" />
-                  {t('dash.quickActions')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {quickActions.map((action, index) => (
-                  <Link key={index} to={createPageUrl(action.path)}>
-                    <Button
-                      className="w-full justify-start bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold h-auto py-4"
-                    >
-                      <action.icon className="h-5 w-5 mr-3" />
-                      {t(action.key)}
-                      <ArrowRight className="h-4 w-4 ml-auto" />
-                    </Button>
-                  </Link>
-                ))}
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-2"
-          >
-            <Card className="bg-slate-900/80 border-brand-900/30">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-brand-500" />
-                  {t('dash.recent')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {summary.recent.length === 0 && (
-                    <p className="text-slate-500">{t('dash.noActivity')}</p>
-                  )}
-                  {summary.recent.map((activity, index) => {
-                    const style = activityIcon[activity.kind] || activityIcon.chat;
-                    return (
-                      <div key={index} className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-lg">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${style.box}`}>
-                          <style.icon className={`h-5 w-5 ${style.color}`} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white font-medium truncate">{activity.title}</p>
-                          <p className="text-slate-500 text-sm">
-                            {formatDistanceToNow(new Date(activity.created_at.replace(' ', 'T') + 'Z'), { addSuffix: true, locale: language === 'bn' ? bangla : undefined })}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {activity.risk && (
-                            <Badge className={
-                              activity.risk === 'low' ? 'bg-green-500/20 text-green-400' :
-                              activity.risk === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                              'bg-red-500/20 text-red-400'
-                            }>
-                              {t(`risk.${activity.risk}`)}
-                            </Badge>
-                          )}
-                          <CheckCircle className="h-5 w-5 text-green-500" />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Usage Overview */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mt-8"
-        >
-          <Card className="bg-slate-900/80 border-brand-900/30">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-brand-500" />
-                {t('dash.usage')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-8">
-                {statCards.map((stat) => {
-                  const value = counts[stat.key] || 0;
-                  return (
-                    <div key={stat.key}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-slate-400">{t(stat.label)}</span>
-                        <span className="text-white font-semibold">{formatNumber(value)}</span>
-                      </div>
-                      <Progress value={totalActions ? (value / totalActions) * 100 : 0} className="h-2 bg-slate-700" />
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <Button pill icon={<Plus className="size-5" />} onClick={() => go('/ask')}>
+          {t('Ask a question', 'প্রশ্ন করুন')}
+        </Button>
       </div>
-    </div>
+
+      {error && (
+        <div className="mt-8">
+          <ErrorState title={t('Your dashboard could not load', 'ড্যাশবোর্ড লোড হয়নি')} body={error} onRetry={load} />
+        </div>
+      )}
+
+      <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {!data
+          ? [0, 1, 2, 3].map((i) => (
+              <Card key={i} className="flex flex-col gap-4 p-5">
+                <Skeleton className="size-10 rounded-xl" />
+                <Skeleton className="h-8 w-16" />
+                <Skeleton className="h-3 w-24" />
+              </Card>
+            ))
+          : stats.map((s) => {
+              const { Icon } = KINDS[s.kind];
+              return (
+                <StatTile
+                  key={s.kind}
+                  icon={<Icon className="size-5" strokeWidth={1.75} />}
+                  label={s.label}
+                  value={num(counts[s.kind] || 0)}
+                />
+              );
+            })}
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <Card className="p-2">
+          <div className="flex items-center justify-between px-4 pt-3 pb-1">
+            <h2 className="text-[17px] font-semibold">{t('Recent activity', 'সাম্প্রতিক কার্যক্রম')}</h2>
+          </div>
+          {!data ? (
+            <div className="flex flex-col gap-1 p-2">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center gap-3.5 px-2 py-2.5">
+                  <Skeleton className="size-10 rounded-xl" />
+                  <div className="flex flex-1 flex-col gap-2">
+                    <Skeleton className="h-3.5 w-2/3" />
+                    <Skeleton className="h-3 w-1/3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : data.recent.length === 0 ? (
+            <EmptyState
+              icon={<Inbox className="size-6" strokeWidth={1.5} />}
+              title={t('Nothing here yet', 'এখনো কিছু নেই')}
+              body={t(
+                'Your questions, contracts and documents will show up here.',
+                'আপনার প্রশ্ন, চুক্তি ও দলিল এখানে দেখা যাবে।',
+              )}
+            />
+          ) : (
+            <ul className="anim-fade">
+              {data.recent.map((a, i) => {
+                const kind = KINDS[a.kind] || KINDS.chat;
+                return (
+                  <li key={i}>
+                    <ListRow
+                      icon={<kind.Icon className="size-5" strokeWidth={1.75} />}
+                      title={a.title}
+                      subtitle={`${t(...kind.label)} · ${date(a.created_at)}`}
+                      onClick={() => go(kind.path)}
+                      right={
+                        ['low', 'medium', 'high'].includes(a.risk) ? (
+                          <RiskBadge level={a.risk} short />
+                        ) : (
+                          <ArrowRight className="size-4 text-muted" />
+                        )
+                      }
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </Card>
+        <Card className="p-5">
+          <h2 className="text-[17px] font-semibold">{t('Quick actions', 'দ্রুত কাজ')}</h2>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {quick.map((q) => (
+              <button
+                key={q.p}
+                onClick={() => go(q.p)}
+                className="flex min-h-24 flex-col items-start justify-between rounded-2xl border border-line bg-surface-2 p-4 text-left text-[14px] font-medium transition-colors hover:border-accent/50"
+              >
+                <q.Icon className="size-5 text-accent-text" strokeWidth={1.75} />
+                {q.l}
+              </button>
+            ))}
+          </div>
+        </Card>
+      </div>
+    </Page>
   );
 }

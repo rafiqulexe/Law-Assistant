@@ -75,6 +75,8 @@ export const legal = {
     api.post('/api/chat', { message, conversation_id: conversationId ?? null }),
   conversations: () => api.get('/api/conversations'),
   conversation: (id) => api.get(`/api/conversations/${id}`),
+  renameConversation: (id, title) => api.post(`/api/conversations/${id}/rename`, { title }),
+  deleteConversation: (id) => api.post(`/api/conversations/${id}/delete`),
   analyzeContract: (text, language) => api.post('/api/contract/analyze', { text, language }),
   checkRisk: (text, language) => api.post('/api/risk/check', { text, language }),
   generateDocument: (documentType, fields, language) =>
