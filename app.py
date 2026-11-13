@@ -99,7 +99,12 @@ def login_required(view):
 def admin_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
-        if not session.get("is_admin"):
+        # Read the flag from the database so removing an admin takes effect at once.
+        with get_db() as connection:
+            row = connection.execute(
+                "SELECT is_admin FROM users WHERE id = ?", (session.get("user_id"),)
+            ).fetchone()
+        if not row or not row["is_admin"]:
             return jsonify({"error": "Administrator access required."}), 403
         return view(*args, **kwargs)
 
@@ -532,10 +537,51 @@ def dashboard():
 def admin_users():
     with get_db() as connection:
         users = connection.execute(
-            "SELECT username, is_admin, created_at FROM users ORDER BY id DESC"
+            "SELECT id, username, is_admin, created_at FROM users ORDER BY id DESC"
         ).fetchall()
     data_files = sorted(p.name for p in DATA_DIR.glob("*") if p.suffix.lower() in {".pdf", ".csv"})
     return jsonify({"users": [dict(row) for row in users], "data_files": data_files})
+
+
+@app.post("/api/admin/users/<int:user_id>/admin")
+@login_required
+@admin_required
+def set_admin(user_id):
+    make_admin = bool((request.get_json(silent=True) or {}).get("is_admin"))
+    if user_id == session["user_id"] and not make_admin:
+        return jsonify({"error": "You cannot remove your own admin access."}), 400
+    with get_db() as connection:
+        updated = connection.execute(
+            "UPDATE users SET is_admin = ? WHERE id = ?", (int(make_admin), user_id)
+        ).rowcount
+    if not updated:
+        return jsonify({"error": "User not found."}), 404
+    return jsonify({"id": user_id, "is_admin": make_admin})
+
+
+@app.get("/api/admin/messages")
+@login_required
+@admin_required
+def admin_messages():
+    with get_db() as connection:
+        rows = connection.execute(
+            "SELECT id, name, email, subject, message, created_at FROM contact_messages"
+            " ORDER BY id DESC LIMIT 200"
+        ).fetchall()
+    return jsonify({"messages": [dict(row) for row in rows]})
+
+
+@app.post("/api/admin/messages/<int:message_id>/delete")
+@login_required
+@admin_required
+def delete_message(message_id):
+    with get_db() as connection:
+        deleted = connection.execute(
+            "DELETE FROM contact_messages WHERE id = ?", (message_id,)
+        ).rowcount
+    if not deleted:
+        return jsonify({"error": "Message not found."}), 404
+    return jsonify({"deleted": message_id})
 
 
 @app.post("/api/admin/upload")

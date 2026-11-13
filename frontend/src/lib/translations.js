@@ -439,6 +439,10 @@ const bn = {
     'Reading scanned files is not set up on this server.': 'এই সার্ভারে স্ক্যান করা ফাইল পড়ার ব্যবস্থা এখনো চালু হয়নি।',
     'Could not read that file.': 'ফাইলটি পড়া যায়নি।',
     'No text found in that file.': 'ফাইলটিতে কোনো লেখা পাওয়া যায়নি।',
+    'Administrator access required.': 'এই পাতাটি শুধু অ্যাডমিনদের জন্য।',
+    'You cannot remove your own admin access.': 'নিজের অ্যাডমিন ক্ষমতা নিজে সরানো যায় না।',
+    'User not found.': 'ব্যবহারকারী পাওয়া যায়নি।',
+    'Message not found.': 'বার্তাটি পাওয়া যায়নি।',
   },
 };
 

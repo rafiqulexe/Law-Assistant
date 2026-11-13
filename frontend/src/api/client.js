@@ -97,4 +97,7 @@ export const admin = {
   },
   startLawSync: () => api.post('/api/admin/sync-laws'),
   lawSyncStatus: () => api.get('/api/admin/sync-status'),
+  setAdmin: (id, isAdmin) => api.post(`/api/admin/users/${id}/admin`, { is_admin: isAdmin }),
+  messages: () => api.get('/api/admin/messages'),
+  deleteMessage: (id) => api.post(`/api/admin/messages/${id}/delete`),
 };
