@@ -40,7 +40,7 @@ export default function Footer() {
             <Link to={createPageUrl('Home')} className="flex items-center gap-2 mb-6">
               <Scale className="h-8 w-8 text-brand-500" />
               <span className="text-2xl font-bold bg-gradient-to-r from-brand-400 to-brand-600 bg-clip-text text-transparent">
-                LexAI
+                {t('brand')}
               </span>
             </Link>
             <p className="text-slate-400 mb-6 max-w-sm leading-relaxed">
@@ -99,7 +99,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Mail className="h-4 w-4 text-brand-500" />
-                contact@lexai.com
+                contact@bidhanshala.com
               </li>
               <li className="flex items-center gap-3 text-slate-400 text-sm">
                 <Phone className="h-4 w-4 text-brand-500" />

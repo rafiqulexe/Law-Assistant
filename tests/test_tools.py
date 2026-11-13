@@ -1,8 +1,8 @@
-import app as lexai
+import app as webapp
 
 
 def test_contract_score_is_kept_between_1_and_10(user, monkeypatch):
-    monkeypatch.setattr(lexai, "ask_for_json", lambda _prompt: {"summary": "ok", "riskScore": 42})
+    monkeypatch.setattr(webapp, "ask_for_json", lambda _prompt: {"summary": "ok", "riskScore": 42})
     response = user.post("/api/contract/analyze", {"text": "The tenant pays rent monthly."})
     assert response.status_code == 200
     assert response.get_json()["riskScore"] == 10
@@ -16,19 +16,19 @@ def test_contract_model_failure(user, monkeypatch):
     def broken(_prompt):
         raise ValueError("The model did not return JSON.")
 
-    monkeypatch.setattr(lexai, "ask_for_json", broken)
+    monkeypatch.setattr(webapp, "ask_for_json", broken)
     assert user.post("/api/contract/analyze", {"text": "Some contract"}).status_code == 503
 
 
 def test_risk_check_returns_sources(user, monkeypatch):
-    monkeypatch.setattr(lexai, "ask_for_json", lambda _prompt: {"complianceScore": 120, "checks": []})
+    monkeypatch.setattr(webapp, "ask_for_json", lambda _prompt: {"complianceScore": 120, "checks": []})
     data = user.post("/api/risk/check", {"text": "Some document"}).get_json()
     assert data["complianceScore"] == 100
     assert data["sources"] == ["The Penal Code, 1860 - Punishment for theft (official, updated 2026-11-07)"]
 
 
 def test_document_generation(user, monkeypatch):
-    monkeypatch.setattr(lexai, "ask_for_text", lambda _prompt: "RENT AGREEMENT\n...")
+    monkeypatch.setattr(webapp, "ask_for_text", lambda _prompt: "RENT AGREEMENT\n...")
     response = user.post("/api/documents/generate", {"document_type": "Rent agreement", "fields": {"Tenant": "Karim"}})
     assert response.get_json()["document"].startswith("RENT AGREEMENT")
 
@@ -38,7 +38,7 @@ def test_document_needs_a_type(user):
 
 
 def test_dashboard_counts_activity(user, chain, monkeypatch):
-    monkeypatch.setattr(lexai, "ask_for_text", lambda _prompt: "A document")
+    monkeypatch.setattr(webapp, "ask_for_text", lambda _prompt: "A document")
     user.post("/api/documents/generate", {"document_type": "Affidavit", "fields": {}})
     response = user.get("/api/dashboard")
     assert response.status_code == 200
@@ -65,7 +65,7 @@ def test_unknown_api_route_is_json_404(client):
 
 def test_tools_answer_in_the_chosen_language(user, monkeypatch):
     prompts = []
-    monkeypatch.setattr(lexai, "ask_for_text", lambda prompt: prompts.append(prompt) or "দলিল")
+    monkeypatch.setattr(webapp, "ask_for_text", lambda prompt: prompts.append(prompt) or "দলিল")
     user.post("/api/documents/generate", {"document_type": "Affidavit", "fields": {}, "language": "bn"})
     user.post("/api/documents/generate", {"document_type": "Affidavit", "fields": {}})
     assert "Write the whole document in Bangla." in prompts[0]

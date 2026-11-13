@@ -30,7 +30,7 @@ const categoryIds = ["all", "ai", "contracts", "compliance", "advice", "startups
 
 const text = {
   en: {
-    badge: "LexAI Blog",
+    badge: "Bidhanshala Blog",
     title1: "Legal Insights & ",
     title2: "Resources",
     intro: "Stay informed with the latest in legal AI, contract law, and compliance best practices.",
@@ -51,7 +51,7 @@ const text = {
     ],
   },
   bn: {
-    badge: "LexAI ব্লগ",
+    badge: "বিধানশালা ব্লগ",
     title1: "আইনি ভাবনা ও ",
     title2: "তথ্যভান্ডার",
     intro: "আইনি এআই, চুক্তি আইন আর আইন মেনে চলার সেরা চর্চা নিয়ে সর্বশেষ খবর জানুন।",

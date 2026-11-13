@@ -1,6 +1,7 @@
 // UI text in English and Bangla. Keys are grouped by page; a missing Bangla key shows the English.
 const en = {
   // Navigation and footer
+  brand: 'Bidhanshala',
   'nav.home': 'Home',
   'nav.features': 'Features',
   'nav.lawUpdates': 'Law Updates',
@@ -26,7 +27,7 @@ const en = {
   'footer.privacy': 'Privacy Policy',
   'footer.terms': 'Terms of Service',
   'footer.cookies': 'Cookie Policy',
-  'footer.rights': '© {year} LexAI. All rights reserved.',
+  'footer.rights': '© {year} Bidhanshala. All rights reserved.',
   'common.loading': 'Loading...',
   'notFound.title': 'Page not found',
   'notFound.text': 'The page "{path}" does not exist.',
@@ -43,7 +44,7 @@ const en = {
   'updates.badge': 'Law Updates',
   'updates.title1': 'Recent changes in ',
   'updates.title2': 'Bangladesh law',
-  'updates.intro': 'LexAI checks the official Laws of Bangladesh website regularly. New laws and amended sections are added to the assistant automatically.',
+  'updates.intro': 'Bidhanshala checks the official Laws of Bangladesh website regularly. New laws and amended sections are added to the assistant automatically.',
   'updates.lastChecked': 'Last checked: {date}',
   'updates.none': 'No updates recorded yet.',
   'updates.latest': 'Latest',
@@ -54,7 +55,7 @@ const en = {
   // Sign in and sign up
   'login.welcome': 'Welcome back',
   'login.createTitle': 'Create your account',
-  'login.welcomeText': 'Sign in to continue to LexAI.',
+  'login.welcomeText': 'Sign in to continue to Bidhanshala.',
   'login.createText': 'Start asking questions about Bangladesh law.',
   'login.username': 'Username',
   'login.password': 'Password',
@@ -73,9 +74,9 @@ const en = {
   'chat.newChat': 'New chat',
   'chat.history': 'History',
   'chat.noHistory': 'No conversations yet.',
-  'chat.assistantName': 'LexAI Assistant',
+  'chat.assistantName': 'Bidhanshala Assistant',
   'chat.online': 'Online',
-  'chat.welcome': "Assalamu Alaikum! I'm LexAI, your legal information assistant for Bangladesh law. Ask me about the Penal Code, CrPC, Evidence Act and other laws in English or Bangla.",
+  'chat.welcome': "Assalamu Alaikum! I'm Bidhanshala, your legal information assistant for Bangladesh law. Ask me about the Penal Code, CrPC, Evidence Act and other laws in English or Bangla.",
   'chat.sources': 'Sources',
   'chat.thinking': 'Thinking...',
   'chat.suggested': 'Suggested questions:',
@@ -214,6 +215,7 @@ const en = {
 };
 
 const bn = {
+  brand: 'বিধানশালা',
   'nav.home': 'হোম',
   'nav.features': 'ফিচার',
   'nav.lawUpdates': 'আইন আপডেট',
@@ -239,7 +241,7 @@ const bn = {
   'footer.privacy': 'গোপনীয়তা নীতি',
   'footer.terms': 'ব্যবহারের শর্তাবলি',
   'footer.cookies': 'কুকি নীতি',
-  'footer.rights': '© {year} LexAI। সর্বস্বত্ব সংরক্ষিত।',
+  'footer.rights': '© {year} বিধানশালা। সর্বস্বত্ব সংরক্ষিত।',
   'common.loading': 'লোড হচ্ছে...',
   'notFound.title': 'পেজটি পাওয়া যায়নি',
   'notFound.text': '"{path}" নামে কোনো পেজ নেই।',
@@ -255,7 +257,7 @@ const bn = {
   'updates.badge': 'আইন আপডেট',
   'updates.title1': 'বাংলাদেশের আইনে ',
   'updates.title2': 'সাম্প্রতিক পরিবর্তন',
-  'updates.intro': 'LexAI নিয়মিত বাংলাদেশের সরকারি আইনের ওয়েবসাইট যাচাই করে। নতুন আইন আর সংশোধিত ধারাগুলো স্বয়ংক্রিয়ভাবে সহকারীতে যুক্ত হয়।',
+  'updates.intro': 'বিধানশালা নিয়মিত বাংলাদেশের সরকারি আইনের ওয়েবসাইট যাচাই করে। নতুন আইন আর সংশোধিত ধারাগুলো স্বয়ংক্রিয়ভাবে সহকারীতে যুক্ত হয়।',
   'updates.lastChecked': 'শেষ যাচাই: {date}',
   'updates.none': 'এখনো কোনো আপডেট নেই।',
   'updates.latest': 'সর্বশেষ',
@@ -265,7 +267,7 @@ const bn = {
 
   'login.welcome': 'আবার স্বাগতম',
   'login.createTitle': 'অ্যাকাউন্ট খুলুন',
-  'login.welcomeText': 'LexAI ব্যবহার করতে সাইন ইন করুন।',
+  'login.welcomeText': 'বিধানশালা ব্যবহার করতে সাইন ইন করুন।',
   'login.createText': 'বাংলাদেশের আইন নিয়ে প্রশ্ন করা শুরু করুন।',
   'login.username': 'ইউজারনেম',
   'login.password': 'পাসওয়ার্ড',
@@ -283,9 +285,9 @@ const bn = {
   'chat.newChat': 'নতুন চ্যাট',
   'chat.history': 'আগের চ্যাট',
   'chat.noHistory': 'এখনো কোনো চ্যাট নেই।',
-  'chat.assistantName': 'LexAI সহকারী',
+  'chat.assistantName': 'বিধানশালা সহকারী',
   'chat.online': 'অনলাইন',
-  'chat.welcome': 'আসসালামু আলাইকুম! আমি LexAI, বাংলাদেশের আইন বিষয়ে আপনার তথ্য সহকারী। দণ্ডবিধি, ফৌজদারি কার্যবিধি, সাক্ষ্য আইনসহ অন্যান্য আইন নিয়ে বাংলা বা ইংরেজিতে প্রশ্ন করুন।',
+  'chat.welcome': 'আসসালামু আলাইকুম! আমি বিধানশালা, বাংলাদেশের আইন বিষয়ে আপনার তথ্য সহকারী। দণ্ডবিধি, ফৌজদারি কার্যবিধি, সাক্ষ্য আইনসহ অন্যান্য আইন নিয়ে বাংলা বা ইংরেজিতে প্রশ্ন করুন।',
   'chat.sources': 'সূত্র',
   'chat.thinking': 'ভাবছি...',
   'chat.suggested': 'যেমন প্রশ্ন করতে পারেন:',

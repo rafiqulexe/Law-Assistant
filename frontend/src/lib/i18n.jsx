@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { translateRateLimit, translations } from '@/lib/translations';
 
-const STORAGE_KEY = 'lexai-language';
+const STORAGE_KEY = 'bidhanshala-language';
 const LanguageContext = createContext(null);
 
 function savedLanguage() {

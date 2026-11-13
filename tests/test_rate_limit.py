@@ -1,4 +1,4 @@
-import app as lexai
+import app as webapp
 from src import rate_limit
 
 
@@ -19,14 +19,14 @@ def test_register_is_limited(api):
 
 
 def test_ai_requests_are_limited_per_user(user, chain):
-    for _ in range(lexai.AI_REQUESTS_PER_10_MIN):
+    for _ in range(webapp.AI_REQUESTS_PER_10_MIN):
         assert user.post("/api/chat", {"message": "What is theft?"}).status_code == 200
     assert user.post("/api/chat", {"message": "What is theft?"}).status_code == 429
 
 
 def test_ai_limit_is_shared_by_the_tools(user, chain, monkeypatch):
-    monkeypatch.setattr(lexai, "ask_for_text", lambda _prompt: "A document")
-    for _ in range(lexai.AI_REQUESTS_PER_10_MIN):
+    monkeypatch.setattr(webapp, "ask_for_text", lambda _prompt: "A document")
+    for _ in range(webapp.AI_REQUESTS_PER_10_MIN):
         user.post("/api/chat", {"message": "What is theft?"})
     response = user.post("/api/documents/generate", {"document_type": "Affidavit", "fields": {}})
     assert response.status_code == 429

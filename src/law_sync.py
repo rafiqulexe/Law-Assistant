@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 SITE = os.getenv("LAWS_SITE_URL", "http://bdlaws.minlaw.gov.bd")
 REQUEST_DELAY = float(os.getenv("LAW_SYNC_DELAY", "2"))
-HEADERS = {"User-Agent": "LexAI law sync (Bangladesh legal information project)"}
+HEADERS = {"User-Agent": "Bidhanshala law sync (Bangladesh legal information project)"}
 
 # Core acts that were in the original PDF library. More can be tracked from the admin panel.
 CORE_ACTS = {

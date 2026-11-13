@@ -28,7 +28,7 @@ const teamImages = [
 
 const text = {
   en: {
-    badge: "About LexAI",
+    badge: "About Bidhanshala",
     title1: "Democratizing ",
     title2: "Legal Access",
     intro: "We're on a mission to make legal assistance accessible, affordable, and intelligent through the power of artificial intelligence.",
@@ -44,7 +44,7 @@ const text = {
     ],
     valuesTitle1: "Our Core ",
     valuesTitle2: "Values",
-    valuesIntro: "The principles that guide everything we do at LexAI.",
+    valuesIntro: "The principles that guide everything we do at Bidhanshala.",
     values: [
       { title: "Innovation", description: "Pushing the boundaries of legal technology with cutting-edge AI solutions." },
       { title: "Accessibility", description: "Making legal assistance available to everyone, regardless of background." },
@@ -61,13 +61,13 @@ const text = {
       { name: "David Park", role: "VP of Product", bio: "Product leader with experience at Slack and Notion. Stanford MBA." },
     ],
     ctaTitle1: "Ready to Get Started with ",
-    ctaTitle2: "LexAI?",
-    ctaText: "Join thousands of users who trust LexAI for their legal needs.",
+    ctaTitle2: "Bidhanshala?",
+    ctaText: "Join thousands of users who trust Bidhanshala for their legal needs.",
     explore: "Explore Features",
     contact: "Contact Us",
   },
   bn: {
-    badge: "LexAI সম্পর্কে",
+    badge: "বিধানশালা সম্পর্কে",
     title1: "আইনি সেবা ",
     title2: "সবার নাগালে",
     intro: "কৃত্রিম বুদ্ধিমত্তার সাহায্যে আইনি সহায়তাকে সহজলভ্য, সাশ্রয়ী আর বুদ্ধিদীপ্ত করাই আমাদের লক্ষ্য।",
@@ -83,7 +83,7 @@ const text = {
     ],
     valuesTitle1: "আমাদের মূল ",
     valuesTitle2: "মূল্যবোধ",
-    valuesIntro: "যে নীতিগুলো LexAI-এর প্রতিটি কাজের দিশা দেয়।",
+    valuesIntro: "যে নীতিগুলো বিধানশালার প্রতিটি কাজের দিশা দেয়।",
     values: [
       { title: "উদ্ভাবন", description: "আধুনিক এআই সমাধান দিয়ে আইনি প্রযুক্তির সীমানা এগিয়ে নেওয়া।" },
       { title: "সহজলভ্যতা", description: "পটভূমি যা-ই হোক, আইনি সহায়তা সবার হাতের নাগালে আনা।" },
@@ -99,9 +99,9 @@ const text = {
       { name: "সারাহ উইলিয়ামস", role: "প্রধান আইন কর্মকর্তা", bio: "আইনি প্রযুক্তিতে ২০ বছরেরও বেশি অভিজ্ঞতা। Fortune 500 প্রতিষ্ঠানের সাবেক জেনারেল কাউন্সেল।" },
       { name: "ডেভিড পার্ক", role: "প্রোডাক্ট বিভাগের ভিপি", bio: "Slack ও Notion-এ কাজের অভিজ্ঞতাসম্পন্ন প্রোডাক্ট লিডার। স্ট্যানফোর্ড থেকে MBA।" },
     ],
-    ctaTitle1: "LexAI দিয়ে শুরু করতে ",
+    ctaTitle1: "বিধানশালা দিয়ে শুরু করতে ",
     ctaTitle2: "প্রস্তুত?",
-    ctaText: "আইনি প্রয়োজনে LexAI-এর ওপর আস্থা রাখা হাজারো ব্যবহারকারীর সঙ্গে যোগ দিন।",
+    ctaText: "আইনি প্রয়োজনে বিধানশালার ওপর আস্থা রাখা হাজারো ব্যবহারকারীর সঙ্গে যোগ দিন।",
     explore: "ফিচারগুলো দেখুন",
     contact: "যোগাযোগ করুন",
   },

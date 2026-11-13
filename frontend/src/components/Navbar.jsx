@@ -64,7 +64,7 @@ export default function Navbar() {
               <div className="absolute inset-0 bg-brand-500/20 blur-xl rounded-full" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-brand-400 via-brand-500 to-brand-600 bg-clip-text text-transparent">
-              LexAI
+              {t('brand')}
             </span>
           </Link>
 

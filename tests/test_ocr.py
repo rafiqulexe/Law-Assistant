@@ -3,7 +3,7 @@ import io
 import pytest
 from pypdf import PdfWriter
 
-import app as lexai
+import app as webapp
 from src import ocr
 
 
@@ -31,7 +31,7 @@ def test_scanned_pdf_goes_through_ocr(user, monkeypatch):
 
 
 def test_pdf_with_text_skips_ocr(user, monkeypatch):
-    monkeypatch.setattr(lexai, "pdf_text_layer", lambda raw: ("The tenant pays rent every month. " * 5, 1))
+    monkeypatch.setattr(webapp, "pdf_text_layer", lambda raw: ("The tenant pays rent every month. " * 5, 1))
     monkeypatch.setattr(ocr, "pdf_to_text", lambda raw: pytest.fail("OCR should not run"))
     data = upload(user, blank_pdf(1), "contract.pdf").get_json()
     assert data["ocr"] is False

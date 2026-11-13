@@ -1,6 +1,6 @@
-# LexAI - Bangladesh Law Assistant
+# Bidhanshala (বিধানশালা) - Bangladesh law, in one place
 
-LexAI answers questions about Bangladesh law using retrieval-augmented generation.
+Bidhanshala answers questions about Bangladesh law using retrieval-augmented generation.
 Law documents (PDF/CSV) from the `Data/` folder are embedded into Pinecone, and an
 Ollama model answers from the retrieved passages, with the source shown for every answer.
 
@@ -168,5 +168,5 @@ sqlite3 instance/law_assistant.db "UPDATE users SET is_admin = 1 WHERE username 
 
 ## Disclaimer
 
-LexAI provides legal information, not legal advice. Consult a qualified lawyer for your
+Bidhanshala provides legal information, not legal advice. Consult a qualified lawyer for your
 specific situation.

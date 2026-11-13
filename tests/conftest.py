@@ -9,7 +9,7 @@ import pytest
 os.environ["SECRET_KEY"] = "test-secret"
 os.environ["DATABASE_PATH"] = str(Path(tempfile.mkdtemp()) / "import.db")
 
-import app as lexai  # noqa: E402
+import app as webapp  # noqa: E402
 from src import rate_limit  # noqa: E402
 from src.database import get_db, init_db  # noqa: E402
 
@@ -52,7 +52,7 @@ class FakeRetriever:
 @pytest.fixture
 def chain(monkeypatch):
     fake = FakeChain()
-    monkeypatch.setattr(lexai, "get_rag_chain", lambda: fake)
+    monkeypatch.setattr(webapp, "get_rag_chain", lambda: fake)
     return fake
 
 
@@ -61,15 +61,15 @@ def fresh_app(tmp_path, monkeypatch):
     monkeypatch.setenv("DATABASE_PATH", str(tmp_path / "test.db"))
     init_db()
     rate_limit.reset()
-    monkeypatch.setattr(lexai, "translate_to_english", lambda text, history=None: "What is the punishment for theft?")
-    monkeypatch.setattr(lexai, "get_shared_retriever", lambda: FakeRetriever())
-    lexai.app.config["TESTING"] = True
+    monkeypatch.setattr(webapp, "translate_to_english", lambda text, history=None: "What is the punishment for theft?")
+    monkeypatch.setattr(webapp, "get_shared_retriever", lambda: FakeRetriever())
+    webapp.app.config["TESTING"] = True
     yield
 
 
 @pytest.fixture
 def client():
-    return lexai.app.test_client()
+    return webapp.app.test_client()
 
 
 class Api:

@@ -80,7 +80,7 @@ const text = {
     ],
     ctaTitle1: "Ready to Experience the ",
     ctaTitle2: "Future of Legal?",
-    ctaText: "Start using LexAI today and transform your legal workflow.",
+    ctaText: "Start using Bidhanshala today and transform your legal workflow.",
     ctaButton: "Get Started Now",
   },
   bn: {
@@ -125,7 +125,7 @@ const text = {
     ],
     ctaTitle1: "আইনি সেবার ",
     ctaTitle2: "ভবিষ্যৎ দেখতে প্রস্তুত?",
-    ctaText: "আজই LexAI ব্যবহার শুরু করুন, বদলে দিন আপনার আইনি কাজের ধরন।",
+    ctaText: "আজই বিধানশালা ব্যবহার শুরু করুন, বদলে দিন আপনার আইনি কাজের ধরন।",
     ctaButton: "এখনই শুরু করুন",
   },
 };

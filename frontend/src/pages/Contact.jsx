@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 const contactMeta = [
-  { icon: Mail, content: "support@lexai.com" },
+  { icon: Mail, content: "support@bidhanshala.com" },
   { icon: Phone, content: "+1 (555) 123-4567" },
   { icon: MapPin, content: "123 Legal Street" },
   { icon: Clock },
