@@ -75,7 +75,7 @@ def main():
     variables = {
         "PINECONE_INDEX_NAME": required("PINECONE_INDEX_NAME", os.getenv("PINECONE_INDEX_NAME")),
         "LLM_PROVIDER": "openai",
-        "LLM_MODEL": os.getenv("SPACE_LLM_MODEL") or "gemini-2.5-flash",
+        "LLM_MODEL": os.getenv("SPACE_LLM_MODEL") or "gemini-3.5-flash",
         "LLM_BASE_URL": os.getenv("SPACE_LLM_BASE_URL") or GEMINI_URL,
         "ADMIN_USERNAMES": os.getenv("SPACE_ADMIN_USERNAMES", ""),
     }

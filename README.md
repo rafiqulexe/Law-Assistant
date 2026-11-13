@@ -131,7 +131,7 @@ The answers come from a hosted LLM; Gemini's free tier is the default.
    SPACE_ADMIN_USERNAMES=your-name  # these accounts become admins when they register
    ```
 
-   `SPACE_LLM_MODEL` (default `gemini-2.5-flash`) and `SPACE_LLM_BASE_URL` switch to another
+   `SPACE_LLM_MODEL` (default `gemini-3.5-flash`) and `SPACE_LLM_BASE_URL` switch to another
    provider. Pinecone settings are read from the same file.
 3. Run `python deploy_space.py`. It creates the Space, sets the secrets and uploads the code
    (not `Data/`, which is already in Pinecone). The first build takes about 10 minutes.
