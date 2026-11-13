@@ -6,7 +6,6 @@ import {
   Globe2,
   HeartHandshake,
   Mail,
-  MapPin,
   ShieldCheck,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -171,18 +170,13 @@ export function Contact() {
         <div className="flex flex-col gap-4">
           <Card className="p-6">
             <Mail className="size-5 text-accent-text" strokeWidth={1.75} />
-            <p className="mt-3 text-[13px] text-muted">{t('Email us', 'ইমেইল করুন')}</p>
-            <a
-              href="mailto:hello@bidhanshala.com"
-              className="rounded text-[17px] font-medium hover:text-accent-text"
-            >
-              hello@bidhanshala.com
-            </a>
-          </Card>
-          <Card className="p-6">
-            <MapPin className="size-5 text-accent-text" strokeWidth={1.75} />
-            <p className="mt-3 text-[13px] text-muted">{t('Office', 'অফিস')}</p>
-            <p className="text-[15px]">{t('Gulshan 2, Dhaka 1212', 'গুলশান ২, ঢাকা ১২১২')}</p>
+            <p className="mt-3 text-[15px] font-medium">{t('How we reply', 'কীভাবে উত্তর দিই')}</p>
+            <p className="mt-1 text-[15px] text-muted">
+              {t(
+                'Your message goes straight to the Bidhanshala team. We reply to the email you give.',
+                'আপনার বার্তা সরাসরি বিধানশালা টিমের কাছে যায়। আপনার দেওয়া ইমেইলে আমরা উত্তর দিই।',
+              )}
+            </p>
           </Card>
         </div>
       </div>

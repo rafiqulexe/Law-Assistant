@@ -218,8 +218,8 @@ export const FAQS = [
   {
     q: { en: 'Is Bidhanshala a law firm?', bn: 'বিধানশালা কি একটি আইন সংস্থা?' },
     a: {
-      en: 'No. We provide legal information based on official Bangladeshi laws. For advice on your specific case, please speak to a licensed lawyer — you can find one in our directory.',
-      bn: 'না। আমরা বাংলাদেশের সরকারি আইনের ভিত্তিতে আইনি তথ্য দিই। আপনার নির্দিষ্ট বিষয়ে পরামর্শের জন্য লাইসেন্সপ্রাপ্ত আইনজীবীর সঙ্গে কথা বলুন — আমাদের তালিকায় খুঁজে পাবেন।',
+      en: 'No. We provide legal information based on official Bangladeshi laws. For advice on your specific case, please speak to a licensed lawyer.',
+      bn: 'না। আমরা বাংলাদেশের সরকারি আইনের ভিত্তিতে আইনি তথ্য দিই। আপনার নির্দিষ্ট বিষয়ে পরামর্শের জন্য লাইসেন্সপ্রাপ্ত আইনজীবীর সঙ্গে কথা বলুন।',
     },
   },
   {
@@ -239,8 +239,8 @@ export const FAQS = [
   {
     q: { en: 'Is my data private?', bn: 'আমার তথ্য কি গোপন থাকে?' },
     a: {
-      en: 'Your chats and documents are private to your account. We never sell your data, and you can delete any conversation at any time.',
-      bn: 'আপনার চ্যাট ও নথি শুধু আপনার অ্যাকাউন্টে থাকে। আমরা কখনো আপনার তথ্য বিক্রি করি না, এবং যেকোনো সময় কথোপকথন মুছে ফেলতে পারেন।',
+      en: 'Your chats and documents are visible only to your account. To write an answer, your question and the matching law text are sent to an AI service. We never sell your data, and you can delete any conversation at any time.',
+      bn: 'আপনার চ্যাট ও নথি শুধু আপনার অ্যাকাউন্টেই দেখা যায়। উত্তর লেখার জন্য আপনার প্রশ্ন ও সংশ্লিষ্ট আইনের অংশ একটি এআই সেবায় পাঠানো হয়। আমরা কখনো আপনার তথ্য বিক্রি করি না, এবং যেকোনো সময় কথোপকথন মুছে ফেলতে পারেন।',
     },
   },
 ];

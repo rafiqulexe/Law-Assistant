@@ -453,12 +453,12 @@ export function Footer() {
           <p className="mt-3 text-[13px] text-muted">
             {t('Bangladesh law, in one place.', 'বাংলাদেশের আইন, এক জায়গায়।')}
           </p>
-          <a
-            href="mailto:contact@bidhanshala.com"
+          <button
+            onClick={() => go('/contact')}
             className="mt-4 inline-flex items-center gap-2 rounded text-[13px] text-fg hover:text-accent-text"
           >
-            <Mail className="size-4" strokeWidth={1.75} /> contact@bidhanshala.com
-          </a>
+            <Mail className="size-4" strokeWidth={1.75} /> {t('Send us a message', 'আমাদের বার্তা পাঠান')}
+          </button>
         </div>
         {cols.map((c) => (
           <div key={c.h}>

@@ -1,5 +1,6 @@
-import { BadgeCheck, MapPin, Search, Star, UserX } from 'lucide-react';
+import { MapPin, Search, UserX } from 'lucide-react';
 import { useState } from 'react';
+import { legal } from '@/api/client';
 import { useApp } from '@/lib/app';
 import { DISTRICTS, LAWYERS, SPECIALTIES } from '@/lib/data';
 import { Avatar, Page } from '@/components/Layout';
@@ -12,15 +13,32 @@ import {
   Input,
   PageHeader,
   Select,
-  Textarea,
-} from '@/components/ui';
+  } from '@/components/ui';
 export default function Lawyers() {
-  const { t, tr, num, toast } = useApp();
+  const { t, tr, num, toast, tError } = useApp();
   const [q, setQ] = useState('');
   const [spec, setSpec] = useState('all');
   const [dist, setDist] = useState('all');
   const [contact, setContact] = useState(null);
   const [sending, setSending] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '' });
+  const notify = async () => {
+    setSending(true);
+    try {
+      await legal.contact({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        subject: 'Lawyer directory',
+        message: `Tell me when the lawyer directory is live (${contact.specialty}, ${contact.district}).`,
+      });
+      setContact(null);
+      toast(t('Thanks. We’ll email you when it’s ready.', 'ধন্যবাদ। চালু হলে ইমেইলে জানাব।'));
+    } catch (err) {
+      toast(tError(err.message), 'error');
+    } finally {
+      setSending(false);
+    }
+  };
   const list = LAWYERS.filter(
     (l) =>
       (spec === 'all' || l.specialty === spec) &&
@@ -31,12 +49,15 @@ export default function Lawyers() {
     <Page>
       <PageHeader
         eyebrow={t('Find a Lawyer', 'আইনজীবী খুঁজুন')}
-        title={t('Talk to a verified lawyer', 'যাচাইকৃত আইনজীবীর সঙ্গে কথা বলুন')}
+        title={t('Find a lawyer near you', 'কাছের আইনজীবী খুঁজুন')}
         body={t(
           'When you need advice for your specific case, choose a lawyer near you.',
           'আপনার নির্দিষ্ট বিষয়ে পরামর্শের প্রয়োজন হলে কাছের একজন আইনজীবী বেছে নিন।',
         )}
       />
+      <p className="mt-4 inline-flex rounded-full border border-line bg-surface-2 px-3 py-1 text-[13px] text-muted">
+        {t('Preview: these listings are samples, not real lawyers.', 'প্রিভিউ: এই তালিকা উদাহরণমাত্র, সত্যিকারের আইনজীবী নয়।')}
+      </p>
       <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-[1fr_220px_200px]">
         <Input
           icon={<Search className="size-[18px]" />}
@@ -89,13 +110,7 @@ export default function Lawyers() {
               <div className="flex items-start gap-4">
                 <Avatar name={l.name.en} size="size-14 text-[17px]" />
                 <div className="min-w-0">
-                  <h2 className="flex items-center gap-1.5 text-[17px] font-semibold">
-                    {tr(l.name)}{' '}
-                    <BadgeCheck
-                      className="size-4 shrink-0 text-accent-text"
-                      aria-label={t('Verified', 'যাচাইকৃত')}
-                    />
-                  </h2>
+                  <h2 className="text-[17px] font-semibold">{tr(l.name)}</h2>
                   <p className="text-[14px] text-muted">{tr(SPECIALTIES[l.specialty])}</p>
                   <p className="mt-1 flex items-center gap-1 text-[13px] text-muted">
                     <MapPin className="size-3.5" aria-hidden /> {tr(DISTRICTS[l.district])} ·{' '}
@@ -108,11 +123,6 @@ export default function Lawyers() {
                   <p className="text-[17px] font-semibold tabular-nums">৳{num(l.fee)}</p>
                   <p className="text-[12px] text-muted">{t('per consultation', 'প্রতি পরামর্শ')}</p>
                 </div>
-                <p className="flex items-center gap-1 text-[14px]">
-                  <Star className="size-4 fill-[var(--med)] text-med" aria-hidden />
-                  <span className="font-semibold">{num(l.rating.toFixed(1))}</span>
-                  <span className="text-muted">({num(l.reviews)})</span>
-                </p>
               </div>
               <Button variant="secondary" className="mt-4 w-full" onClick={() => setContact(l)}>
                 {t('Contact', 'যোগাযোগ')}
@@ -131,45 +141,30 @@ export default function Lawyers() {
       <Dialog
         open={!!contact}
         onClose={() => setContact(null)}
-        title={contact ? t(`Contact ${contact.name.en}`, `${contact.name.bn}-এর সঙ্গে যোগাযোগ`) : ''}
+        title={t('The directory is not live yet', 'তালিকাটি এখনো চালু হয়নি')}
         footer={
           <>
             <Button variant="neutral" onClick={() => setContact(null)}>
               {t('Cancel', 'বাতিল')}
             </Button>
-            <Button
-              loading={sending}
-              onClick={() => {
-                setSending(true);
-                setTimeout(
-                  () => (
-                    setSending(false),
-                    setContact(null),
-                    toast(
-                      t(
-                        'Request sent. Expect a reply within 24 hours.',
-                        'অনুরোধ পাঠানো হয়েছে। ২৪ ঘণ্টার মধ্যে উত্তর পাবেন।',
-                      ),
-                    )
-                  ),
-                  900,
-                );
-              }}
-            >
-              {t('Send request', 'অনুরোধ পাঠান')}
+            <Button loading={sending} disabled={!form.name.trim() || !/^\S+@\S+\.\S+$/.test(form.email)} onClick={notify}>
+              {t('Notify me', 'আমাকে জানান')}
             </Button>
           </>
         }
       >
+        <p className="mt-2 text-[15px] text-muted">
+          {t(
+            'These lawyers are samples, so we can’t pass on a request. Leave your email and we’ll tell you when real lawyers join.',
+            'এই আইনজীবীরা উদাহরণমাত্র, তাই অনুরোধ পাঠানো যাবে না। ইমেইল দিন, সত্যিকারের আইনজীবী যুক্ত হলে আমরা জানাব।',
+          )}
+        </p>
         <div className="mt-4 flex flex-col gap-4 text-fg">
-          <Field label={t('Phone', 'ফোন')} htmlFor="c-phone">
-            <Input id="c-phone" type="tel" placeholder="01XXXXXXXXX" />
+          <Field label={t('Name', 'নাম')} htmlFor="c-name">
+            <Input id="c-name" autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </Field>
-          <Field
-            label={t('Briefly, what do you need help with?', 'সংক্ষেপে, কী বিষয়ে সাহায্য প্রয়োজন?')}
-            htmlFor="c-msg"
-          >
-            <Textarea id="c-msg" className="min-h-24" />
+          <Field label={t('Email', 'ইমেইল')} htmlFor="c-email">
+            <Input id="c-email" type="email" autoComplete="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           </Field>
         </div>
       </Dialog>

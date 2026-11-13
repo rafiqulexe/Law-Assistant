@@ -2,7 +2,7 @@ import { Check, Minus } from 'lucide-react';
 import { useState } from 'react';
 import { useApp } from '@/lib/app';
 import { Page } from '@/components/Layout';
-import { Badge, Button, Card, PageHeader, Segmented, cx } from '@/components/ui';
+import { Button, Card, PageHeader, Segmented, cx } from '@/components/ui';
 export default function Pricing() {
   const { t, num, go } = useApp();
   const [cycle, setCycle] = useState('m');
@@ -24,7 +24,7 @@ export default function Pricing() {
       name: t('Pro', 'প্রো'),
       price: 499,
       desc: t('For people and freelancers.', 'ব্যক্তি ও ফ্রিল্যান্সারদের জন্য।'),
-      cta: t('Get Pro', 'প্রো নিন'),
+      cta: t('Ask about Pro', 'প্রো সম্পর্কে জানুন'),
       items: [
         t('Unlimited questions', 'সীমাহীন প্রশ্ন'),
         t('20 contract analyses', '২০টি চুক্তি বিশ্লেষণ'),
@@ -70,7 +70,10 @@ export default function Pricing() {
       <div className="flex flex-col items-center text-center">
         <PageHeader title={t('Simple pricing, in taka', 'সহজ মূল্য, টাকায়')} />
         <p className="mt-2 text-[17px] text-muted">
-          {t('Start free. Upgrade when you need more.', 'বিনামূল্যে শুরু করুন। প্রয়োজনে আপগ্রেড করুন।')}
+          {t(
+            'Paid plans are not live yet. Every feature is free while Bidhanshala is in beta.',
+            'পেইড প্ল্যান এখনো চালু হয়নি। বেটা চলাকালীন সব ফিচার বিনামূল্যে।',
+          )}
         </p>
         <Segmented
           className="mt-8"
@@ -98,11 +101,6 @@ export default function Pricing() {
               key={p.id}
               className={cx('relative flex flex-col p-7', featured && 'border-accent ring-1 ring-accent')}
             >
-              {featured && (
-                <Badge tone="accent" className="absolute top-6 right-6">
-                  {t('Most popular', 'সবচেয়ে জনপ্রিয়')}
-                </Badge>
-              )}
               <h2 className="text-[17px] font-semibold">{p.name}</h2>
               <p className="mt-1 text-[14px] text-muted">{p.desc}</p>
               <p className="mt-6 flex items-baseline gap-1">
@@ -123,7 +121,7 @@ export default function Pricing() {
               <Button
                 className="mt-8 w-full"
                 variant={featured ? 'primary' : 'secondary'}
-                onClick={() => go(p.id === 'firm' ? '/contact' : '/signin')}
+                onClick={() => go(p.id === 'free' ? '/register' : '/contact')}
               >
                 {p.cta}
               </Button>
@@ -174,8 +172,8 @@ export default function Pricing() {
         </Card>
         <p className="mt-4 text-[13px] text-muted">
           {t(
-            'Pay with bKash, Nagad or card. Prices include VAT.',
-            'বিকাশ, নগদ বা কার্ডে পরিশোধ করুন। মূল্যে ভ্যাট অন্তর্ভুক্ত।',
+            'Planned prices, shown so you know what to expect. Nothing is charged today.',
+            'পরিকল্পিত মূল্য, যেন আগে থেকে জানতে পারেন। এখন কোনো টাকা নেওয়া হয় না।',
           )}
         </p>
       </div>
