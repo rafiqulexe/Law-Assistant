@@ -28,6 +28,7 @@ from src.helper import (
 from src import ocr
 from src.database import get_db, init_db
 from src.rate_limit import limit
+from src.source_names import act_and_section
 from src.prompt import contract_prompt, document_prompt, risk_prompt, system_prompt
 
 load_dotenv()
@@ -163,15 +164,18 @@ def get_rag_chain():
     return _rag_chain
 
 
-def citation_label(metadata):
-    source = metadata.get("source", "Unknown source")
+def citation_label(metadata, text=""):
     page = metadata.get("page")
     if metadata.get("act_title"):
         # Synced from the official website: name the act, section and date.
         return f"{metadata['act_title']} - {metadata.get('section', '')} (official, updated {metadata.get('updated_at', '')})"
-    if isinstance(page, int):
-        return f"{Path(source).name} (page {page + 1})"
-    return Path(source).name
+    act, section = act_and_section(metadata, text)
+    act = act or "Laws of Bangladesh"
+    if section:
+        return f"{act} - {section}"
+    if isinstance(page, (int, float)):
+        return f"{act} (page {int(page) + 1})"
+    return act
 
 
 def extract_sources(documents):
@@ -180,15 +184,17 @@ def extract_sources(documents):
     seen = set()
     for document in documents:
         metadata = document.metadata or {}
-        label = citation_label(metadata)
+        text = document.page_content or ""
+        label = citation_label(metadata, text)
         if label in seen:
             continue
         seen.add(label)
         source = str(metadata.get("source", ""))
+        act, section = act_and_section(metadata, text)
         sources.append({
             "label": label,
-            "act": metadata.get("act_title") or Path(source).stem,
-            "section": metadata.get("section", ""),
+            "act": metadata.get("act_title") or act or "Laws of Bangladesh",
+            "section": metadata.get("section") or section,
             "text": (document.page_content or "").strip()[:1500],
             "url": source if source.startswith("http") else "",
         })
