@@ -12,7 +12,7 @@ export default function LawUpdatesBanner() {
   if (!latest) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-amber-500 text-slate-950 shadow-lg shadow-black/40">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-brand-500 text-slate-950 shadow-lg shadow-black/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-3 text-sm">
         <BellRing className="h-4 w-4 flex-shrink-0" />
         <p className="flex-1 min-w-0 truncate">

@@ -10,7 +10,7 @@ export default function PageNotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-slate-950 text-white">
       <div className="max-w-md w-full text-center space-y-6">
-        <Scale className="h-12 w-12 text-amber-500 mx-auto" />
+        <Scale className="h-12 w-12 text-brand-500 mx-auto" />
         <h1 className="text-7xl font-light text-slate-600">404</h1>
         <h2 className="text-2xl font-medium">{t('notFound.title')}</h2>
         <p className="text-slate-400">
@@ -18,7 +18,7 @@ export default function PageNotFound() {
         </p>
         <Link
           to="/"
-          className="inline-flex items-center px-5 py-2 rounded-lg bg-amber-500 text-slate-900 font-semibold hover:bg-amber-600"
+          className="inline-flex items-center px-5 py-2 rounded-lg bg-brand-500 text-slate-900 font-semibold hover:bg-brand-600"
         >
           {t('notFound.home')}
         </Link>

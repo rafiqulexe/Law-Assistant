@@ -40,7 +40,7 @@ export default function FloatingLegalIcons() {
           }}
         >
           <Icon 
-            className="text-amber-500/40" 
+            className="text-brand-500/40" 
             size={Math.random() * 30 + 40}
             strokeWidth={1.5}
           />

@@ -54,16 +54,16 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-amber-900/20">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-brand-900/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to={createPageUrl('Home')} className="flex items-center gap-2 group">
             <div className="relative">
-              <Scale className="h-8 w-8 text-amber-500 group-hover:text-amber-400 transition-colors" />
-              <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full" />
+              <Scale className="h-8 w-8 text-brand-500 group-hover:text-brand-400 transition-colors" />
+              <div className="absolute inset-0 bg-brand-500/20 blur-xl rounded-full" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold bg-gradient-to-r from-brand-400 via-brand-500 to-brand-600 bg-clip-text text-transparent">
               LexAI
             </span>
           </Link>
@@ -74,7 +74,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={createPageUrl(link.path)}
-                className="px-2.5 xl:px-4 py-2 whitespace-nowrap text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium"
+                className="px-2.5 xl:px-4 py-2 whitespace-nowrap text-slate-300 hover:text-brand-400 transition-colors text-sm font-medium"
               >
                 {t(link.key)}
               </Link>
@@ -83,18 +83,18 @@ export default function Navbar() {
             {/* Tools Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="px-2.5 xl:px-4 py-2 whitespace-nowrap text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium flex items-center gap-1">
+                <button className="px-2.5 xl:px-4 py-2 whitespace-nowrap text-slate-300 hover:text-brand-400 transition-colors text-sm font-medium flex items-center gap-1">
                   {t('nav.aiTools')} <ChevronDown className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-slate-900 border-amber-900/30 w-56">
+              <DropdownMenuContent className="bg-slate-900 border-brand-900/30 w-56">
                 {toolsMenu.map((tool) => (
                   <DropdownMenuItem key={tool.path} asChild>
                     <Link
                       to={createPageUrl(tool.path)}
-                      className="flex items-center gap-3 text-slate-300 hover:text-amber-400 cursor-pointer"
+                      className="flex items-center gap-3 text-slate-300 hover:text-brand-400 cursor-pointer"
                     >
-                      <tool.icon className="h-4 w-4 text-amber-500" />
+                      <tool.icon className="h-4 w-4 text-brand-500" />
                       {t(tool.key)}
                     </Link>
                   </DropdownMenuItem>
@@ -106,7 +106,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={createPageUrl(link.path)}
-                className="px-2.5 xl:px-4 py-2 whitespace-nowrap text-slate-300 hover:text-amber-400 transition-colors text-sm font-medium"
+                className="px-2.5 xl:px-4 py-2 whitespace-nowrap text-slate-300 hover:text-brand-400 transition-colors text-sm font-medium"
               >
                 {t(link.key)}
               </Link>
@@ -117,7 +117,7 @@ export default function Navbar() {
           <div className="hidden xl:flex items-center gap-3">
             <LanguageToggle />
             {isAdmin && (
-              <Link to="/Admin" className="text-sm text-slate-300 hover:text-amber-400">
+              <Link to="/Admin" className="text-sm text-slate-300 hover:text-brand-400">
                 {t('nav.admin')}
               </Link>
             )}
@@ -125,14 +125,14 @@ export default function Navbar() {
               <>
                 <Link to={createPageUrl('Dashboard')}>
                   <Button 
-                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold shadow-lg shadow-amber-500/25"
+                    className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold shadow-lg shadow-brand-500/25"
                   >
                     {t('nav.dashboard')}
                   </Button>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-slate-400 hover:text-amber-400"
+                  className="p-2 text-slate-400 hover:text-brand-400"
                   title={t('nav.signOut')}
                 >
                   <LogOut className="h-5 w-5" />
@@ -141,7 +141,7 @@ export default function Navbar() {
             ) : (
               <Link to="/Login">
                 <Button 
-                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold shadow-lg shadow-amber-500/25"
+                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold shadow-lg shadow-brand-500/25"
                 >
                   {t('nav.signIn')}
                 </Button>
@@ -152,7 +152,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="xl:hidden p-2 text-slate-300 hover:text-amber-400"
+            className="xl:hidden p-2 text-slate-300 hover:text-brand-400"
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -166,7 +166,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="xl:hidden bg-slate-950 border-t border-amber-900/20 max-h-[calc(100vh-4rem)] overflow-y-auto"
+            className="xl:hidden bg-slate-950 border-t border-brand-900/20 max-h-[calc(100vh-4rem)] overflow-y-auto"
           >
             <div className="px-4 py-4 space-y-2">
               <LanguageToggle className="mb-2" />
@@ -175,7 +175,7 @@ export default function Navbar() {
                   key={link.path}
                   to={createPageUrl(link.path)}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-slate-300 hover:text-amber-400 hover:bg-slate-800/50 rounded-lg transition-colors"
+                  className="block px-4 py-3 text-slate-300 hover:text-brand-400 hover:bg-slate-800/50 rounded-lg transition-colors"
                 >
                   {t(link.key)}
                 </Link>
@@ -187,9 +187,9 @@ export default function Navbar() {
                     key={tool.path}
                     to={createPageUrl(tool.path)}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-amber-400 hover:bg-slate-800/50 rounded-lg transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-brand-400 hover:bg-slate-800/50 rounded-lg transition-colors"
                   >
-                    <tool.icon className="h-4 w-4 text-amber-500" />
+                    <tool.icon className="h-4 w-4 text-brand-500" />
                     {t(tool.key)}
                   </Link>
                 ))}
@@ -200,27 +200,27 @@ export default function Navbar() {
                     <Link
                       to="/Admin"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block px-4 py-3 text-slate-300 hover:text-amber-400 hover:bg-slate-800/50 rounded-lg"
+                      className="block px-4 py-3 text-slate-300 hover:text-brand-400 hover:bg-slate-800/50 rounded-lg"
                     >
                       {t('nav.admin')}
                     </Link>
                   )}
                   <Link to={createPageUrl('Dashboard')} onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full mt-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                    <Button className="w-full mt-4 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold">
                       {t('nav.dashboard')}
                     </Button>
                   </Link>
                   <Button
                     variant="outline"
                     onClick={handleLogout}
-                    className="w-full mt-2 border-amber-900/30 text-slate-300"
+                    className="w-full mt-2 border-brand-900/30 text-slate-300"
                   >
                     {t('nav.signOut')}
                   </Button>
                 </>
               ) : (
                 <Link to="/Login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full mt-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                  <Button className="w-full mt-4 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold">
                     {t('nav.signIn')}
                   </Button>
                 </Link>

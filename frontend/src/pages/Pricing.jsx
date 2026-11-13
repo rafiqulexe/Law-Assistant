@@ -126,9 +126,9 @@ export default function Pricing() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <Sparkles className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <Sparkles className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               <span className="text-white">{c.title1}</span>
@@ -144,7 +144,7 @@ export default function Pricing() {
               <Switch
                 checked={isYearly}
                 onCheckedChange={setIsYearly}
-                className="data-[state=checked]:bg-amber-500"
+                className="data-[state=checked]:bg-brand-500"
               />
               <span className={`text-sm ${isYearly ? 'text-white' : 'text-slate-400'}`}>
                 {c.yearly}
@@ -171,19 +171,19 @@ export default function Pricing() {
               >
                 <Card className={`relative h-full ${
                   plan.popular 
-                    ? 'bg-gradient-to-b from-amber-500/10 to-slate-900 border-amber-500/50' 
-                    : 'bg-slate-900/80 border-amber-900/30'
+                    ? 'bg-gradient-to-b from-brand-500/10 to-slate-900 border-brand-500/50' 
+                    : 'bg-slate-900/80 border-brand-900/30'
                 }`}>
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-semibold px-4 py-1">
+                      <Badge className="bg-gradient-to-r from-brand-500 to-brand-600 text-slate-900 font-semibold px-4 py-1">
                         {c.popular}
                       </Badge>
                     </div>
                   )}
                   <CardHeader className="text-center pt-8">
-                    <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/20 flex items-center justify-center mb-4">
-                      <plan.icon className="h-7 w-7 text-amber-500" />
+                    <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-700/20 flex items-center justify-center mb-4">
+                      <plan.icon className="h-7 w-7 text-brand-500" />
                     </div>
                     <CardTitle className="text-2xl text-white mb-2">{plan.name}</CardTitle>
                     <p className="text-slate-400 text-sm">{plan.description}</p>
@@ -212,7 +212,7 @@ export default function Pricing() {
                     <Button
                       className={`w-full ${
                         plan.popular
-                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold'
+                          ? 'bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold'
                           : 'bg-slate-800 hover:bg-slate-700 text-white'
                       }`}
                     >
@@ -253,7 +253,7 @@ export default function Pricing() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-slate-900/80 border-amber-900/30">
+                <Card className="bg-slate-900/80 border-brand-900/30">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold text-white mb-2">{faq.question}</h3>
                     <p className="text-slate-400">{faq.answer}</p>

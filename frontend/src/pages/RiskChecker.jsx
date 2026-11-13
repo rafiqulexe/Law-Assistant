@@ -80,9 +80,9 @@ export default function RiskChecker() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <ShieldCheck className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{t('rc.badge')}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <ShieldCheck className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{t('rc.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               <span className="text-white">{t('rc.title1')}</span>
@@ -104,10 +104,10 @@ export default function RiskChecker() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <Card className="bg-slate-900/80 border-amber-900/30">
+              <Card className="bg-slate-900/80 border-brand-900/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
-                    <FileWarning className="h-5 w-5 text-amber-500" />
+                    <FileWarning className="h-5 w-5 text-brand-500" />
                     {t('rc.input')}
                   </CardTitle>
                 </CardHeader>
@@ -122,7 +122,7 @@ export default function RiskChecker() {
                   <Button
                     onClick={analyzeCompliance}
                     disabled={!documentText.trim() || isAnalyzing}
-                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6"
+                    className="w-full bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold py-6"
                   >
                     {isAnalyzing ? (
                       <>
@@ -149,11 +149,11 @@ export default function RiskChecker() {
               {analysis ? (
                 <>
                   {/* Compliance Score */}
-                  <Card className="bg-slate-900/80 border-amber-900/30">
+                  <Card className="bg-slate-900/80 border-brand-900/30">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center justify-between">
                         <span className="flex items-center gap-2">
-                          <Shield className="h-5 w-5 text-amber-500" />
+                          <Shield className="h-5 w-5 text-brand-500" />
                           {t('rc.score')}
                         </span>
                         <span className={`text-3xl font-bold ${
@@ -181,10 +181,10 @@ export default function RiskChecker() {
                   </Card>
 
                   {/* Compliance Checks */}
-                  <Card className="bg-slate-900/80 border-amber-900/30">
+                  <Card className="bg-slate-900/80 border-brand-900/30">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
-                        <ListChecks className="h-5 w-5 text-amber-500" />
+                        <ListChecks className="h-5 w-5 text-brand-500" />
                         {t('rc.checks')}
                       </CardTitle>
                     </CardHeader>
@@ -203,10 +203,10 @@ export default function RiskChecker() {
 
                   {/* Risks */}
                   {analysis.risks?.length > 0 && (
-                    <Card className="bg-slate-900/80 border-amber-900/30">
+                    <Card className="bg-slate-900/80 border-brand-900/30">
                       <CardHeader>
                         <CardTitle className="text-white flex items-center gap-2">
-                          <AlertTriangle className="h-5 w-5 text-amber-500" />
+                          <AlertTriangle className="h-5 w-5 text-brand-500" />
                           {t('rc.risks')}
                         </CardTitle>
                       </CardHeader>
@@ -227,10 +227,10 @@ export default function RiskChecker() {
                   )}
 
                   {/* Recommendations */}
-                  <Card className="bg-slate-900/80 border-amber-900/30">
+                  <Card className="bg-slate-900/80 border-brand-900/30">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
-                        <Lightbulb className="h-5 w-5 text-amber-500" />
+                        <Lightbulb className="h-5 w-5 text-brand-500" />
                         {t('tool.recommendations')}
                       </CardTitle>
                     </CardHeader>
@@ -238,7 +238,7 @@ export default function RiskChecker() {
                       <ul className="space-y-3">
                         {analysis.recommendations?.map((rec, index) => (
                           <li key={index} className="flex items-start gap-3 text-slate-300">
-                            <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
+                            <CheckCircle className="h-4 w-4 text-brand-500 mt-1 flex-shrink-0" />
                             {rec}
                           </li>
                         ))}
@@ -248,10 +248,10 @@ export default function RiskChecker() {
 
                   {/* Sources from the law library */}
                   {analysis.sources?.length > 0 && (
-                    <Card className="bg-slate-900/80 border-amber-900/30">
+                    <Card className="bg-slate-900/80 border-brand-900/30">
                       <CardHeader>
                         <CardTitle className="text-white flex items-center gap-2">
-                          <BookOpen className="h-5 w-5 text-amber-500" />
+                          <BookOpen className="h-5 w-5 text-brand-500" />
                           {t('tool.sources')}
                         </CardTitle>
                       </CardHeader>
@@ -266,7 +266,7 @@ export default function RiskChecker() {
                   )}
                 </>
               ) : (
-                <Card className="bg-slate-900/80 border-amber-900/30 h-full flex items-center justify-center min-h-[400px]">
+                <Card className="bg-slate-900/80 border-brand-900/30 h-full flex items-center justify-center min-h-[400px]">
                   <CardContent className="text-center">
                     <ShieldCheck className="h-16 w-16 text-slate-600 mx-auto mb-4" />
                     <p className="text-slate-400 text-lg">{t('rc.emptyTitle')}</p>

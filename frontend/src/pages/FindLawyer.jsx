@@ -158,9 +158,9 @@ export default function FindLawyer() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <Users className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <Users className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               <span className="text-white">{c.title1}</span>
@@ -178,7 +178,7 @@ export default function FindLawyer() {
             transition={{ delay: 0.2 }}
             className="max-w-4xl mx-auto"
           >
-            <div className="bg-slate-900/80 backdrop-blur-sm border border-amber-900/30 rounded-2xl p-6 shadow-2xl shadow-amber-500/10">
+            <div className="bg-slate-900/80 backdrop-blur-sm border border-brand-900/30 rounded-2xl p-6 shadow-2xl shadow-brand-500/10">
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -204,7 +204,7 @@ export default function FindLawyer() {
                 </Select>
                 <Button 
                   onClick={handleSearch}
-                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
+                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold"
                 >
                   <Search className="h-4 w-4 mr-2" />
                   {c.search}
@@ -216,7 +216,7 @@ export default function FindLawyer() {
       </section>
 
       {/* Stats */}
-      <section className="py-12 border-y border-amber-900/20 bg-slate-900/30">
+      <section className="py-12 border-y border-brand-900/20 bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -233,7 +233,7 @@ export default function FindLawyer() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <stat.icon className="h-8 w-8 text-amber-500 mx-auto mb-3" />
+                <stat.icon className="h-8 w-8 text-brand-500 mx-auto mb-3" />
                 <p className="text-2xl font-bold text-white">{stat.value}</p>
                 <p className="text-slate-400 text-sm">{stat.label}</p>
               </motion.div>
@@ -249,7 +249,7 @@ export default function FindLawyer() {
             <h2 className="text-2xl font-bold text-white">
               {fill(c.found, filteredLawyers.length)}
             </h2>
-            <Button variant="outline" className="border-amber-900/30 text-slate-300 hover:text-amber-400">
+            <Button variant="outline" className="border-brand-900/30 text-slate-300 hover:text-brand-400">
               <Filter className="h-4 w-4 mr-2" />
               {c.moreFilters}
             </Button>
@@ -264,7 +264,7 @@ export default function FindLawyer() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-slate-900/80 border-amber-900/20 hover:border-amber-500/50 transition-all duration-300 overflow-hidden group">
+                <Card className="bg-slate-900/80 border-brand-900/20 hover:border-brand-500/50 transition-all duration-300 overflow-hidden group">
                   <CardContent className="p-0">
                     <div className="relative h-48 overflow-hidden">
                       <img 
@@ -282,7 +282,7 @@ export default function FindLawyer() {
                     
                     <div className="p-6">
                       <h3 className="text-xl font-semibold text-white mb-1">{lawyerName(lawyer.name)}</h3>
-                      <p className="text-amber-400 font-medium mb-3">{specialtyName(lawyer.specialty)}</p>
+                      <p className="text-brand-400 font-medium mb-3">{specialtyName(lawyer.specialty)}</p>
                       
                       <div className="flex items-center gap-4 text-sm text-slate-400 mb-4">
                         <span className="flex items-center gap-1">
@@ -297,18 +297,18 @@ export default function FindLawyer() {
                       
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <Star className="h-4 w-4 fill-brand-400 text-brand-400" />
                           <span className="text-white font-medium">{formatNumber(lawyer.rating)}</span>
                           <span className="text-slate-500">{fill(c.reviews, lawyer.reviews)}</span>
                         </div>
-                        <span className="text-amber-400 font-semibold">${formatNumber(lawyer.rate)}{c.perHour}</span>
+                        <span className="text-brand-400 font-semibold">${formatNumber(lawyer.rate)}{c.perHour}</span>
                       </div>
                       
                       <div className="flex gap-3">
                         <Button 
                           size="sm" 
                           variant="outline" 
-                          className="flex-1 border-amber-900/30 text-slate-300 hover:text-amber-400"
+                          className="flex-1 border-brand-900/30 text-slate-300 hover:text-brand-400"
                         >
                           <Phone className="h-4 w-4 mr-1" />
                           {c.call}
@@ -316,14 +316,14 @@ export default function FindLawyer() {
                         <Button 
                           size="sm" 
                           variant="outline" 
-                          className="flex-1 border-amber-900/30 text-slate-300 hover:text-amber-400"
+                          className="flex-1 border-brand-900/30 text-slate-300 hover:text-brand-400"
                         >
                           <Mail className="h-4 w-4 mr-1" />
                           {c.email}
                         </Button>
                         <Button 
                           size="sm" 
-                          className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900"
+                          className="flex-1 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900"
                         >
                           <Calendar className="h-4 w-4 mr-1" />
                           {c.book}

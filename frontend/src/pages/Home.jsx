@@ -144,8 +144,8 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 hero-glow" />
-        <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-amber-700/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-brand-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-brand-700/10 rounded-full blur-[120px]" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -160,10 +160,10 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-8"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-8"
               >
-                <Zap className="h-4 w-4 text-amber-400" />
-                <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
+                <Zap className="h-4 w-4 text-brand-400" />
+                <span className="text-brand-400 text-sm font-medium">{c.badge}</span>
               </motion.div>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
@@ -184,7 +184,7 @@ export default function Home() {
                 <Link to={createPageUrl('Features')}>
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:via-amber-700 hover:to-amber-800 text-slate-900 font-bold text-lg px-10 py-7 rounded-xl shadow-2xl shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-300 group"
+                    className="bg-gradient-to-r from-brand-500 via-brand-600 to-brand-700 hover:from-brand-600 hover:via-brand-700 hover:to-brand-800 text-slate-900 font-bold text-lg px-10 py-7 rounded-xl shadow-2xl shadow-brand-500/30 hover:shadow-brand-500/50 transition-all duration-300 group"
                   >
                     {c.explore}
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -200,11 +200,11 @@ export default function Home() {
                 className="mt-12 flex items-center gap-6 justify-center lg:justify-start"
               >
                 <div className="flex items-center gap-2 text-slate-400 text-sm">
-                  <Lock className="h-4 w-4 text-amber-500" />
+                  <Lock className="h-4 w-4 text-brand-500" />
                   <span>{c.security}</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-400 text-sm">
-                  <Globe className="h-4 w-4 text-amber-500" />
+                  <Globe className="h-4 w-4 text-brand-500" />
                   <span>{c.coverage}</span>
                 </div>
               </motion.div>
@@ -231,7 +231,7 @@ export default function Home() {
                   ease: "easeInOut"
                 }}
               >
-                <Scale className="h-12 w-12 text-amber-400" strokeWidth={1.5} />
+                <Scale className="h-12 w-12 text-brand-400" strokeWidth={1.5} />
               </motion.div>
 
               <motion.div
@@ -248,7 +248,7 @@ export default function Home() {
                   delay: 0.5
                 }}
               >
-                <Gavel className="h-14 w-14 text-amber-500" strokeWidth={1.5} />
+                <Gavel className="h-14 w-14 text-brand-500" strokeWidth={1.5} />
               </motion.div>
 
               <motion.div
@@ -265,7 +265,7 @@ export default function Home() {
                   delay: 1
                 }}
               >
-                <FileText className="h-10 w-10 text-amber-400" strokeWidth={1.5} />
+                <FileText className="h-10 w-10 text-brand-400" strokeWidth={1.5} />
               </motion.div>
 
               <motion.div
@@ -282,7 +282,7 @@ export default function Home() {
                   delay: 1.5
                 }}
               >
-                <Shield className="h-11 w-11 text-amber-500" strokeWidth={1.5} />
+                <Shield className="h-11 w-11 text-brand-500" strokeWidth={1.5} />
               </motion.div>
 
               <motion.div
@@ -299,18 +299,18 @@ export default function Home() {
                   delay: 2
                 }}
               >
-                <BookOpen className="h-9 w-9 text-amber-400" strokeWidth={1.5} />
+                <BookOpen className="h-9 w-9 text-brand-400" strokeWidth={1.5} />
               </motion.div>
 
               <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto">
                 {/* Main large image */}
                 <motion.div 
-                  className="col-span-2 relative rounded-2xl overflow-hidden shadow-2xl shadow-amber-500/20 z-20"
+                  className="col-span-2 relative rounded-2xl overflow-hidden shadow-2xl shadow-brand-500/20 z-20"
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent z-10" />
-                  <div className="absolute inset-0 border-2 border-amber-500/30 rounded-2xl z-20" />
+                  <div className="absolute inset-0 border-2 border-brand-500/30 rounded-2xl z-20" />
                   <img 
                     src={heroImages[0].src}
                     alt={c.imageAlts[0]}
@@ -322,10 +322,10 @@ export default function Home() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.8 }}
-                    className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur-sm border border-amber-500/30 rounded-2xl p-4 shadow-xl z-30"
+                    className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur-sm border border-brand-500/30 rounded-2xl p-4 shadow-xl z-30"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
                         <CheckCircle className="h-6 w-6 text-white" />
                       </div>
                       <div>
@@ -338,12 +338,12 @@ export default function Home() {
                 
                 {/* Two smaller images */}
                 <motion.div 
-                  className="relative rounded-2xl overflow-hidden shadow-xl shadow-amber-500/10 z-20"
+                  className="relative rounded-2xl overflow-hidden shadow-xl shadow-brand-500/10 z-20"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent z-10" />
-                  <div className="absolute inset-0 border-2 border-amber-500/20 rounded-2xl z-20" />
+                  <div className="absolute inset-0 border-2 border-brand-500/20 rounded-2xl z-20" />
                   <img 
                     src={heroImages[1].src}
                     alt={c.imageAlts[1]}
@@ -352,12 +352,12 @@ export default function Home() {
                 </motion.div>
                 
                 <motion.div 
-                  className="relative rounded-2xl overflow-hidden shadow-xl shadow-amber-500/10 z-20"
+                  className="relative rounded-2xl overflow-hidden shadow-xl shadow-brand-500/10 z-20"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent z-10" />
-                  <div className="absolute inset-0 border-2 border-amber-500/20 rounded-2xl z-20" />
+                  <div className="absolute inset-0 border-2 border-brand-500/20 rounded-2xl z-20" />
                   <img 
                     src={heroImages[2].src}
                     alt={c.imageAlts[2]}
@@ -374,7 +374,7 @@ export default function Home() {
       <SupportSection />
 
       {/* Stats Section */}
-      <section className="py-20 border-y border-amber-900/20 bg-slate-900/30">
+      <section className="py-20 border-y border-brand-900/20 bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -422,17 +422,17 @@ export default function Home() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Link to={createPageUrl(feature.path)}>
-                  <div className="group h-full bg-gradient-to-br from-slate-900 to-slate-900/50 border border-amber-900/20 hover:border-amber-500/50 rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 card-glow">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <feature.icon className="h-7 w-7 text-amber-500" />
+                  <div className="group h-full bg-gradient-to-br from-slate-900 to-slate-900/50 border border-brand-900/20 hover:border-brand-500/50 rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-brand-500/10 card-glow">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-700/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                      <feature.icon className="h-7 w-7 text-brand-500" />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-amber-400 transition-colors">
+                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-brand-400 transition-colors">
                       {feature.title}
                     </h3>
                     <p className="text-slate-400 leading-relaxed">
                       {feature.description}
                     </p>
-                    <div className="mt-6 flex items-center text-amber-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-6 flex items-center text-brand-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                       {c.learnMore} <ArrowRight className="ml-2 h-4 w-4" />
                     </div>
                   </div>
@@ -467,11 +467,11 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-slate-900/50 border border-amber-900/20 rounded-2xl p-8"
+                className="bg-slate-900/50 border border-brand-900/20 rounded-2xl p-8"
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-amber-500 text-amber-500" />
+                    <Star key={i} className="h-5 w-5 fill-brand-500 text-brand-500" />
                   ))}
                 </div>
                 <p className="text-slate-300 mb-6 leading-relaxed">"{testimonial.content}"</p>
@@ -492,9 +492,9 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-amber-500/10 to-amber-700/10 border border-amber-500/30 rounded-3xl p-12 md:p-16 relative overflow-hidden"
+            className="bg-gradient-to-br from-brand-500/10 to-brand-700/10 border border-brand-500/30 rounded-3xl p-12 md:p-16 relative overflow-hidden"
           >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl" />
             <div className="relative">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
                 <span className="text-white">{c.ctaTitle1}</span>
@@ -507,7 +507,7 @@ export default function Home() {
               <Link to={createPageUrl('Features')}>
                 <Button 
                   size="lg"
-                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-lg px-10 py-6 rounded-xl shadow-xl shadow-amber-500/30"
+                  className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-bold text-lg px-10 py-6 rounded-xl shadow-xl shadow-brand-500/30"
                 >
                   {c.ctaButton}
                   <ArrowRight className="ml-2 h-5 w-5" />

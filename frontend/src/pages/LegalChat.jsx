@@ -117,9 +117,9 @@ export default function LegalChat() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <MessageSquare className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{t('chat.badge')}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <MessageSquare className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{t('chat.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="text-white">{t('chat.title1')}</span>
@@ -135,11 +135,11 @@ export default function LegalChat() {
       {/* Chat Section */}
       <section className="pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[260px_1fr] gap-6">
-          <Card className="bg-slate-900/80 border-amber-900/30 h-fit">
+          <Card className="bg-slate-900/80 border-brand-900/30 h-fit">
             <CardContent className="p-4 space-y-3">
               <Button
                 onClick={startNewChat}
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900"
+                className="w-full bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900"
               >
                 <Plus className="h-4 w-4 mr-2" /> {t('chat.newChat')}
               </Button>
@@ -156,7 +156,7 @@ export default function LegalChat() {
                     onClick={() => openConversation(item.id)}
                     className={`w-full text-left text-sm px-3 py-2 rounded-lg truncate transition-colors ${
                       item.id === conversationId
-                        ? 'bg-amber-500/20 text-amber-300'
+                        ? 'bg-brand-500/20 text-brand-300'
                         : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                     }`}
                   >
@@ -171,11 +171,11 @@ export default function LegalChat() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="bg-slate-900/80 border-amber-900/30 overflow-hidden">
+            <Card className="bg-slate-900/80 border-brand-900/30 overflow-hidden">
               {/* Chat Header */}
-              <div className="bg-slate-800/50 border-b border-amber-900/20 p-4">
+              <div className="bg-slate-800/50 border-b border-brand-900/20 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
                     <Scale className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -200,17 +200,17 @@ export default function LegalChat() {
                     >
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                         message.role === 'user' 
-                          ? 'bg-amber-500/20' 
-                          : 'bg-gradient-to-br from-amber-500 to-amber-700'
+                          ? 'bg-brand-500/20' 
+                          : 'bg-gradient-to-br from-brand-500 to-brand-700'
                       }`}>
                         {message.role === 'user' 
-                          ? <User className="h-4 w-4 text-amber-400" />
+                          ? <User className="h-4 w-4 text-brand-400" />
                           : <Bot className="h-4 w-4 text-white" />
                         }
                       </div>
                       <div className={`max-w-[80%] rounded-2xl p-4 ${
                         message.role === 'user'
-                          ? 'bg-amber-500/20 text-white'
+                          ? 'bg-brand-500/20 text-white'
                           : 'bg-slate-800 text-slate-300'
                       }`}>
                         {message.role === 'user' ? (
@@ -222,7 +222,7 @@ export default function LegalChat() {
                         )}
                         {message.citations?.length > 0 && (
                           <div className="mt-3 pt-3 border-t border-slate-700 space-y-1">
-                            <p className="text-xs text-amber-400 flex items-center gap-1">
+                            <p className="text-xs text-brand-400 flex items-center gap-1">
                               <BookOpen className="h-3 w-3" /> {t('chat.sources')}
                             </p>
                             {message.citations.map((citation) => (
@@ -240,12 +240,12 @@ export default function LegalChat() {
                       animate={{ opacity: 1 }}
                       className="flex gap-3"
                     >
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
                         <Bot className="h-4 w-4 text-white" />
                       </div>
                       <div className="bg-slate-800 rounded-2xl p-4">
                         <div className="flex items-center gap-2">
-                          <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
+                          <Loader2 className="h-4 w-4 animate-spin text-brand-500" />
                           <span className="text-slate-400">{t('chat.thinking')}</span>
                         </div>
                       </div>
@@ -263,7 +263,7 @@ export default function LegalChat() {
                         <Badge
                           key={index}
                           variant="outline"
-                          className="border-amber-900/30 text-slate-400 hover:text-amber-400 hover:border-amber-500/50 cursor-pointer transition-colors"
+                          className="border-brand-900/30 text-slate-400 hover:text-brand-400 hover:border-brand-500/50 cursor-pointer transition-colors"
                           onClick={() => sendMessage(t(key))}
                         >
                           <HelpCircle className="h-3 w-3 mr-1" />
@@ -275,7 +275,7 @@ export default function LegalChat() {
                 )}
 
                 {/* Input */}
-                <div className="p-4 border-t border-amber-900/20">
+                <div className="p-4 border-t border-brand-900/20">
                   <div className="flex gap-3">
                     <Input
                       value={input}
@@ -288,7 +288,7 @@ export default function LegalChat() {
                     <Button
                       onClick={() => sendMessage()}
                       disabled={!input.trim() || isLoading}
-                      className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900"
+                      className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900"
                     >
                       {isLoading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -319,9 +319,9 @@ export default function LegalChat() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-slate-900/50 border-amber-900/20">
+                <Card className="bg-slate-900/50 border-brand-900/20">
                   <CardContent className="p-6 text-center">
-                    <item.icon className="h-8 w-8 text-amber-500 mx-auto mb-3" />
+                    <item.icon className="h-8 w-8 text-brand-500 mx-auto mb-3" />
                     <h3 className="text-white font-semibold mb-1">{item.title}</h3>
                     <p className="text-slate-400 text-sm">{item.desc}</p>
                   </CardContent>

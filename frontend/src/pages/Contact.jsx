@@ -139,9 +139,9 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <MessageSquare className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <MessageSquare className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               <span className="text-white">{c.title1}</span>
@@ -155,7 +155,7 @@ export default function Contact() {
       </section>
 
       {/* Contact Info Cards */}
-      <section className="py-12 border-b border-amber-900/20">
+      <section className="py-12 border-b border-brand-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {contactInfo.map((info, index) => (
@@ -166,13 +166,13 @@ export default function Contact() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-slate-900/80 border-amber-900/30 text-center p-6">
+                <Card className="bg-slate-900/80 border-brand-900/30 text-center p-6">
                   <CardContent className="p-0">
-                    <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/20 flex items-center justify-center mb-4">
-                      <info.icon className="h-6 w-6 text-amber-500" />
+                    <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-700/20 flex items-center justify-center mb-4">
+                      <info.icon className="h-6 w-6 text-brand-500" />
                     </div>
                     <h3 className="text-lg font-semibold text-white mb-1">{info.title}</h3>
-                    <p className="text-amber-400">{info.content}</p>
+                    <p className="text-brand-400">{info.content}</p>
                     <p className="text-slate-500 text-sm mt-1">{info.subtitle}</p>
                   </CardContent>
                 </Card>
@@ -192,7 +192,7 @@ export default function Contact() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <Card className="bg-slate-900/80 border-amber-900/30">
+              <Card className="bg-slate-900/80 border-brand-900/30">
                 <CardHeader>
                   <CardTitle className="text-2xl text-white">{c.formTitle}</CardTitle>
                 </CardHeader>
@@ -213,7 +213,7 @@ export default function Contact() {
                       <Button
                         onClick={() => setIsSubmitted(false)}
                         variant="outline"
-                        className="mt-6 border-amber-900/30 text-slate-300 hover:text-amber-400"
+                        className="mt-6 border-brand-900/30 text-slate-300 hover:text-brand-400"
                       >
                         {c.sendAnother}
                       </Button>
@@ -277,7 +277,7 @@ export default function Contact() {
                       <Button
                         type="submit"
                         disabled={isSending}
-                        className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6"
+                        className="w-full bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold py-6"
                       >
                         <Send className="h-5 w-5 mr-2" />
                         {isSending ? c.sending : c.send}
@@ -296,10 +296,10 @@ export default function Contact() {
               className="space-y-8"
             >
               {/* Map Placeholder */}
-              <Card className="bg-slate-900/80 border-amber-900/30 overflow-hidden">
+              <Card className="bg-slate-900/80 border-brand-900/30 overflow-hidden">
                 <div className="h-64 bg-slate-800 flex items-center justify-center">
                   <div className="text-center">
-                    <MapPin className="h-12 w-12 text-amber-500/50 mx-auto mb-3" />
+                    <MapPin className="h-12 w-12 text-brand-500/50 mx-auto mb-3" />
                     <p className="text-slate-400">123 Legal Street</p>
                     <p className="text-slate-500 text-sm">{c.city}</p>
                   </div>
@@ -307,7 +307,7 @@ export default function Contact() {
               </Card>
 
               {/* Social Links */}
-              <Card className="bg-slate-900/80 border-amber-900/30">
+              <Card className="bg-slate-900/80 border-brand-900/30">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">{c.connect}</h3>
                   <div className="flex gap-4">
@@ -320,7 +320,7 @@ export default function Contact() {
                       <a
                         key={index}
                         href={social.href}
-                        className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 hover:text-amber-400 hover:bg-slate-700 transition-all"
+                        className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 hover:text-brand-400 hover:bg-slate-700 transition-all"
                         aria-label={social.label}
                       >
                         <social.icon className="h-5 w-5" />
@@ -331,7 +331,7 @@ export default function Contact() {
               </Card>
 
               {/* FAQ Teaser */}
-              <Card className="bg-gradient-to-br from-amber-500/10 to-slate-900 border-amber-500/30">
+              <Card className="bg-gradient-to-br from-brand-500/10 to-slate-900 border-brand-500/30">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-white mb-2">{c.faqTitle}</h3>
                   <p className="text-slate-400 mb-4">
@@ -339,7 +339,7 @@ export default function Contact() {
                   </p>
                   <Button 
                     variant="outline"
-                    className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                    className="border-brand-500/30 text-brand-400 hover:bg-brand-500/10"
                   >
                     {c.faqButton}
                   </Button>

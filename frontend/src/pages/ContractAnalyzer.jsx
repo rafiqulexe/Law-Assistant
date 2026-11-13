@@ -95,9 +95,9 @@ export default function ContractAnalyzer() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <FileSearch className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{t('ca.badge')}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <FileSearch className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{t('ca.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               <span className="text-white">{t('ca.title1')}</span>
@@ -119,16 +119,16 @@ export default function ContractAnalyzer() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <Card className="bg-slate-900/80 border-amber-900/30">
+              <Card className="bg-slate-900/80 border-brand-900/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-amber-500" />
+                    <FileText className="h-5 w-5 text-brand-500" />
                     {t('ca.input')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* File Upload */}
-                  <div className="border-2 border-dashed border-amber-900/30 rounded-xl p-8 text-center hover:border-amber-500/50 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-brand-900/30 rounded-xl p-8 text-center hover:border-brand-500/50 transition-colors cursor-pointer">
                     <input
                       type="file"
                       accept=".txt,.pdf,.png,.jpg,.jpeg,.webp,.tif,.tiff"
@@ -139,9 +139,9 @@ export default function ContractAnalyzer() {
                     />
                     <label htmlFor="file-upload" className="cursor-pointer">
                       {isReading ? (
-                        <Loader2 className="h-12 w-12 text-amber-500/70 mx-auto mb-4 animate-spin" />
+                        <Loader2 className="h-12 w-12 text-brand-500/70 mx-auto mb-4 animate-spin" />
                       ) : (
-                        <Upload className="h-12 w-12 text-amber-500/50 mx-auto mb-4" />
+                        <Upload className="h-12 w-12 text-brand-500/50 mx-auto mb-4" />
                       )}
                       <p className="text-slate-400 mb-2">
                         {isReading ? t('ca.reading') : uploadedFile ? uploadedFile.name : t('ca.upload')}
@@ -162,7 +162,7 @@ export default function ContractAnalyzer() {
                   <Button
                     onClick={analyzeContract}
                     disabled={!contractText.trim() || isAnalyzing}
-                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6"
+                    className="w-full bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold py-6"
                   >
                     {isAnalyzing ? (
                       <>
@@ -189,11 +189,11 @@ export default function ContractAnalyzer() {
               {analysis ? (
                 <>
                   {/* Risk Score */}
-                  <Card className="bg-slate-900/80 border-amber-900/30">
+                  <Card className="bg-slate-900/80 border-brand-900/30">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center justify-between">
                         <span className="flex items-center gap-2">
-                          <Shield className="h-5 w-5 text-amber-500" />
+                          <Shield className="h-5 w-5 text-brand-500" />
                           {t('ca.riskAssessment')}
                         </span>
                         <Badge 
@@ -217,7 +217,7 @@ export default function ContractAnalyzer() {
                   </Card>
 
                   {/* Key Terms */}
-                  <Card className="bg-slate-900/80 border-amber-900/30">
+                  <Card className="bg-slate-900/80 border-brand-900/30">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <CheckCircle className="h-5 w-5 text-green-500" />
@@ -227,7 +227,7 @@ export default function ContractAnalyzer() {
                     <CardContent className="space-y-3">
                       {analysis.keyTerms?.map((item, index) => (
                         <div key={index} className="p-4 bg-slate-800/50 rounded-lg">
-                          <p className="text-amber-400 font-medium mb-1">{item.term}</p>
+                          <p className="text-brand-400 font-medium mb-1">{item.term}</p>
                           <p className="text-slate-400 text-sm">{item.explanation}</p>
                         </div>
                       ))}
@@ -235,10 +235,10 @@ export default function ContractAnalyzer() {
                   </Card>
 
                   {/* Risks */}
-                  <Card className="bg-slate-900/80 border-amber-900/30">
+                  <Card className="bg-slate-900/80 border-brand-900/30">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
-                        <AlertTriangle className="h-5 w-5 text-amber-500" />
+                        <AlertTriangle className="h-5 w-5 text-brand-500" />
                         {t('ca.potentialRisks')}
                       </CardTitle>
                     </CardHeader>
@@ -269,7 +269,7 @@ export default function ContractAnalyzer() {
                   </Card>
 
                   {/* Recommendations */}
-                  <Card className="bg-slate-900/80 border-amber-900/30">
+                  <Card className="bg-slate-900/80 border-brand-900/30">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <Info className="h-5 w-5 text-blue-500" />
@@ -280,7 +280,7 @@ export default function ContractAnalyzer() {
                       <ul className="space-y-2">
                         {analysis.recommendations?.map((rec, index) => (
                           <li key={index} className="flex items-start gap-2 text-slate-300">
-                            <CheckCircle className="h-4 w-4 text-amber-500 mt-1 flex-shrink-0" />
+                            <CheckCircle className="h-4 w-4 text-brand-500 mt-1 flex-shrink-0" />
                             {rec}
                           </li>
                         ))}
@@ -290,7 +290,7 @@ export default function ContractAnalyzer() {
 
                   <Button 
                     variant="outline" 
-                    className="w-full border-amber-900/30 text-slate-300 hover:text-amber-400"
+                    className="w-full border-brand-900/30 text-slate-300 hover:text-brand-400"
                     onClick={downloadReport}
                   >
                     <Download className="h-4 w-4 mr-2" />
@@ -298,7 +298,7 @@ export default function ContractAnalyzer() {
                   </Button>
                 </>
               ) : (
-                <Card className="bg-slate-900/80 border-amber-900/30 h-full flex items-center justify-center min-h-[400px]">
+                <Card className="bg-slate-900/80 border-brand-900/30 h-full flex items-center justify-center min-h-[400px]">
                   <CardContent className="text-center">
                     <FileSearch className="h-16 w-16 text-slate-600 mx-auto mb-4" />
                     <p className="text-slate-400 text-lg">{t('ca.emptyTitle')}</p>

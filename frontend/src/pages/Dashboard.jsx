@@ -84,11 +84,11 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="bg-slate-900/80 border-amber-900/30">
+              <Card className="bg-slate-900/80 border-brand-900/30">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                      <stat.icon className="h-6 w-6 text-amber-500" />
+                    <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
+                      <stat.icon className="h-6 w-6 text-brand-500" />
                     </div>
                   </div>
                   <p className="text-3xl font-bold text-white mb-1">{formatNumber(counts[stat.key] || 0)}</p>
@@ -106,10 +106,10 @@ export default function Dashboard() {
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-1"
           >
-            <Card className="bg-slate-900/80 border-amber-900/30 h-full">
+            <Card className="bg-slate-900/80 border-brand-900/30 h-full">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-amber-500" />
+                  <Zap className="h-5 w-5 text-brand-500" />
                   {t('dash.quickActions')}
                 </CardTitle>
               </CardHeader>
@@ -117,7 +117,7 @@ export default function Dashboard() {
                 {quickActions.map((action, index) => (
                   <Link key={index} to={createPageUrl(action.path)}>
                     <Button
-                      className="w-full justify-start bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold h-auto py-4"
+                      className="w-full justify-start bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold h-auto py-4"
                     >
                       <action.icon className="h-5 w-5 mr-3" />
                       {t(action.key)}
@@ -135,10 +135,10 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="lg:col-span-2"
           >
-            <Card className="bg-slate-900/80 border-amber-900/30">
+            <Card className="bg-slate-900/80 border-brand-900/30">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-amber-500" />
+                  <Clock className="h-5 w-5 text-brand-500" />
                   {t('dash.recent')}
                 </CardTitle>
               </CardHeader>
@@ -188,10 +188,10 @@ export default function Dashboard() {
           transition={{ delay: 0.3 }}
           className="mt-8"
         >
-          <Card className="bg-slate-900/80 border-amber-900/30">
+          <Card className="bg-slate-900/80 border-brand-900/30">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-amber-500" />
+                <BarChart3 className="h-5 w-5 text-brand-500" />
                 {t('dash.usage')}
               </CardTitle>
             </CardHeader>

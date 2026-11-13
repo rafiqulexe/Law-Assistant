@@ -147,9 +147,9 @@ export default function Features() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <Sparkles className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <Sparkles className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               <span className="text-white">{c.title1}</span>
@@ -163,7 +163,7 @@ export default function Features() {
       </section>
 
       {/* Highlights */}
-      <section className="py-16 border-y border-amber-900/20 bg-slate-900/30">
+      <section className="py-16 border-y border-brand-900/20 bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {highlights.map((item, index) => (
@@ -175,8 +175,8 @@ export default function Features() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/20 flex items-center justify-center mb-4">
-                  <item.icon className="h-7 w-7 text-amber-500" />
+                <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-700/20 flex items-center justify-center mb-4">
+                  <item.icon className="h-7 w-7 text-brand-500" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
                 <p className="text-slate-400 text-sm">{item.description}</p>
@@ -199,9 +199,9 @@ export default function Features() {
                 className={`grid lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
               >
                 <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 mb-4">
-                    <feature.icon className="h-4 w-4 text-amber-400" />
-                    <span className="text-amber-400 text-sm font-medium">{c.feature}</span>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 mb-4">
+                    <feature.icon className="h-4 w-4 text-brand-400" />
+                    <span className="text-brand-400 text-sm font-medium">{c.feature}</span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{feature.title}</h2>
                   <p className="text-lg text-slate-400 mb-8 leading-relaxed">{feature.description}</p>
@@ -209,8 +209,8 @@ export default function Features() {
                   <ul className="space-y-4 mb-8">
                     {feature.benefits.map((benefit, i) => (
                       <li key={i} className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                          <Check className="h-4 w-4 text-amber-500" />
+                        <div className="w-6 h-6 rounded-full bg-brand-500/20 flex items-center justify-center flex-shrink-0">
+                          <Check className="h-4 w-4 text-brand-500" />
                         </div>
                         <span className="text-slate-300">{benefit}</span>
                       </li>
@@ -218,7 +218,7 @@ export default function Features() {
                   </ul>
                   
                   <Link to={createPageUrl(feature.path)}>
-                    <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                    <Button className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold">
                       {c.tryTool.replace('{name}', feature.title)}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -226,14 +226,14 @@ export default function Features() {
                 </div>
                 
                 <div className={`relative ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-amber-900/30 rounded-2xl overflow-hidden shadow-2xl shadow-amber-500/10">
+                  <div className="bg-gradient-to-br from-slate-900 to-slate-800 border border-brand-900/30 rounded-2xl overflow-hidden shadow-2xl shadow-brand-500/10">
                     <img 
                       src={featureImages[index]}
                       alt={feature.title}
                       className="w-full h-64 object-cover"
                     />
                   </div>
-                  <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl" />
+                  <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-brand-500/10 rounded-full blur-2xl" />
                 </div>
               </motion.div>
             ))}
@@ -259,7 +259,7 @@ export default function Features() {
             <Link to={createPageUrl('Dashboard')}>
               <Button 
                 size="lg"
-                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-lg px-10 py-6 rounded-xl shadow-xl shadow-amber-500/30"
+                className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-bold text-lg px-10 py-6 rounded-xl shadow-xl shadow-brand-500/30"
               >
                 {c.ctaButton}
                 <ArrowRight className="ml-2 h-5 w-5" />

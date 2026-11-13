@@ -131,9 +131,9 @@ export default function DocumentGenerator() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <FileText className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{t('dg.badge')}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <FileText className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{t('dg.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               <span className="text-white">{t('dg.title1')}</span>
@@ -159,18 +159,18 @@ export default function DocumentGenerator() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card 
-                    className="bg-slate-900/80 border-amber-900/30 hover:border-amber-500/50 transition-all duration-300 cursor-pointer group h-full"
+                    className="bg-slate-900/80 border-brand-900/30 hover:border-brand-500/50 transition-all duration-300 cursor-pointer group h-full"
                     onClick={() => handleSelectType(type)}
                   >
                     <CardContent className="p-6">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <type.icon className="h-7 w-7 text-amber-500" />
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-700/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <type.icon className="h-7 w-7 text-brand-500" />
                       </div>
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-amber-400 transition-colors">
+                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-brand-400 transition-colors">
                         {t(`doc.${type.id}.name`)}
                       </h3>
                       <p className="text-slate-400 text-sm mb-4">{t(`doc.${type.id}.desc`)}</p>
-                      <div className="flex items-center text-amber-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center text-brand-500 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                         {t('dg.create')} <ArrowRight className="ml-2 h-4 w-4" />
                       </div>
                     </CardContent>
@@ -185,11 +185,11 @@ export default function DocumentGenerator() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
               >
-                <Card className="bg-slate-900/80 border-amber-900/30">
+                <Card className="bg-slate-900/80 border-brand-900/30">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-white flex items-center gap-2">
-                        <selectedType.icon className="h-5 w-5 text-amber-500" />
+                        <selectedType.icon className="h-5 w-5 text-brand-500" />
                         {t(`doc.${selectedType.id}.full`)}
                       </CardTitle>
                       <Button
@@ -227,7 +227,7 @@ export default function DocumentGenerator() {
                     <Button
                       onClick={generateDocument}
                       disabled={isGenerating || selectedType.fields.some(f => !formData[f])}
-                      className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6 mt-6"
+                      className="w-full bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold py-6 mt-6"
                     >
                       {isGenerating ? (
                         <>
@@ -250,10 +250,10 @@ export default function DocumentGenerator() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
               >
-                <Card className="bg-slate-900/80 border-amber-900/30 h-full">
+                <Card className="bg-slate-900/80 border-brand-900/30 h-full">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-amber-500" />
+                      <FileText className="h-5 w-5 text-brand-500" />
                       {t('dg.generated')}
                     </CardTitle>
                   </CardHeader>
@@ -268,7 +268,7 @@ export default function DocumentGenerator() {
                         <div className="flex gap-3">
                           <Button 
                             variant="outline" 
-                            className="flex-1 border-amber-900/30 text-slate-300 hover:text-amber-400"
+                            className="flex-1 border-brand-900/30 text-slate-300 hover:text-brand-400"
                             onClick={() => {
                               navigator.clipboard.writeText(generatedDocument);
                               toast.success(t('dg.copied'));
@@ -278,7 +278,7 @@ export default function DocumentGenerator() {
                             {t('dg.copy')}
                           </Button>
                           <Button 
-                            className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900"
+                            className="flex-1 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900"
                             onClick={() => downloadTextAsPdf(
                               generatedDocument,
                               `${selectedType.id}-document.pdf`,

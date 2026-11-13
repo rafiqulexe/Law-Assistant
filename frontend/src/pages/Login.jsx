@@ -51,8 +51,8 @@ export default function Login({ mode = 'login' }) {
         className="w-full max-w-md py-12"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/20 mb-4">
-            <Scale className="w-7 h-7 text-amber-500" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-500/20 mb-4">
+            <Scale className="w-7 h-7 text-brand-500" />
           </div>
           <h1 className="text-3xl font-bold text-white">
             {isRegister ? t('login.createTitle') : t('login.welcome')}
@@ -62,7 +62,7 @@ export default function Login({ mode = 'login' }) {
           </p>
         </div>
 
-        <Card className="bg-slate-900/80 border-amber-900/30">
+        <Card className="bg-slate-900/80 border-brand-900/30">
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
@@ -97,7 +97,7 @@ export default function Login({ mode = 'login' }) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold"
+                className="w-full bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold"
               >
                 {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {isRegister ? t('login.createAccount') : t('login.signIn')}
@@ -108,7 +108,7 @@ export default function Login({ mode = 'login' }) {
 
         <p className="text-center text-sm text-slate-400 mt-6">
           {isRegister ? t('login.haveAccount') : t('login.noAccount')}
-          <Link to={isRegister ? '/Login' : '/Register'} className="text-amber-400 hover:text-amber-300">
+          <Link to={isRegister ? '/Login' : '/Register'} className="text-brand-400 hover:text-brand-300">
             {isRegister ? t('login.signIn') : t('login.createOne')}
           </Link>
         </p>

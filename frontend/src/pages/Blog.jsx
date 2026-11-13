@@ -98,9 +98,9 @@ export default function Blog() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <BookOpen className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{c.badge}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <BookOpen className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{c.badge}</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               <span className="text-white">{c.title1}</span>
@@ -122,7 +122,7 @@ export default function Blog() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <Input
                 placeholder={c.search}
-                className="pl-12 py-6 bg-slate-900/80 border-amber-900/30 text-white placeholder:text-slate-500 rounded-xl"
+                className="pl-12 py-6 bg-slate-900/80 border-brand-900/30 text-white placeholder:text-slate-500 rounded-xl"
               />
             </div>
           </motion.div>
@@ -130,7 +130,7 @@ export default function Blog() {
       </section>
 
       {/* Categories */}
-      <section className="py-8 border-b border-amber-900/20">
+      <section className="py-8 border-b border-brand-900/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-3">
             {categories.map((category, index) => (
@@ -139,8 +139,8 @@ export default function Blog() {
                 variant="outline"
                 className={`cursor-pointer px-4 py-2 text-sm transition-all ${
                   index === 0
-                    ? 'bg-amber-500/20 text-amber-400 border-amber-500/50'
-                    : 'border-amber-900/30 text-slate-400 hover:text-amber-400 hover:border-amber-500/50'
+                    ? 'bg-brand-500/20 text-brand-400 border-brand-500/50'
+                    : 'border-brand-900/30 text-slate-400 hover:text-brand-400 hover:border-brand-500/50'
                 }`}
               >
                 {category}
@@ -158,7 +158,7 @@ export default function Blog() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <Card className="bg-slate-900/80 border-amber-900/30 overflow-hidden">
+            <Card className="bg-slate-900/80 border-brand-900/30 overflow-hidden">
               <div className="grid md:grid-cols-2">
                 <div className="relative h-64 md:h-auto">
                   <img
@@ -169,7 +169,7 @@ export default function Blog() {
                   <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-transparent md:from-transparent md:to-slate-900" />
                 </div>
                 <CardContent className="p-8 md:p-12 flex flex-col justify-center">
-                  <Badge className="w-fit bg-amber-500/20 text-amber-400 border-amber-500/30 mb-4">
+                  <Badge className="w-fit bg-brand-500/20 text-brand-400 border-brand-500/30 mb-4">
                     <Tag className="h-3 w-3 mr-1" />
                     {c.featured}
                   </Badge>
@@ -191,7 +191,7 @@ export default function Blog() {
                       {featuredPost.readTime}
                     </span>
                   </div>
-                  <Button className="w-fit bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900">
+                  <Button className="w-fit bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900">
                     {c.read}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -214,7 +214,7 @@ export default function Blog() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-slate-900/80 border-amber-900/30 overflow-hidden h-full group hover:border-amber-500/50 transition-all">
+                <Card className="bg-slate-900/80 border-brand-900/30 overflow-hidden h-full group hover:border-brand-500/50 transition-all">
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={post.image}
@@ -222,12 +222,12 @@ export default function Blog() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
-                    <Badge className="absolute top-4 left-4 bg-amber-500/20 text-amber-400 border-amber-500/30">
+                    <Badge className="absolute top-4 left-4 bg-brand-500/20 text-brand-400 border-brand-500/30">
                       {post.category}
                     </Badge>
                   </div>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-amber-400 transition-colors line-clamp-2">
+                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-brand-400 transition-colors line-clamp-2">
                       {post.title}
                     </h3>
                     <p className="text-slate-400 text-sm mb-4 line-clamp-2">{post.excerpt}</p>
@@ -248,7 +248,7 @@ export default function Blog() {
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+            <Button className="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-slate-900 font-semibold">
               {c.more}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

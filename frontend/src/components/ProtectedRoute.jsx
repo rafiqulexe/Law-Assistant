@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   if (isLoadingAuth) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-700 border-t-amber-500 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-slate-700 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }

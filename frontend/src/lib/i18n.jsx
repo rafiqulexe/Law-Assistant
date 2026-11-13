@@ -61,7 +61,7 @@ export function LanguageToggle({ className = '' }) {
     <button
       type="button"
       onClick={() => setLanguage(next)}
-      className={`rounded-lg border border-amber-900/40 px-3 py-1.5 text-sm font-medium text-slate-300 hover:border-amber-500/60 hover:text-amber-400 transition-colors ${className}`}
+      className={`rounded-lg border border-brand-900/40 px-3 py-1.5 text-sm font-medium text-slate-300 hover:border-brand-500/60 hover:text-brand-400 transition-colors ${className}`}
       aria-label={next === 'bn' ? 'বাংলায় দেখুন' : 'Switch to English'}
       title={next === 'bn' ? 'বাংলায় দেখুন' : 'Switch to English'}
     >

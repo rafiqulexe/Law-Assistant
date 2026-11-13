@@ -123,10 +123,10 @@ export default function Admin() {
         <p className="text-slate-400">{c.intro}</p>
       </div>
 
-      <Card className="bg-slate-900/80 border-amber-900/30">
+      <Card className="bg-slate-900/80 border-brand-900/30">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <RefreshCw className="h-5 w-5 text-amber-500" /> {c.syncTitle}
+            <RefreshCw className="h-5 w-5 text-brand-500" /> {c.syncTitle}
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
@@ -146,7 +146,7 @@ export default function Admin() {
           <Button
             onClick={startSync}
             disabled={sync?.running}
-            className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900"
+            className="bg-gradient-to-r from-brand-500 to-brand-600 text-slate-900"
           >
             {sync?.running ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
             {sync?.running ? c.checking : c.checkNow}
@@ -155,10 +155,10 @@ export default function Admin() {
       </Card>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <Card className="bg-slate-900/80 border-amber-900/30">
+        <Card className="bg-slate-900/80 border-brand-900/30">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Upload className="h-5 w-5 text-amber-500" /> {c.uploadTitle}
+              <Upload className="h-5 w-5 text-brand-500" /> {c.uploadTitle}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -167,7 +167,7 @@ export default function Admin() {
                 type="file"
                 accept=".pdf,.csv"
                 onChange={(e) => setFile(e.target.files[0] || null)}
-                className="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-amber-500 file:px-4 file:py-2 file:text-slate-900"
+                className="block w-full text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-500 file:px-4 file:py-2 file:text-slate-900"
               />
               <p className="text-xs text-slate-500">
                 {c.uploadHint}
@@ -175,7 +175,7 @@ export default function Admin() {
               <Button
                 type="submit"
                 disabled={!file || isUploading}
-                className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900"
+                className="bg-gradient-to-r from-brand-500 to-brand-600 text-slate-900"
               >
                 {isUploading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 {c.upload}
@@ -194,10 +194,10 @@ export default function Admin() {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900/80 border-amber-900/30">
+        <Card className="bg-slate-900/80 border-brand-900/30">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Users className="h-5 w-5 text-amber-500" /> {c.users}
+              <Users className="h-5 w-5 text-brand-500" /> {c.users}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -208,7 +208,7 @@ export default function Admin() {
                     <p className="text-white">{user.username}</p>
                     <p className="text-xs text-slate-500">{user.created_at}</p>
                   </div>
-                  {user.is_admin ? <Badge className="bg-amber-500/20 text-amber-400">{c.admin}</Badge> : null}
+                  {user.is_admin ? <Badge className="bg-brand-500/20 text-brand-400">{c.admin}</Badge> : null}
                 </li>
               ))}
             </ul>

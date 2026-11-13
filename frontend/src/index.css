@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Site accent: emerald to teal, with cyan for highlights. Change these to restyle the site. */
+:root {
+  --brand-50: 236 253 245;
+  --brand-100: 209 250 229;
+  --brand-200: 167 243 208;
+  --brand-300: 110 231 183;
+  --brand-400: 52 211 153;
+  --brand-500: 16 185 129;
+  --brand-600: 5 150 105;
+  --brand-700: 4 120 87;
+  --brand-800: 6 95 70;
+  --brand-900: 6 78 59;
+  --brand-950: 2 44 34;
+  --brand-highlight: 34 211 238;
+  --page-background: 7 11 20;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

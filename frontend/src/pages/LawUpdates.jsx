@@ -17,9 +17,9 @@ export default function LawUpdates() {
         <div className="absolute inset-0 hero-glow" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <BellRing className="h-4 w-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">{t('updates.badge')}</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-500/10 border border-brand-500/30 mb-6">
+              <BellRing className="h-4 w-4 text-brand-400" />
+              <span className="text-brand-400 text-sm font-medium">{t('updates.badge')}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="text-white">{t('updates.title1')}</span>
@@ -38,7 +38,7 @@ export default function LawUpdates() {
       </section>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-        {isLoading && <Loader2 className="h-6 w-6 animate-spin text-amber-500 mx-auto" />}
+        {isLoading && <Loader2 className="h-6 w-6 animate-spin text-brand-500 mx-auto" />}
         {!isLoading && updates.length === 0 && (
           <p className="text-slate-400 text-center">{t('updates.none')}</p>
         )}
@@ -47,18 +47,18 @@ export default function LawUpdates() {
           return (
             <Card
               key={`${update.act_id}-${update.detected_at}`}
-              className={`bg-slate-900/80 ${index === 0 ? 'border-amber-500/60' : 'border-amber-900/30'}`}
+              className={`bg-slate-900/80 ${index === 0 ? 'border-brand-500/60' : 'border-brand-900/30'}`}
             >
               <CardContent className="p-5 flex gap-4">
-                <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                  <Icon className="h-5 w-5 text-amber-500" />
+                <div className="w-10 h-10 rounded-lg bg-brand-500/20 flex items-center justify-center flex-shrink-0">
+                  <Icon className="h-5 w-5 text-brand-500" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h3 className={`text-white ${index === 0 ? 'font-extrabold' : 'font-semibold'}`}>
                       {update.title}
                     </h3>
-                    {index === 0 && <Badge className="bg-amber-500 text-slate-900">{t('updates.latest')}</Badge>}
+                    {index === 0 && <Badge className="bg-brand-500 text-slate-900">{t('updates.latest')}</Badge>}
                   </div>
                   <p className="text-sm text-slate-400">
                     {t('updates.detected', { change: describeChange(update, t, formatNumber), date: formatDate(update.detected_at, language) })}
@@ -77,7 +77,7 @@ export default function LawUpdates() {
                     href={update.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-sm text-amber-400 hover:text-amber-300 mt-2"
+                    className="inline-flex items-center gap-1 text-sm text-brand-400 hover:text-brand-300 mt-2"
                   >
                     {t('updates.official')} <ExternalLink className="h-3 w-3" />
                   </a>
