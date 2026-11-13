@@ -3,6 +3,9 @@ flask
 python-dotenv
 requests
 pypdf
+pypdfium2
+pytesseract
+pillow
 sentence-transformers>=3.0.0,<6
 langchain
 langchain-classic

@@ -25,6 +25,7 @@ from src.helper import (
     split_into_chunks,
     translate_to_english,
 )
+from src import ocr
 from src.database import get_db, init_db
 from src.rate_limit import limit
 from src.prompt import contract_prompt, document_prompt, risk_prompt, system_prompt
@@ -390,23 +391,39 @@ def extract_text():
     if not upload or not upload.filename:
         return jsonify({"error": "Please choose a file."}), 400
     extension = upload.filename.rsplit(".", 1)[-1].lower()
+    if extension not in ("pdf", "txt", *IMAGE_EXTENSIONS):
+        return jsonify({"error": "Only PDF, TXT and image files are supported."}), 400
     raw = upload.read()
+    used_ocr = False
     try:
-        if extension == "pdf":
-            from pypdf import PdfReader
-
-            reader = PdfReader(io.BytesIO(raw))
-            text = "\n".join(page.extract_text() or "" for page in reader.pages)
-        elif extension == "txt":
+        if extension == "txt":
             text = raw.decode("utf-8", errors="ignore")
+        elif extension == "pdf":
+            text, pages = pdf_text_layer(raw)
+            # A scanned PDF has no text layer, or only a few stray characters per page.
+            if len(text.strip()) < 20 * max(pages, 1):
+                text, used_ocr = ocr.pdf_to_text(raw), True
         else:
-            return jsonify({"error": "Only PDF and TXT files are supported."}), 400
+            text, used_ocr = ocr.image_to_text(raw), True
+    except ocr.OcrUnavailable:
+        return jsonify({"error": "Reading scanned files is not set up on this server."}), 503
     except Exception:
         logger.exception("Text extraction failed")
         return jsonify({"error": "Could not read that file."}), 400
     if not text.strip():
-        return jsonify({"error": "No text found. Scanned PDFs are not supported yet."}), 400
-    return jsonify({"text": text[:MAX_TEXT_LENGTH]})
+        return jsonify({"error": "No text found in that file."}), 400
+    return jsonify({"text": text[:MAX_TEXT_LENGTH], "ocr": used_ocr})
+
+
+IMAGE_EXTENSIONS = ("png", "jpg", "jpeg", "webp", "tif", "tiff")
+
+
+def pdf_text_layer(raw):
+    from pypdf import PdfReader
+
+    reader = PdfReader(io.BytesIO(raw))
+    text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    return text, len(reader.pages)
 
 
 @app.post("/api/contract/analyze")

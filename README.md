@@ -8,8 +8,9 @@ Ollama model answers from the retrieved passages, with the source shown for ever
 
 - **Legal chat** - questions in English or Bangla, answers grounded in the law library,
   source citations and per-user conversation history.
-- **Contract analyzer** - paste text or upload a PDF/TXT to get a summary, key terms,
-  risks, recommendations and a risk score, downloadable as a PDF report.
+- **Contract analyzer** - paste text or upload a PDF, TXT or a photo of the document to get a
+  summary, key terms, risks, recommendations and a risk score, downloadable as a PDF report.
+  Scanned pages and photos are read with OCR (Bangla and English).
 - **Risk checker** - compliance review of a document against passages from the law library.
 - **Document generator** - NDAs, service agreements, rental agreements and more,
   downloadable as PDF.
@@ -26,6 +27,7 @@ Ollama model answers from the retrieved passages, with the source shown for ever
 app.py              Flask JSON API + serves the built React app
 src/helper.py       document loading, Pinecone and Ollama helpers
 src/prompt.py       prompts for chat and the legal tools
+src/ocr.py          reads scanned PDFs and photos with Tesseract
 store_index.py      builds the Pinecone index from Data/
 sync_laws.py        checks the official website for new and amended laws
 src/law_sync.py     official website sync logic
@@ -62,6 +64,12 @@ contact form 5 per hour, and chat plus the AI tools `AI_REQUESTS_PER_10_MIN` (de
 for each user. Set `TRUST_PROXY=1` behind a proxy that sends `X-Forwarded-For`
 (PythonAnywhere does) and `RATE_LIMITS=0` to switch them off.
 
+OCR: a PDF with almost no text layer, or an image upload, is read with Tesseract.
+`TESSDATA_DIR` points at a folder with `ben.traineddata` and `eng.traineddata`,
+`TESSERACT_CMD` at the binary if it is not on `PATH`. `OCR_LANGUAGES` (default `ben+eng`) and
+`OCR_MAX_PAGES` (default 20) are optional. Without Tesseract the rest of the app works and
+scanned uploads get a clear error.
+
 ## Running locally
 
 1. Backend (Python 3.10+):
@@ -75,6 +83,16 @@ for each user. Set `TRUST_PROXY=1` behind a proxy that sends `X-Forwarded-For`
    ```
 
 2. Ollama must be running with the model pulled: `ollama pull gemma3:12b` (about 8 GB; `llama3.2` works on smaller machines but its Bangla is weak).
+
+   Optional, for scanned files: install Tesseract (Windows: `winget install UB-Mannheim.TesseractOCR`,
+   Linux: `apt install tesseract-ocr`), then put the Bangla model in a folder with the English one
+   and set `TESSDATA_DIR` to it:
+
+   ```bash
+   mkdir -p instance/tessdata
+   curl -L -o instance/tessdata/ben.traineddata https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/main/ben.traineddata
+   curl -L -o instance/tessdata/eng.traineddata https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/main/eng.traineddata
+   ```
 
 3. Frontend:
 
@@ -112,7 +130,10 @@ Pinecone and the official law site.
 2. Run `npm run build` on your own machine and upload `frontend/dist` (it is not in git).
 3. Create `.env` in the project folder with `SECRET_KEY`, `PINECONE_API_KEY`,
    `PINECONE_INDEX_NAME`, the hosted LLM settings above, `SESSION_COOKIE_SECURE=1` and
-   `TRUST_PROXY=1`.
+   `TRUST_PROXY=1`. Keep `DATABASE_PATH` and `DATA_DIR` under `/home/<username>/`.
+   For OCR, check `tesseract --version` in a Bash console, download the two
+   `.traineddata` files as in "Running locally" into `~/tessdata` and set
+   `TESSDATA_DIR=/home/<username>/tessdata`.
 4. Web tab: add a web app with manual configuration, set the virtualenv, and make the WSGI
    file import `application` from this project's `wsgi.py`. Turn on "Force HTTPS".
 5. Tasks tab: add a daily task that only does the law check on the first of the month:
@@ -144,21 +165,6 @@ Register normally, then set `is_admin` to `1` for that user:
 ```bash
 sqlite3 instance/law_assistant.db "UPDATE users SET is_admin = 1 WHERE username = 'your-name';"
 ```
-
-## Deploying on PythonAnywhere
-
-1. Clone the repository into `/home/<username>/Law-Assistant`.
-2. Build the frontend locally (`cd frontend && npm run build`) and upload `frontend/dist`,
-   or build it in a PythonAnywhere console if Node is available.
-3. Create a virtualenv, `pip install -r requirements.txt`, and point the web app's
-   virtualenv setting at it.
-4. Set the WSGI file to import `/home/<username>/Law-Assistant/wsgi.py`.
-5. Add the environment variables above. Set `DATABASE_PATH` and `DATA_DIR` to writable
-   paths under `/home/<username>/`.
-6. Reload the web app.
-
-Generation uses Ollama, so the server must be able to reach an Ollama instance
-(`OLLAMA_BASE_URL`). Do not expose an unauthenticated Ollama service to the internet.
 
 ## Disclaimer
 

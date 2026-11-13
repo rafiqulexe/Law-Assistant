@@ -28,17 +28,24 @@ export default function ContractAnalyzer() {
   const [analysis, setAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [isReading, setIsReading] = useState(false);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setUploadedFile(file);
+    setIsReading(true);
     try {
       const data = await legal.extractText(file);
       setContractText(data.text);
+      if (data.ocr) toast.info(t('ca.ocrDone'));
     } catch (error) {
       toast.error(tError(error.message));
       setUploadedFile(null);
+    } finally {
+      setIsReading(false);
+      // Let the same file be picked again after an error.
+      e.target.value = '';
     }
   };
 
@@ -124,15 +131,20 @@ export default function ContractAnalyzer() {
                   <div className="border-2 border-dashed border-amber-900/30 rounded-xl p-8 text-center hover:border-amber-500/50 transition-colors cursor-pointer">
                     <input
                       type="file"
-                      accept=".txt,.pdf"
+                      accept=".txt,.pdf,.png,.jpg,.jpeg,.webp,.tif,.tiff"
+                      disabled={isReading}
                       onChange={handleFileUpload}
                       className="hidden"
                       id="file-upload"
                     />
                     <label htmlFor="file-upload" className="cursor-pointer">
-                      <Upload className="h-12 w-12 text-amber-500/50 mx-auto mb-4" />
+                      {isReading ? (
+                        <Loader2 className="h-12 w-12 text-amber-500/70 mx-auto mb-4 animate-spin" />
+                      ) : (
+                        <Upload className="h-12 w-12 text-amber-500/50 mx-auto mb-4" />
+                      )}
                       <p className="text-slate-400 mb-2">
-                        {uploadedFile ? uploadedFile.name : t('ca.upload')}
+                        {isReading ? t('ca.reading') : uploadedFile ? uploadedFile.name : t('ca.upload')}
                       </p>
                       <p className="text-slate-500 text-sm">{t('ca.supports')}</p>
                     </label>
